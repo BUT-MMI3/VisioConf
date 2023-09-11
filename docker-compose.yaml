@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # api-express:
+  #   build: ./api-express
+  #   container_name: api-express
+  #   restart: always
+  #   ports:
+  #     - 3000:3000
+  #   networks:
+  #     - visioconf
+  #   depends_on:
+  #     - mysql
+  #     - mongodb
+
+  # react-front:
+  #   build: ./react-front
+  #   container_name: react-front
+  #   restart: always
+  #   ports:
+  #     - 3001:3001
+  #   networks:
+  #     - visioconf
+  #   depends_on:
+  #     - api-express
+
+  mysql:
+    image: mysql:8.1.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - 3306:3306
+    volumes:
+      - ./databases/mysql:/var/lib/mysql
+    networks:
+      - visioconf
+
+  mongodb:
+    image: mongo:7.0.1
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - 27017:27017
+    volumes:
+      - ./databases/mongodb:/data/db
+    networks:
+      - visioconf
+    
+
+networks:
+  visioconf:
+
