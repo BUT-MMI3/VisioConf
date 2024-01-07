@@ -60,7 +60,7 @@ Elle s'inspire grandement des applications de communication telles que Discord o
 - Lancer la commande `docker-compose up --build`
 
 ## Documentation
-- [Documentation technique](https://mathiss-organization-1.gitbook.io/mmi-visioconf/)
+- [Documentation technique]([https://mathiss-organization-1.gitbook.io/mmi-visioconf/](https://app.gitbook.com/o/6FzhzYiY7ojoK2D1qEr2/s/9Jwmu8xpp1lu3lvXljrR/))
 
 
 ## Auteurs
