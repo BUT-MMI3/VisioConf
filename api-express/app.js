@@ -1,14 +1,14 @@
+/**
+ * Author: @mathis-lambert
+ * Date : Janvier 2024
+ */
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
-const socketio = require("socket.io");
 
 const indexRouter = require("./routes/index");
 
-const events = require("./routes/events");
-
 const app = express();
-const io = socketio();
 
 // generate random string
 const randomString = (len) => {
@@ -22,12 +22,12 @@ const randomString = (len) => {
 
 // Set up mongoose connection to MongoDB
 const mongoose = require("mongoose");
-const user = process.env.MONGO_USER || "admin";
-const password = process.env.MONGO_PASSWORD || "admin";
-const dbName = process.env.MONGO_DB_NAME || "express";
+const user = process.env.MONGO_USER || "root";
+const password = process.env.MONGO_PASSWORD || "root";
+const dbName = process.env.MONGO_DB_NAME || "visioconf";
 
 mongoose
-  .connect(`mongodb://${user}:${password}@localhost:27017/${dbName}`, {
+  .connect(`mongodb://${user}:${password}@mongodb:27017/${dbName}`, {
     authSource: "admin", // Specify the authentication database
   })
   .then(() => console.log("MongoDB Connected"))
@@ -47,6 +47,7 @@ const session = require("express-session");
 app.use(
   session({
     secret: randomString(32),
+    cookie: { maxAge: 60 * 60 * 1000 }, // 1 hour
     resave: false,
     saveUninitialized: true,
   })
@@ -71,9 +72,6 @@ app.use(function (req, res, next) {
 
 // routes
 app.use("/", indexRouter);
-
-// events
-events(io);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

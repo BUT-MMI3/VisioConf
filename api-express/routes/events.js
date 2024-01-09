@@ -1,5 +1,10 @@
+/**
+ * Author: @mathis-lambert
+ * Date : Janvier 2024
+ */
 module.exports = function (io) {
   io.on("connection", (socket) => {
+    console.log("User connected");
     // Login event
     socket.on("login", (userData) => {
       // Handle login logic here
@@ -23,5 +28,9 @@ module.exports = function (io) {
       // Handle disconnect logic here
       console.log("User disconnected");
     });
+
+    setInterval(() => {
+      socket.emit("foo", "bar");
+    }, 1000);
   });
 };

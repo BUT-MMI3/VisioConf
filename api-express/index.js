@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/**
+ * Author: @mathis-lambert
+ * Date : Janvier 2024
+ * Description : Ce fichier est le point d'entrée de l'application
+ */
 
 /**
  * Module dependencies.
@@ -6,7 +11,9 @@
 
 const app = require("./app");
 const debug = require("debug")("express-locallibrary-tutorial:server");
-const http = require("http");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+const events = require("./routes/events");
 
 /**
  * Get port from environment and store in Express.
@@ -19,7 +26,15 @@ app.set("port", port);
  * Create HTTP server.
  */
 
-const server = http.createServer(app);
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
+});
+
+events(io);
 
 /**
  * Listen on provided port, on all network interfaces.
