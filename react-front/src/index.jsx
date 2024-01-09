@@ -1,3 +1,7 @@
+/**
+ * Author: @mathis-lambert
+ * Date : Janvier 2024
+ */
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./styles/index.scss";
