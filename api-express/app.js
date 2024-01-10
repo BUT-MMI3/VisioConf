@@ -25,9 +25,11 @@ const mongoose = require("mongoose");
 const user = process.env.MONGO_USER || "root";
 const password = process.env.MONGO_PASSWORD || "root";
 const dbName = process.env.MONGO_DB_NAME || "visioconf";
+const url = process.env.MONGO_URL || "localhost";
+const port = process.env.MONGO_PORT || 27017;
 
 mongoose
-  .connect(`mongodb://${user}:${password}@mongodb:27017/${dbName}`, {
+  .connect(`mongodb://${user}:${password}@${url}:${port}/${dbName}`, {
     authSource: "admin", // Specify the authentication database
   })
   .then(() => console.log("MongoDB Connected"))
