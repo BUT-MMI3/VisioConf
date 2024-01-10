@@ -25,7 +25,11 @@ const Modale = ({
   return (
     <div className="modale-background">
       <div className={`modale-container ${type}`}>
-        <div className="modale-icon">{getIcon()}</div>
+        <div className="modale-icon">
+          <span>
+            {getIcon()}
+          </span>
+        </div>
         <div className="modale-header">
           <h3>{titre}</h3>
         </div>
