@@ -8,7 +8,7 @@
 /**
  * Module dependencies.
  */
-require('dotenv').config();
+require("dotenv").config();
 const app = require("./app");
 const debug = require("debug")("express-locallibrary-tutorial:server");
 const { createServer } = require("http");
@@ -29,7 +29,11 @@ app.set("port", port);
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "http://visioconf.mathislambert.fr:3000",
+      "http://www.visioconf.mathislambert.fr:3000",
+    ],
     methods: ["GET", "POST"],
   },
 });
