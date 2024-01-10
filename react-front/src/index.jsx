@@ -7,11 +7,14 @@ import ReactDOM from "react-dom/client";
 import "./styles/index.scss";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
+import { ToastContextProvider } from "./components/Toasts/ToastContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <ToastContextProvider>
+        <App />
+      </ToastContextProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
