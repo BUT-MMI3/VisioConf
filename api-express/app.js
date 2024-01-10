@@ -5,7 +5,7 @@
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
-const initializeUsers = require('./scripts/initializeDb');
+const { initializeUsers, initializeDiscussions } = require('./scripts/initializeDb');
 
 const indexRouter = require("./routes/index");
 
@@ -52,6 +52,7 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function () {
   console.log("We're connected to the database.");
     initializeUsers();
+    initializeDiscussions();
 });
 
 // use sessions for tracking logins
