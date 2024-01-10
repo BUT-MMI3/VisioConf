@@ -65,7 +65,7 @@ Elle s'inspire grandement des applications de communication telles que Discord o
 
 ## Auteurs
 - [Mathis LAMBERT](https://mathislambert.fr)
-- Arthur MONDON
+- [Arthur MONDON](https://mondon.pro)
 - Clément FAVAREL
 - Florian THOMY
 - Kyllian DIOCHON
