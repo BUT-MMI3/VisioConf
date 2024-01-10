@@ -91,7 +91,7 @@ UserSchema.virtual("url").get(function () {
 });
 
 // Virtual for user's permissions
-UserSchema.virtual("user_permissions").get(function () {
+UserSchema.virtual("permissions").get(function () { // fix user_permissions to permissions because the path is already used in the model
   return this.user_permissions;
 });
 

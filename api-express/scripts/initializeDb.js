@@ -1,7 +1,9 @@
+const { v4: uuidv4 } = require('uuid');
 const User = require('../models/user');
 
 const usersToInsert = [
     {
+        user_uuid: uuidv4(),
         user_firstname: 'John',
         user_lastname: 'Doe',
         user_job_desc: 'Developer',
@@ -9,6 +11,7 @@ const usersToInsert = [
         user_password: 'hashed_password',
     },
     {
+        user_uuid: uuidv4(),
         user_firstname: 'Janny',
         user_lastname: 'Doey',
         user_job_desc: 'Designer',
@@ -16,6 +19,7 @@ const usersToInsert = [
         user_password: 'hashed_password',
     },
     {
+        user_uuid: uuidv4(),
         user_firstname: 'Jean',
         user_lastname: 'Deau',
         user_job_desc: 'Manager',
