@@ -7,6 +7,7 @@ import Home from "./pages/home/Home.jsx";
 import { socket } from "./socket";
 import { useState, useEffect } from "react";
 import Modale from "./components/Modale/Modale.jsx";
+import NotFound from "./components/NotFound.jsx";
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -34,7 +35,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Home isConnected={isConnected} />} />
-      <Route path="/:room" element={<Home />} />
+      {/*<Route path="/:room" element={<Home />} />*/}
       <Route
         path="/dev_route_modale"
         element={
@@ -56,6 +57,7 @@ export default function App() {
           />
         }
       />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
