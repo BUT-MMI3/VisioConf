@@ -7,7 +7,7 @@ export default function Events({ events }) {
     <>
       <h2>Events</h2>
       <ul>
-        {events.map((event, index) => (
+        {events && events.length > 0 && events.map((event, index) => (
           <li key={index}>{event}</li>
         ))}
       </ul>
