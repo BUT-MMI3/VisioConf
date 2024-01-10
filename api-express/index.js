@@ -8,7 +8,7 @@
 /**
  * Module dependencies.
  */
-
+require('dotenv').config();
 const app = require("./app");
 const debug = require("debug")("express-locallibrary-tutorial:server");
 const { createServer } = require("http");
