@@ -1,4 +1,3 @@
-import React from 'react';
 import feather from 'feather-icons';
 import './Modale.css';
 
