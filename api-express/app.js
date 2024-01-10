@@ -22,18 +22,29 @@ const randomString = (len) => {
 
 // Set up mongoose connection to MongoDB
 const mongoose = require("mongoose");
+const withAuth = process.env.MONGO_WITH_AUTH || true;
 const user = process.env.MONGO_USER || "root";
 const password = process.env.MONGO_PASSWORD || "root";
 const dbName = process.env.MONGO_DB_NAME || "visioconf";
 const url = process.env.MONGO_URL || "localhost";
 const port = process.env.MONGO_PORT || 27017;
 
-mongoose
-  .connect(`mongodb://${user}:${password}@${url}:${port}/${dbName}`, {
-    authSource: "admin", // Specify the authentication database
-  })
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log(err));
+if (withAuth) {
+    mongoose
+        .connect(`mongodb://${user}:${password}@${url}:${port}/${dbName}`, {
+            authSource: "admin", // Specify the authentication database
+        })
+        .then(() => console.log("MongoDB Connected"))
+        .catch((err) => console.log(err));
+}else{
+    mongoose
+        .connect(`mongodb://${url}:${port}/${dbName}`, {
+            authSource: "admin", // Specify the authentication database
+        })
+        .then(() => console.log("MongoDB Connected"))
+        .catch((err) => console.log(err));
+}
+
 
 const db = mongoose.connection;
 
