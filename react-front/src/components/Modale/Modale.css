@@ -73,22 +73,22 @@
 
 .modale-icon{
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
 }
 .modale-container.info .modale-icon svg{
     color: #429BDB;
 }
-.modale-container.info .modale-icon span{
+.modale-icon span{
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(66, 155, 219, 0.1);
     width: 30px;
     aspect-ratio: 1/1;
     border-radius: 1rem;
     padding: 0.2rem;
 }
+
 .modale-container.info .modale-action-button{
     background-color: #429BDB;
 }
@@ -99,10 +99,16 @@
 .modale-container.warning .modale-action-button{
     background-color: #ff9100;
 }
+.modale-container.warning .modale-icon span{
+    background-color: rgba(255, 145, 0, 0.1);
+}
 
 .modale-container.error .modale-icon svg{
     color: red;
 }
 .modale-container.error .modale-action-button{
     background-color: red;
+}
+.modale-container.error .modale-icon span{
+    background-color: rgba(255, 0, 0, 0.1);
 }
