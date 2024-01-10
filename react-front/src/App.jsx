@@ -46,12 +46,12 @@ export default function App() {
       />
       <Route path="/:room" element={<Home />} />
       <Route path="/dev_route_modale" element={<Modale
-          type="info"
-          titre="Titre de la Modale"
-          texte="Ceci est le contenu de la modale."
-          texteBoutonAction="Cliquez ici"
-          lienBoutonAction="https://exemple.com"
-          onClose={/* Fonction à appeler pour fermer la modale */}
+          type="warning"
+          titre="Vous êtes sur le point de supprimer un élément."
+          texte="Toutes les données personnelles de l’utilisateur serront supprimées, mais l’ensemble des contenus associés au compte resteront visibles (messages, posts, etc...). Le profil de l’utilisateur apparaîtra comme “Utilisateur Supprimé”.."
+          texteBoutonAction="Supprimer l'utilisateur"
+          lienBoutonAction="http://localhost:3000/"
+          onClose={/* Fonction à appeler pour fermer la modale */ () => {console.log('Fermer la modale')}}
       />} />
     </Routes>
   );
