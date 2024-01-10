@@ -6,6 +6,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/home/Home.jsx";
 import { socket } from "./socket";
 import { useState, useEffect } from "react";
+import Modale from "./components/Modale/Modale.jsx";
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -44,6 +45,14 @@ export default function App() {
         element={<Home isConnected={isConnected} fooEvents={fooEvents} />}
       />
       <Route path="/:room" element={<Home />} />
+      <Route path="/dev_route_modale" element={<Modale
+          type="info"
+          titre="Titre de la Modale"
+          texte="Ceci est le contenu de la modale."
+          texteBoutonAction="Cliquez ici"
+          lienBoutonAction="https://exemple.com"
+          onClose={/* Fonction à appeler pour fermer la modale */}
+      />} />
     </Routes>
   );
 }
