@@ -10,7 +10,6 @@ import Modale from "./components/Modale/Modale.jsx";
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [fooEvents, setFooEvents] = useState([]);
 
   useEffect(() => {
     function onConnect() {
@@ -23,27 +22,18 @@ export default function App() {
       setIsConnected(false);
     }
 
-    function onFooEvent(value) {
-      setFooEvents((previous) => [...previous, value]);
-    }
-
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
-    socket.on("foo", onFooEvent);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
-      socket.off("foo", onFooEvent);
     };
   });
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={<Home isConnected={isConnected} fooEvents={fooEvents} />}
-      />
+      <Route path="/" element={<Home isConnected={isConnected} />} />
       <Route path="/:room" element={<Home />} />
       <Route path="/dev_route_modale" element={<Modale
           type="warning"
