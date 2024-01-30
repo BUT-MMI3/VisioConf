@@ -4,13 +4,15 @@
  */
 import { io } from "socket.io-client";
 
-const currentURL = window.location.href;
-// "undefined" means the URL will be computed from the `window.location` object
-console.log(import.meta.env.VITE_ENV === "production");
+const currentURL = window.location.hostname;
+const currentProtocol = window.location.protocol;
+
 const URL =
   // eslint-disable-next-line no-undef
   import.meta.env.VITE_ENV === "production"
-    ? currentURL.split(":")[0] + ":" + currentURL.split(":")[1] + ":3001"
+    ? `${currentProtocol}//${currentURL}${import.meta.env.VITE_SERVER_ROUTE}`
     : "http://localhost:3001";
+
+console.log("URL", URL);
 
 export const socket = io(URL);
