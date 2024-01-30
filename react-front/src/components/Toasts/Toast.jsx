@@ -1,3 +1,8 @@
+/* 
+Author: @mathis-lambert
+Date: Janvier 2024
+*/
+
 import "./toasts.scss";
 
 export default function Toast({ title, message, type }) {

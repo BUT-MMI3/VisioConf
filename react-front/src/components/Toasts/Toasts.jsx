@@ -1,3 +1,8 @@
+/* 
+Author: @mathis-lambert
+Date: Janvier 2024
+*/
+
 import { AnimatePresence, motion } from "framer-motion";
 import { useContext, useState } from "react";
 import Toast from "./Toast";

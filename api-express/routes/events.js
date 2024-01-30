@@ -17,6 +17,11 @@ module.exports = function (io) {
       console.log("User logged out:", userId);
     });
 
+    socket.on("chat-message", (message) => {
+      // Handle chat message logic here
+      io.emit("chat-message", message);
+      console.log("Chat message received:", message);
+    });
     // Custom event
     socket.on("customEvent", (data) => {
       // Handle custom event logic here
@@ -33,9 +38,5 @@ module.exports = function (io) {
       // Handle disconnect logic here
       console.log("User disconnected");
     });
-
-    setInterval(() => {
-      socket.emit("foo", "bar");
-    }, 1000);
   });
 };

@@ -1,3 +1,8 @@
+/* 
+Author: @mathis-lambert
+Date: Janvier 2024
+*/
+
 import { createContext, useContext, useCallback, useRef } from "react";
 import { Toasts } from "./Toasts";
 
