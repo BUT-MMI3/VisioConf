@@ -1,31 +1,31 @@
 version: '3.8'
 
 services:
-  api-express:
-    build: ./api-express
-    container_name: api-express
-    restart: always
-    volumes:
-      - ./api-express/docker.env:/api-express/.env
-    ports:
-      - 3001:3001
-    networks:
-      - visioconf
-    depends_on:
-      - mongodb
+  # api-express:
+  #   build: ./api-express
+  #   container_name: api-express
+  #   restart: always
+  #   volumes:
+  #     - ./api-express/docker.env:/api-express/.env
+  #   ports:
+  #     - 3001:3001
+  #   networks:
+  #     - visioconf
+  #   depends_on:
+  #     - mongodb
 
-  react-front:
-    build: ./react-front
-    container_name: react-front
-    restart: always
-    volumes:
-      - ./react-front/docker.env:/react-front/.env
-    ports:
-      - 3000:3000
-    networks:
-      - visioconf
-    depends_on:
-      - api-express
+  # react-front:
+  #   build: ./react-front
+  #   container_name: react-front
+  #   restart: always
+  #   volumes:
+  #     - ./react-front/docker.env:/react-front/.env
+  #   ports:
+  #     - 3000:3000
+  #   networks:
+  #     - visioconf
+  #   depends_on:
+  #     - api-express
 
   mongodb:
     image: mongo:7.0.1
@@ -50,8 +50,8 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - react-front
-      - api-express
+      # - react-front
+      # - api-express
       - mongodb
     networks:
       - visioconf

@@ -9,26 +9,13 @@ import Events from "../../components/Events";
 import ConnectionManager from "../../components/ConnectionManager";
 import SubscribeToEvent from "../../components/SubscribeToEvent";
 import { useToasts } from "../../components/Toasts/ToastContext";
+import ChatInput from "../../components/ChatInput/ChatInput";
+import { DiscussionContextProvider } from "../../components/FilDiscussion/DiscussionContext";
+import FilDiscussion from "../../components/FilDiscussion/FilDiscussion";
 
 function Home({ isConnected }) {
   const [count, setCount] = useState(0);
-  const [fooEvents, setFooEvents] = useState([]);
   const { pushToast } = useToasts();
-
-  // This is a trick to keep the same function reference
-  const onFooEventRef = useRef((event) => {
-    setFooEvents((fooEvents) => [...fooEvents, event]);
-  });
-
-  useEffect(() => {
-    // Subscribe to the event
-    const unsub = SubscribeToEvent("foo", onFooEventRef.current);
-
-    return () => {
-      // Clean up the subscription to avoid memory leaks
-      unsub();
-    };
-  }, []);
 
   return (
     <>
@@ -83,7 +70,13 @@ function Home({ isConnected }) {
 
       <ConnectionState isConnected={isConnected} />
       <ConnectionManager />
-      <Events events={fooEvents} />
+      {/* <Events events={fooEvents} /> */}
+
+      <DiscussionContextProvider>
+        <FilDiscussion />
+        <ChatInput />
+      </DiscussionContextProvider>
+
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
