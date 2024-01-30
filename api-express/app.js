@@ -5,6 +5,7 @@
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
+const { initializeUsers, initializeDiscussions } = require('./scripts/initializeDb');
 
 const indexRouter = require("./routes/index");
 
@@ -22,7 +23,7 @@ const randomString = (len) => {
 
 // Set up mongoose connection to MongoDB
 const mongoose = require("mongoose");
-const withAuth = process.env.MONGO_WITH_AUTH || true;
+const withAuth = process.env.MONGO_WITH_AUTH === 'true';
 const user = process.env.MONGO_USER || "root";
 const password = process.env.MONGO_PASSWORD || "root";
 const dbName = process.env.MONGO_DB_NAME || "visioconf";
@@ -37,10 +38,9 @@ if (withAuth) {
         .then(() => console.log("MongoDB Connected"))
         .catch((err) => console.log(err));
 }else{
+    console.log(`mongodb://${url}:${port}/${dbName}`)
     mongoose
-        .connect(`mongodb://${url}:${port}/${dbName}`, {
-            authSource: "admin", // Specify the authentication database
-        })
+        .connect(`mongodb://${url}:${port}/${dbName}`)
         .then(() => console.log("MongoDB Connected"))
         .catch((err) => console.log(err));
 }
@@ -51,6 +51,8 @@ const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function () {
   console.log("We're connected to the database.");
+    initializeUsers();
+    initializeDiscussions();
 });
 
 // use sessions for tracking logins

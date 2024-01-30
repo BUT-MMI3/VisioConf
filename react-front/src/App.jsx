@@ -8,6 +8,7 @@ import { socket } from "./socket";
 import { useState, useEffect } from "react";
 import Modale from "./components/Modale/Modale.jsx";
 import BarreDeMenu from "./components/NoyauBarreDeMenu/NoyauBarreDeMenu.jsx";
+import NotFound from "./components/NotFound.jsx";
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -31,7 +32,7 @@ export default function App() {
       socket.off("disconnect", onDisconnect);
     };
   });
-  
+
   const utilisateur = {
     id: 123,
     nom: "Doe",
@@ -42,12 +43,20 @@ export default function App() {
     isAdmin: true,
     logo: "https://imgv3.fotor.com/images/gallery/a-girl-cartoon-character-with-pink-background-generated-by-cartoon-character-maker-in-Fotor.jpg",
   };
-  
+
   return (
     <Routes>
       <Route path="/" element={<Home isConnected={isConnected} />} />
-      <Route path="/:room" element={<Home />} />
-      <Route path="/dev_route_nav" element={<BarreDeMenu logoImage="https://jeremiahhaulin.fr/img/Logo%20MMI%20Toulon.png" utilisateur={utilisateur}/>} />
+      <Route
+        path="/dev_route_nav"
+        element={
+          <BarreDeMenu
+            logoImage="https://jeremiahhaulin.fr/img/Logo%20MMI%20Toulon.png"
+            utilisateur={utilisateur}
+          />
+        }
+      />
+      {/*<Route path="/:room" element={<Home />} />*/}
       <Route
         path="/dev_route_modale"
         element={
@@ -69,6 +78,7 @@ export default function App() {
           />
         }
       />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
