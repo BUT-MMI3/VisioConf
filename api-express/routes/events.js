@@ -23,6 +23,11 @@ module.exports = function (io) {
       console.log("Custom event received:", data);
     });
 
+    socket.on('search-user', (searchInput) => {
+      // Traitez la recherche d'utilisateur ici et envoyez une réponse au client si nécessaire
+      console.log(`Recherche d'utilisateur : ${searchInput}`);
+    });
+
     // Disconnect event
     socket.on("disconnect", () => {
       // Handle disconnect logic here
