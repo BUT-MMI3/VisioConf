@@ -3,7 +3,7 @@
  * Date : Janvier 2024
  */
 import { useState, useEffect, useRef } from "react";
-import "./Home.scss";
+import "./NoyauAccueil.scss";
 import ConnectionState from "../../components/ConnectionState";
 import Events from "../../components/Events";
 import ConnectionManager from "../../components/ConnectionManager";
@@ -39,7 +39,7 @@ function Home({ isConnected }) {
           count is {count}
         </button>
         <p>
-          Edit <code>src/pages/home/Home.jsx</code> and save to reload.
+          Edit <code>src/pages/NoyauAccueil/NoyauAccueil.jsx</code> and save to reload.
         </p>
       </div>
     </>

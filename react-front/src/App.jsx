@@ -3,10 +3,11 @@
  * Date : Janvier 2024
  */
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/home/Home.jsx";
+import Home from "./pages/NoyauAccueil/NoyauAccueil.jsx";
 import { socket } from "./socket";
 import { useState, useEffect } from "react";
 import Modale from "./components/Modale/Modale.jsx";
+import BarreDeMenu from "./components/NoyauBarreDeMenu/NoyauBarreDeMenu.jsx";
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -30,11 +31,23 @@ export default function App() {
       socket.off("disconnect", onDisconnect);
     };
   });
-
+  
+  const utilisateur = {
+    id: 123,
+    nom: "Doe",
+    prenom: "John",
+    email: "john.doe@example.com",
+    job: "Etudiant MMI3",
+    connecte: true,
+    isAdmin: true,
+    logo: "https://imgv3.fotor.com/images/gallery/a-girl-cartoon-character-with-pink-background-generated-by-cartoon-character-maker-in-Fotor.jpg",
+  };
+  
   return (
     <Routes>
       <Route path="/" element={<Home isConnected={isConnected} />} />
       <Route path="/:room" element={<Home />} />
+      <Route path="/dev_route_nav" element={<BarreDeMenu logoImage="https://jeremiahhaulin.fr/img/Logo%20MMI%20Toulon.png" utilisateur={utilisateur}/>} />
       <Route
         path="/dev_route_modale"
         element={
