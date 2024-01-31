@@ -3,7 +3,7 @@
  * Date : Janvier 2024
  */
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/NoyauAccueil/NoyauAccueil.jsx";
+import NoyauAccueil from "./pages/NoyauAccueil/NoyauAccueil.jsx";
 import { socket } from "./socket";
 import { useState, useEffect } from "react";
 import Modale from "./components/Modale/Modale.jsx";
@@ -46,7 +46,7 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Home isConnected={isConnected} />} />
+      <Route path="/" element={<NoyauAccueil isConnected={isConnected} />} />
       <Route
         path="/dev_route_nav"
         element={

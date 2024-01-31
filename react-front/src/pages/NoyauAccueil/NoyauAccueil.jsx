@@ -2,48 +2,80 @@
  * Author: @mathis-lambert
  * Date : Janvier 2024
  */
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import "./NoyauAccueil.scss";
 import ConnectionState from "../../components/ConnectionState";
-import Events from "../../components/Events";
 import ConnectionManager from "../../components/ConnectionManager";
-import SubscribeToEvent from "../../components/SubscribeToEvent";
+import { useToasts } from "../../components/Toasts/ToastContext";
+import ChatInput from "../../components/ChatInput/ChatInput";
+import { DiscussionContextProvider } from "../../components/FilDiscussion/DiscussionContext";
+import FilDiscussion from "../../components/FilDiscussion/FilDiscussion";
 
-function Home({ isConnected }) {
+function NoyeauAccueil({ isConnected }) {
   const [count, setCount] = useState(0);
-  const [fooEvents, setFooEvents] = useState([]);
-
-  // This is a trick to keep the same function reference
-  const onFooEventRef = useRef((event) => {
-    setFooEvents((fooEvents) => [...fooEvents, event]);
-  });
-
-  useEffect(() => {
-    // Subscribe to the event
-    const unsub = SubscribeToEvent("foo", onFooEventRef.current);
-
-    return () => {
-      // Clean up the subscription to avoid memory leaks
-      unsub();
-    };
-  }, []);
+  const { pushToast } = useToasts();
 
   return (
     <>
       <h1>MMI VisioConf</h1>
+      <button
+        onClick={() =>
+          pushToast({
+            type: "error",
+            title: "Erreur",
+            message: "Une erreur est survenue",
+            duration: 3,
+          })
+        }
+      >
+        Afficher un toast d&apos;erreur
+      </button>
+      <button
+        onClick={() =>
+          pushToast({
+            type: "success",
+            title: "Succés",
+            message: "Une opération a réussi",
+          })
+        }
+      >
+        Afficher un toast de succés
+      </button>
+      <button
+        onClick={() =>
+          pushToast({
+            type: "info",
+            title: "Info",
+            message: "Une information",
+            duration: 3,
+          })
+        }
+      >
+        Afficher un toast d&apos;information
+      </button>
+      <button
+        onClick={() =>
+          pushToast({
+            type: "warning",
+            title: "Attention",
+            message: "Une information importante",
+            duration: 3,
+          })
+        }
+      >
+        Afficher un toast d&apos;attention
+      </button>
+
       <ConnectionState isConnected={isConnected} />
       <ConnectionManager />
-      <Events events={fooEvents} />
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/pages/NoyauAccueil/NoyauAccueil.jsx</code> and save to reload.
-        </p>
-      </div>
+      {/* <Events events={fooEvents} /> */}
+
+      <DiscussionContextProvider>
+        <FilDiscussion />
+        <ChatInput />
+      </DiscussionContextProvider>
     </>
   );
 }
 
-export default Home;
+export default NoyeauAccueil;

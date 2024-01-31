@@ -52,7 +52,7 @@ export function DiscussionContextProvider({ children }) {
 
   return (
     <DiscussionContext.Provider value={contextValue}>
-      {children}
+      <div className="discussion">{children}</div>
     </DiscussionContext.Provider>
   );
 }
