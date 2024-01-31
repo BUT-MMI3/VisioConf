@@ -1,0 +1,113 @@
+/* styles.css (ou tout autre nom que vous avez choisi) */
+#root {
+    max-width: 100%;
+}
+
+.page-connexion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 1920px;
+    background-image: url("/others/bg-connexion.png");
+}
+
+.card-connexion {
+    background-color: white;
+    border-radius: 10px;
+    padding: 35px;
+    text-align: center;
+    width: 353px;
+    padding-top: 50px;
+    padding-bottom: 15px;
+}
+
+.logo-connexion {
+    width: 280px;
+    max-height: 80px;
+    object-fit: contain;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: flex;
+    margin-bottom: 5px;
+    color: #304978;
+}
+
+input {
+    width: 92%;
+    padding: 10px;
+    border: 1px solid #F4F5F9;
+    border-radius: 5px;
+    outline: none;
+    background: #F4F5F9;
+}
+
+.erreur {
+    color: #CB0000;
+}
+
+.erreur-message {
+    color: #CB0000;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.button-connexion {
+    background-color: #1C376A;
+    color: #fff;
+    padding: 10px;
+    border: 1px solid #1c376a;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 345px;
+    outline: none;
+}
+
+.button-connexion.erreur {
+    background-color: #5F7091;
+    border: 1px solid #5F7091;
+}
+
+.button-connexion.erreur:hover {
+    background-color: #1C376A;
+    border: 1px solid #1C376A;
+}
+
+.lien-mot-de-passe-oublie {
+    margin-top: 19px;
+    text-align: right;
+    margin-right: 30px;
+}
+
+.lien-mot-de-passe-oublie>a:nth-child(1) {
+    color: #409cdc;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+@media only screen and (max-width: 600px) {
+    #root {
+        width: 100%;
+    }
+
+    .page-connexion {
+        width: 100%;
+    }
+
+    .card-connexion {
+        width: 70%;
+    }
+
+    .button-connexion {
+        width: 100%;
+    }
+}

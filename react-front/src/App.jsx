@@ -7,6 +7,7 @@ import Home from "./pages/NoyauAccueil/NoyauAccueil.jsx";
 import { socket } from "./socket";
 import { useState, useEffect } from "react";
 import Modale from "./components/Modale/Modale.jsx";
+import NoyauConnexion from "./pages/NoyauConnexion/NoyauConnexion.jsx";
 import BarreDeMenu from "./components/NoyauBarreDeMenu/NoyauBarreDeMenu.jsx";
 import NotFound from "./components/NotFound.jsx";
 
@@ -38,6 +39,7 @@ export default function App() {
     nom: "Doe",
     prenom: "John",
     email: "john.doe@example.com",
+    motDePasse: "azerty",
     job: "Etudiant MMI3",
     connecte: true,
     isAdmin: true,
@@ -52,6 +54,15 @@ export default function App() {
         element={
           <BarreDeMenu
             logoImage="https://jeremiahhaulin.fr/img/Logo%20MMI%20Toulon.png"
+            utilisateur={utilisateur}
+          />
+        }
+      />
+      <Route
+        path="/dev_route_connexion"
+        element={
+          <NoyauConnexion
+            logoImage="https://upload.wikimedia.org/wikipedia/fr/thumb/1/1a/Logo_Universit%C3%A9_de_Toulon.svg/1200px-Logo_Universit%C3%A9_de_Toulon.svg.png"
             utilisateur={utilisateur}
           />
         }
