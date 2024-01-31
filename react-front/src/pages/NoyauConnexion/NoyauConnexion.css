@@ -46,6 +46,7 @@ input {
     border-radius: 5px;
     outline: none;
     background: #F4F5F9;
+    color: gray;
 }
 
 .erreur {
