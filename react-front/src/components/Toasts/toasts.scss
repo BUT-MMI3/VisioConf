@@ -1,0 +1,80 @@
+/* 
+Author: @mathis-lambert
+Date: Janvier 2024
+*/
+
+.toast-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 9999;
+  width: 300px;
+  height: 100dvh;
+  padding: 15px;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  .toast {
+    position: relative;
+    display: block;
+    margin-bottom: 10px;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    color: #fff;
+    background-color: #323232;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    pointer-events: auto;
+
+    &.danger,
+    &.error {
+      background-color: #d9534f;
+    }
+
+    &.warning {
+      background-color: #f0ad4e;
+    }
+
+    &.success {
+      background-color: #5cb85c;
+    }
+
+    &.info {
+      background-color: #5bc0de;
+    }
+
+    &__content {
+      display: flex;
+      flex-direction: column;
+      justify-content: left;
+      align-items: flex-start;
+    }
+
+    &__title {
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    &__message {
+      font-size: 14px;
+      text-align: left;
+    }
+
+    &__close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 10px;
+      aspect-ratio: 1;
+      line-height: 0;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.3s ease-in-out;
+      background-color: rgba(0, 0, 0, 0.2);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+  }
+}

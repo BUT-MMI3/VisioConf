@@ -5,7 +5,10 @@
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
-const { initializeUsers, initializeDiscussions } = require('./scripts/initializeDb');
+const {
+  initializeUsers,
+  initializeDiscussions,
+} = require("./scripts/initializeDb");
 
 const indexRouter = require("./routes/index");
 
@@ -23,7 +26,7 @@ const randomString = (len) => {
 
 // Set up mongoose connection to MongoDB
 const mongoose = require("mongoose");
-const withAuth = process.env.MONGO_WITH_AUTH === 'true';
+const withAuth = process.env.MONGO_WITH_AUTH === "true";
 const user = process.env.MONGO_USER || "root";
 const password = process.env.MONGO_PASSWORD || "root";
 const dbName = process.env.MONGO_DB_NAME || "visioconf";
@@ -31,28 +34,27 @@ const url = process.env.MONGO_URL || "localhost";
 const port = process.env.MONGO_PORT || 27017;
 
 if (withAuth) {
-    mongoose
-        .connect(`mongodb://${user}:${password}@${url}:${port}/${dbName}`, {
-            authSource: "admin", // Specify the authentication database
-        })
-        .then(() => console.log("MongoDB Connected"))
-        .catch((err) => console.log(err));
-}else{
-    console.log(`mongodb://${url}:${port}/${dbName}`)
-    mongoose
-        .connect(`mongodb://${url}:${port}/${dbName}`)
-        .then(() => console.log("MongoDB Connected"))
-        .catch((err) => console.log(err));
+  mongoose
+    .connect(`mongodb://${user}:${password}@${url}:${port}/${dbName}`, {
+      authSource: "admin", // Specify the authentication database
+    })
+    .then(() => console.log("MongoDB Connected"))
+    .catch((err) => console.log(err));
+} else {
+  console.log(`mongodb://${url}:${port}/${dbName}`);
+  mongoose
+    .connect(`mongodb://${url}:${port}/${dbName}`)
+    .then(() => console.log("MongoDB Connected"))
+    .catch((err) => console.log(err));
 }
-
 
 const db = mongoose.connection;
 
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function () {
   console.log("We're connected to the database.");
-    initializeUsers();
-    initializeDiscussions();
+  initializeUsers();
+  initializeDiscussions();
 });
 
 // use sessions for tracking logins
@@ -73,17 +75,17 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, "public")));
 
-// redirect to /auth/login if not logged in
-app.use(function (req, res, next) {
-  if (!req.session.userId) {
-    if (req.url.startsWith("/auth")) {
-      return next();
-    }
-    return res.redirect("/auth/login");
-  }
+// // redirect to /auth/login if not logged in
+// app.use(function (req, res, next) {
+//   if (!req.session.userId) {
+//     if (req.url.startsWith("/auth")) {
+//       return next();
+//     }
+//     return res.redirect("/auth/login");
+//   }
 
-  next();
-});
+//   next();
+// });
 
 // routes
 app.use("/", indexRouter);

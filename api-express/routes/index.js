@@ -12,10 +12,8 @@ const router = express.Router();
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 router.get("/", async function (req, res) {
-  res.render("home", {
-    loggedIn: req.session.userId ? true : false,
-    username: req.session.username,
-  });
+  console.log("une requete sur /");
+  res.send("Hello World!");
 });
 
 module.exports = router;

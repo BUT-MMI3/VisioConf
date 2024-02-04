@@ -3,11 +3,10 @@
  * Date : Janvier 2024
  */
 import { Routes, Route } from "react-router-dom";
-import Home from "./components/NoyauAccueil/NoyauAccueil.jsx";
+import NoyauAccueil from "./pages/NoyauAccueil/NoyauAccueil.jsx";
 import { socket } from "./socket";
 import { useState, useEffect } from "react";
 import Modale from "./components/Modale/Modale.jsx";
-import NoyauConnexion from "./components/NoyauConnexion/NoyauConnexion.jsx";
 import BarreDeMenu from "./components/NoyauBarreDeMenu/NoyauBarreDeMenu.jsx";
 import NotFound from "./components/NotFound.jsx";
 
@@ -34,43 +33,30 @@ export default function App() {
     };
   });
 
+  const utilisateur = {
+    id: 123,
+    nom: "Doe",
+    prenom: "John",
+    email: "john.doe@example.com",
+    job: "Etudiant MMI3",
+    connecte: true,
+    isAdmin: true,
+    logo: "https://imgv3.fotor.com/images/gallery/a-girl-cartoon-character-with-pink-background-generated-by-cartoon-character-maker-in-Fotor.jpg",
+  };
+
   return (
     <Routes>
-      <Route path="/" element={<Home isConnected={isConnected} />} />
+      <Route path="/" element={<NoyauAccueil isConnected={isConnected} />} />
       <Route
         path="/dev_route_nav"
         element={
-          <BarreDeMenu/>
-        }
-      />
-      <Route
-        path="/dev_route_connexion"
-        element={
-          <NoyauConnexion/>
-        }
-      />
-      {/*<Route path="/:room" element={<Home />} />*/}
-      <Route
-        path="/dev_route_modale"
-        element={
-          <Modale
-            type="error"
-            titre="Vous êtes sur le point de supprimer un élément."
-            texte="Toutes les données personnelles de l’utilisateur serront supprimées, mais l’ensemble des contenus associés au compte resteront visibles (messages, posts, etc...). Le profil de l’utilisateur apparaîtra comme “Utilisateur Supprimé”.."
-            texteBoutonAction="Supprimer l'utilisateur"
-            onClose={
-              /* Fonction à appeler pour fermer la modale */ () => {
-                console.log("Fermer la modale");
-              }
-            }
-            onValidate={
-              /* Fonction à appeler pour valider l'action */ () => {
-                console.log("Valider l'action");
-              }
-            }
+          <BarreDeMenu
+            logoImage="https://jeremiahhaulin.fr/img/Logo%20MMI%20Toulon.png"
+            utilisateur={utilisateur}
           />
         }
       />
+      {/*<Route path="/:room" element={<Home />} />*/}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
