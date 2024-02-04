@@ -30,7 +30,7 @@ const NoyauBarreDeMenu = () => {
 
   return (
     <div className="barre-de-menu">
-      <img src={logoImage} alt="Logo de l'entreprise" className="logo" />
+      <img src={logoImage} alt="Logo de l'entreprise" className="logo-band" />
       <div className="onglets">
         <Link to="/discussions">
           <FeatherIcon

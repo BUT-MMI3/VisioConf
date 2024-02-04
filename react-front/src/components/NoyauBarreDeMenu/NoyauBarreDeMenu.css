@@ -26,13 +26,11 @@ a {
   text-decoration: unset;
 }
 
-.logo {
+.logo-band {
   width: 60px;
   max-height: 80px;
-  /* Ajustez la hauteur maximale du logo selon vos besoins */
   object-fit: contain;
   margin-bottom: 20px;
-  /* Espace entre le logo et le reste de la barre de menu */
 }
 
 .onglets {
@@ -51,7 +49,7 @@ a {
 }
 
 .profil-section {
-  bottom: -320px;
+  bottom: -390px;
   position: relative;
 }
 
