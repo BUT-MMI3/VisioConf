@@ -1,44 +1,28 @@
-import { useState, useEffect } from 'react';
+import { useModal } from '../../components/Modale/ModaleContext';
 import FeatherIcon from 'feather-icons-react';
-import Modale from '../Modale/Modale';
 
-const NoyauDeconnexion = ({ onValidate, visible }) => {
-  const [modalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {
-    setModalVisible(visible);
-  }, [visible]);
+const NoyauDeconnexion = () => {
+    const { newModal } = useModal();
 
-  const handleCloseModal = () => {
-    setModalVisible(false);
-  };
 
-  const handleValiderDeconnexion = () => {
-    onValidate();
-    handleCloseModal();
-  };
-
-  return (
-    <>
-      {/* Bouton de déconnexion */}
-      <a style={{ color: 'red', cursor: 'pointer' }} onClick={() => setModalVisible(true)}>
-        <FeatherIcon icon="log-out" size="20" strokeWidth="1" className="log-out" />
-        Déconnexion
-      </a>
-
-      {/* Modale de déconnexion */}
-      {modalVisible && (
-        <Modale
-          type="error"
-          titre="Vous êtes sur le point de vous déconnecter"
-          texte="Souhaitez-vous vraiment vous déconnecter"
-          texteBoutonAction="Déconnexion"
-          onClose={handleCloseModal}
-          onValidate={handleValiderDeconnexion}
-        />
-      )}
-    </>
-  );
+    return (
+        <>
+            <button style={{ background: 'none', border: 'none', color: 'red', cursor: 'pointer' }} onClick={() => newModal({
+                type: 'error',
+                boutonClose: true,
+                titre: 'Souhaitez-vous vraiment vous déconnecter ?',
+                texteBoutonAction: "déconnexion",
+                onValidate: () => {
+                    console.log('Utilisateur déconnecté');
+                    window.location.href = "/";
+                },
+            })}>
+                <FeatherIcon icon="log-out" size="20" strokeWidth="1" className="log-out" />
+                Déconnexion
+            </button>
+        </>
+    );
 };
 
 export default NoyauDeconnexion;
