@@ -4,10 +4,10 @@
  */
 import { useState, useEffect, useRef } from "react";
 import "./NoyauAccueil.scss";
-import ConnectionState from "../../components/ConnectionState";
-import Events from "../../components/Events";
-import ConnectionManager from "../../components/ConnectionManager";
-import SubscribeToEvent from "../../components/SubscribeToEvent";
+import ConnectionState from "../ConnectionState";
+import Events from "../Events";
+import ConnectionManager from "../ConnectionManager";
+import SubscribeToEvent from "../SubscribeToEvent";
 
 function Home({ isConnected }) {
   const [count, setCount] = useState(0);

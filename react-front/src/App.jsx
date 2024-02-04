@@ -3,11 +3,11 @@
  * Date : Janvier 2024
  */
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/NoyauAccueil/NoyauAccueil.jsx";
+import Home from "./components/NoyauAccueil/NoyauAccueil.jsx";
 import { socket } from "./socket";
 import { useState, useEffect } from "react";
 import Modale from "./components/Modale/Modale.jsx";
-import NoyauConnexion from "./pages/NoyauConnexion/NoyauConnexion.jsx";
+import NoyauConnexion from "./components/NoyauConnexion/NoyauConnexion.jsx";
 import BarreDeMenu from "./components/NoyauBarreDeMenu/NoyauBarreDeMenu.jsx";
 import NotFound from "./components/NotFound.jsx";
 
@@ -34,37 +34,19 @@ export default function App() {
     };
   });
 
-  const utilisateur = {
-    id: 123,
-    nom: "Doe",
-    prenom: "John",
-    email: "john.doe@example.com",
-    motDePasse: "azerty",
-    job: "Etudiant MMI3",
-    connecte: true,
-    isAdmin: true,
-    logo: "https://imgv3.fotor.com/images/gallery/a-girl-cartoon-character-with-pink-background-generated-by-cartoon-character-maker-in-Fotor.jpg",
-  };
-
   return (
     <Routes>
       <Route path="/" element={<Home isConnected={isConnected} />} />
       <Route
         path="/dev_route_nav"
         element={
-          <BarreDeMenu
-            logoImage="https://jeremiahhaulin.fr/img/Logo%20MMI%20Toulon.png"
-            utilisateur={utilisateur}
-          />
+          <BarreDeMenu/>
         }
       />
       <Route
         path="/dev_route_connexion"
         element={
-          <NoyauConnexion
-            logoImage="https://upload.wikimedia.org/wikipedia/fr/thumb/1/1a/Logo_Universit%C3%A9_de_Toulon.svg/1200px-Logo_Universit%C3%A9_de_Toulon.svg.png"
-            utilisateur={utilisateur}
-          />
+          <NoyauConnexion/>
         }
       />
       {/*<Route path="/:room" element={<Home />} />*/}
