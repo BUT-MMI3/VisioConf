@@ -7,7 +7,7 @@ import NoyauAccueil from "./components/NoyauAccueil/NoyauAccueil.jsx";
 import { socket } from "./socket";
 import { useState, useEffect } from "react";
 import Modale from "./components/Modale/Modale.jsx";
-import BarreDeMenu from "./components/NoyauBarreDeMenu/NoyauBarreDeMenu.jsx";
+import NoyauBarreDeMenu from "./components/NoyauBarreDeMenu/NoyauBarreDeMenu.jsx";
 import NotFound from "./components/NotFound.jsx";
 
 export default function App() {
@@ -39,7 +39,7 @@ export default function App() {
       <Route
         path="/dev_route_nav"
         element={
-          <BarreDeMenu/>
+          <NoyauBarreDeMenu/>
         }
       />
       {/*<Route path="/:room" element={<Home />} />*/}

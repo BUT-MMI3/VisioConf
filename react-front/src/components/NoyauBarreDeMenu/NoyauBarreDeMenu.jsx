@@ -3,12 +3,10 @@ import FeatherIcon from 'feather-icons-react';
 import { Link } from 'react-router-dom';
 import "./NoyauBarreDeMenu.css"
 import '../ProfilOverlay/ProfilOverlay.css';
-import { useModal } from '../../components/Modale/ModaleContext';
 import NoyauDeconnexion from '../../components/NoyauDeconnexion/NoyauDeconnexion';
 
-const BarreDeMenu = () => {
+const NoyauBarreDeMenu = () => {
   const [overlayVisible, setOverlayVisible] = useState(false);
-  const { newModal } = useModal();
   const logoImage = "https://jeremiahhaulin.fr/img/Logo%20MMI%20Toulon.png";
   const utilisateur = {
     id: 123,
@@ -48,7 +46,7 @@ const BarreDeMenu = () => {
         </Link>
         {checkRole() == "Administrateur" && (
           <Link to="/admin">
-            <FeatherIcon icon="shield" size="40" strokeWidth="1" className="onglet" />
+            <FeatherIcon icon="settings" size="40" strokeWidth="1" className="onglet" />
           </Link>
         )}
       </div>
@@ -84,4 +82,4 @@ const BarreDeMenu = () => {
   );
 };
 
-export default BarreDeMenu;
+export default NoyauBarreDeMenu;
