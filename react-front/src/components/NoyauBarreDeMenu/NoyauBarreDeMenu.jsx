@@ -1,11 +1,11 @@
 // BarreDeMenu.jsx
 
-import { useState } from 'react';
-import FeatherIcon from 'feather-icons-react';
-import { Link } from 'react-router-dom';
-import ProfilOverlay from '../ProfilOverlay/ProfilOverlay'; // Importez le composant ProfilOverlay
-import PropTypes from 'prop-types';
-import "./NoyauBarreDeMenu.css"
+import { useState } from "react";
+import FeatherIcon from "feather-icons-react";
+import { Link } from "react-router-dom";
+import ProfilOverlay from "../ProfilOverlay/ProfilOverlay"; // Importez le composant ProfilOverlay
+import PropTypes from "prop-types";
+import "./NoyauBarreDeMenu.css";
 
 const BarreDeMenu = ({ logoImage, utilisateur }) => {
   const [overlayVisible, setOverlayVisible] = useState(false);
@@ -18,28 +18,61 @@ const BarreDeMenu = ({ logoImage, utilisateur }) => {
     <div className="barre-de-menu">
       <img src={logoImage} alt="Logo de l'entreprise" className="logo" />
       <div className="onglets">
-        <Link to="/messages">
-          <FeatherIcon icon="message-circle" size="40" stroke-width="1" className="onglet" />
+        <Link to="/discussions">
+          <FeatherIcon
+            icon="message-circle"
+            size="40"
+            stroke-width="1"
+            className="onglet"
+          />
         </Link>
         <Link to="/utilisateurs">
-          <FeatherIcon icon="users" size="40" stroke-width="1" className="onglet" />
+          <FeatherIcon
+            icon="users"
+            size="40"
+            stroke-width="1"
+            className="onglet"
+          />
         </Link>
         <Link to="/dossiers">
-          <FeatherIcon icon="folder" size="40" stroke-width="1" className="onglet" />
+          <FeatherIcon
+            icon="folder"
+            size="40"
+            stroke-width="1"
+            className="onglet"
+          />
         </Link>
         <Link to="/livres">
-          <FeatherIcon icon="book" size="40" stroke-width="1" className="onglet" />
+          <FeatherIcon
+            icon="book"
+            size="40"
+            stroke-width="1"
+            className="onglet"
+          />
         </Link>
-        {/* Condition pour afficher l'icône seulement si l'utilisateur est un administrateur */}
+        {/* Condition pour afficher l'icï¿½ne seulement si l'utilisateur est un administrateur */}
         {utilisateur.isAdmin && (
           <Link to="/admin">
-            <FeatherIcon icon="shield" size="40" stroke-width="1" className="onglet" />
+            <FeatherIcon
+              icon="shield"
+              size="40"
+              stroke-width="1"
+              className="onglet"
+            />
           </Link>
         )}
       </div>
       <div className="profil-section" onClick={handleOverlayToggle}>
-        <div className={`statut-indicateur ${utilisateur.connecte ? 'connecte' : 'deconnecte'}`} />
-        <img src={utilisateur.logo} alt="Logo de l'utilisateur" className="logo-utilisateur" />
+        <div
+          className={`statut-indicateur ${
+            utilisateur.connecte ? "connecte" : "deconnecte"
+          }`}
+        />
+        <img
+          src={utilisateur.logo}
+          alt="Logo de l'utilisateur"
+          className="logo-utilisateur"
+        />
       </div>
       {overlayVisible && <ProfilOverlay utilisateur={utilisateur} />}
     </div>

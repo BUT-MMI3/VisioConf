@@ -21,7 +21,7 @@ export default function ChatInput() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="chat-input">
       <input
         type="text"
         value={newMessage}
