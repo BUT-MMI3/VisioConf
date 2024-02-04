@@ -49,6 +49,10 @@ const Modale = () => {
         }
     };
 
+    const handleContainerClick = (e) => {
+        e.stopPropagation();
+    };
+
     return (
         <AnimatePresence>
             {modalProps.isOpen && (
@@ -57,12 +61,21 @@ const Modale = () => {
                     initial="hidden"
                     animate="visible"
                     exit="exit"
+                    onClick={closeModal}
                 >
                     <motion.div
                         className={`modale-container ${modalProps.type}`}
                         variants={modalVariants}
+                        onClick={handleContainerClick}
                     >
 
+                        {
+                            modalProps.boutonClose && (
+                                <button onClick={closeModal} className="modale-close-button">
+                                    <FeatherIcon icon="x"/>
+                                </button>
+                            )
+                        }
                         <div className="modale-icon">
                           <span>
                             {getIcon()}
@@ -75,7 +88,7 @@ const Modale = () => {
                             <p>{modalProps.texte}</p>
                         </div>
                         <div className="modale-footer">
-                            <button onClick={closeModal} className="modale-close-button">
+                            <button onClick={closeModal} className="modale-cancel-button">
                                 Annuler
                             </button>
                             {modalProps.onValidate && (
