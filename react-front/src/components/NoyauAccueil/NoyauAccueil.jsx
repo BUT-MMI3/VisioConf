@@ -8,7 +8,7 @@ import ConnectionManager from "../../components/ConnectionManager";
 import { DiscussionContextProvider } from "../../components/FilDiscussion/DiscussionContext";
 import TestComponents from "../../components/TestComponents";
 
-function NoyeauAccueil({ isConnected }) {
+function NoyauAccueil({ isConnected }) {
   return (
     <div className="NoyeauAccueil">
       {/* <ConnectionState isConnected={isConnected} />
@@ -19,4 +19,4 @@ function NoyeauAccueil({ isConnected }) {
   );
 }
 
-export default NoyeauAccueil;
+export default NoyauAccueil;

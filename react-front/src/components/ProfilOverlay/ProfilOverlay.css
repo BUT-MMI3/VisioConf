@@ -70,14 +70,14 @@
   width: 1px;
   top: 65px;
   position: relative;
-  left: 35px;
+  left: 30px;
 }
 .statut-indicateur.deconnecte
 {
   border-radius: 50%;
-  border: 12px solid red;
+  border: 10px solid red;
   width: 1px;
-  top: 70px;
+  top: 65px;
   position: relative;
   left: 30px;
 }
@@ -89,7 +89,7 @@
   width: 1px;
   top: 23px;
   position: relative;
-  left: 55px;
+  left: 50px;
 }
 .statut-connexion.deconnecte
 {
@@ -98,5 +98,5 @@
     width: 1px;
     top: 23px;
     position: relative;
-    left: 55px;
+    left: 50px;
 }

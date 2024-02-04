@@ -3,10 +3,9 @@
  * Date : Janvier 2024
  */
 import { Routes, Route } from "react-router-dom";
-import NoyauAccueil from "./pages/NoyauAccueil/NoyauAccueil.jsx";
+import NoyauAccueil from "./components/NoyauAccueil/NoyauAccueil.jsx";
 import { socket } from "./socket";
 import { useState, useEffect } from "react";
-import BarreDeMenu from "./components/NoyauBarreDeMenu/NoyauBarreDeMenu.jsx";
 import NotFound from "./components/NotFound.jsx";
 import Layout from "./components/Layout/Layout.jsx";
 import ListeDiscussion from "./components/ListeDiscussion/ListeDiscussion.jsx";

@@ -1,14 +1,28 @@
-// BarreDeMenu.jsx
-
 import { useState } from "react";
 import FeatherIcon from "feather-icons-react";
 import { Link } from "react-router-dom";
-import ProfilOverlay from "../ProfilOverlay/ProfilOverlay"; // Importez le composant ProfilOverlay
-import PropTypes from "prop-types";
 import "./NoyauBarreDeMenu.css";
+import "../ProfilOverlay/ProfilOverlay.css";
+import NoyauDeconnexion from "../../components/NoyauDeconnexion/NoyauDeconnexion";
 
-const BarreDeMenu = ({ logoImage, utilisateur }) => {
+const NoyauBarreDeMenu = () => {
   const [overlayVisible, setOverlayVisible] = useState(false);
+  const logoImage = "https://jeremiahhaulin.fr/img/Logo%20MMI%20Toulon.png";
+  const utilisateur = {
+    id: 123,
+    nom: "Doe",
+    prenom: "John",
+    email: "john.doe@example.com",
+    motDePasse: "azerty",
+    job: "Etudiant MMI3",
+    isConnected: true,
+    isAdmin: true,
+    logo: "https://imgv3.fotor.com/images/gallery/a-girl-cartoon-character-with-pink-background-generated-by-cartoon-character-maker-in-Fotor.jpg",
+  };
+
+  const checkRole = () => {
+    return utilisateur.isAdmin ? "Administrateur" : "Utilisateur";
+  };
 
   const handleOverlayToggle = () => {
     setOverlayVisible(!overlayVisible);
@@ -22,7 +36,7 @@ const BarreDeMenu = ({ logoImage, utilisateur }) => {
           <FeatherIcon
             icon="message-circle"
             size="40"
-            stroke-width="1"
+            strokeWidth="1"
             className="onglet"
           />
         </Link>
@@ -30,7 +44,7 @@ const BarreDeMenu = ({ logoImage, utilisateur }) => {
           <FeatherIcon
             icon="users"
             size="40"
-            stroke-width="1"
+            strokeWidth="1"
             className="onglet"
           />
         </Link>
@@ -38,7 +52,7 @@ const BarreDeMenu = ({ logoImage, utilisateur }) => {
           <FeatherIcon
             icon="folder"
             size="40"
-            stroke-width="1"
+            strokeWidth="1"
             className="onglet"
           />
         </Link>
@@ -46,17 +60,16 @@ const BarreDeMenu = ({ logoImage, utilisateur }) => {
           <FeatherIcon
             icon="book"
             size="40"
-            stroke-width="1"
+            strokeWidth="1"
             className="onglet"
           />
         </Link>
-        {/* Condition pour afficher l'ic�ne seulement si l'utilisateur est un administrateur */}
-        {utilisateur.isAdmin && (
+        {checkRole() == "Administrateur" && (
           <Link to="/admin">
             <FeatherIcon
-              icon="shield"
+              icon="settings"
               size="40"
-              stroke-width="1"
+              strokeWidth="1"
               className="onglet"
             />
           </Link>
@@ -65,7 +78,7 @@ const BarreDeMenu = ({ logoImage, utilisateur }) => {
       <div className="profil-section" onClick={handleOverlayToggle}>
         <div
           className={`statut-indicateur ${
-            utilisateur.connecte ? "connecte" : "deconnecte"
+            utilisateur.isConnected ? "connecte" : "deconnecte"
           }`}
         />
         <img
@@ -73,21 +86,48 @@ const BarreDeMenu = ({ logoImage, utilisateur }) => {
           alt="Logo de l'utilisateur"
           className="logo-utilisateur"
         />
+        {overlayVisible && (
+          <div className={`profil-overlay`}>
+            <div className="card">
+              <div className="info-container">
+                <img
+                  src={utilisateur.logo}
+                  alt="Logo de l'utilisateur"
+                  className="overlay-logo"
+                />
+                <div className="text-container">
+                  <p
+                    style={{ color: "#223A6A", fontWeight: 600 }}
+                  >{`${utilisateur.nom} ${utilisateur.prenom}`}</p>
+                  <small>{`${utilisateur.job}`}</small>
+                </div>
+              </div>
+              <div className="onglets-overlay">
+                <Link to="/changer-status">
+                  <div
+                    className={`statut-connexion ${
+                      utilisateur.isConnected ? "connecte" : "deconnecte"
+                    }`}
+                  />
+                  {utilisateur.isConnected ? "en ligne" : "déconnecté"}
+                </Link>
+                <Link to="/parametres">
+                  <FeatherIcon
+                    icon="settings"
+                    size="20"
+                    strokeWidth="1"
+                    className="settings"
+                  />
+                  Paramètres
+                </Link>
+                <NoyauDeconnexion />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-      {overlayVisible && <ProfilOverlay utilisateur={utilisateur} />}
     </div>
   );
 };
 
-BarreDeMenu.propTypes = {
-  logoImage: PropTypes.string.isRequired,
-  utilisateur: PropTypes.shape({
-    logo: PropTypes.string.isRequired,
-    nom: PropTypes.string.isRequired,
-    prenom: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
-    connecte: PropTypes.bool.isRequired,
-  }).isRequired,
-};
-
-export default BarreDeMenu;
+export default NoyauBarreDeMenu;
