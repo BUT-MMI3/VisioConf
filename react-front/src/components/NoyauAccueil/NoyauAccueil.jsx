@@ -13,7 +13,7 @@ import FilDiscussion from "../../components/FilDiscussion/FilDiscussion";
 import Modale from "../../components/Modale/Modale";
 import { useModal } from '../../components/Modale/ModaleContext';
 
-function NoyeauAccueil({ isConnected }) {
+function NoyauAccueil({ isConnected }) {
     const { newModal } = useModal();
     const { pushToast } = useToasts();
 
@@ -128,4 +128,4 @@ function NoyeauAccueil({ isConnected }) {
   );
 }
 
-export default NoyeauAccueil;
+export default NoyauAccueil;
