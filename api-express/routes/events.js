@@ -2,7 +2,9 @@
  * Author: @mathis-lambert
  * Date : Janvier 2024
  */
-const uuid = require('uuid');
+const uuid = require("uuid");
+const User = require("../models/user");
+const Discussion = require("../models/discussion");
 
 module.exports = function (io) {
   io.on("connection", (socket) => {
@@ -39,43 +41,69 @@ module.exports = function (io) {
       console.log("Custom event received:", data);
     });
 
-    socket.on('search-user', async (query) => {
+    socket.on("search-user", async (query) => {
       try {
-        
         const results = await User.find({
-          $or: [{ user_firstname: { $regex: query, $options: 'i' } }, { user_lastname: { $regex: query, $options: 'i' } }],
+          $or: [
+            { user_firstname: { $regex: query, $options: "i" } },
+            { user_lastname: { $regex: query, $options: "i" } },
+          ],
         });
 
         // Émettre les résultats de la recherche à l'utilisateur
-        socket.emit('search-results', results);
+        socket.emit("search-results", results);
       } catch (error) {
-        console.error('Erreur lors de la recherche d\'utilisateur :', error.message);
+        console.error(
+          "Erreur lors de la recherche d'utilisateur :",
+          error.message
+        );
       }
     });
 
-    socket.on('create-group', async (selectedUsers) => {
+    socket.on("create-group", async (selectedUsers) => {
       try {
         const newDiscussion = new Discussion({
           discussion_uuid: uuid.v4(), // Utilisation de uuid pour générer un identifiant UUID aléatoire
-          discussion_name: null, 
-          discussion_description: null, 
-          discussion_type: 'group',
+          discussion_name: null,
+          discussion_description: null,
+          discussion_type: "group",
           discussion_members: selectedUsers,
         });
 
         const savedDiscussion = await newDiscussion.save();
-        io.emit('group-created', savedDiscussion);
+        io.emit("group-created", savedDiscussion);
       } catch (error) {
-        console.error('Erreur lors de la création du groupe :', error.message);
+        console.error("Erreur lors de la création du groupe :", error.message);
       }
     });
 
-    socket.on('fetch-users', async () => {
+    socket.on("fetch-users", async () => {
       try {
-        const usersList = await User.find({}, 'user_firstname user_lastname _id');
-        socket.emit('users-list', usersList);
+        const usersList = await User.find(
+          {},
+          "user_firstname user_lastname _id"
+        );
+        socket.emit("users-list", usersList);
       } catch (error) {
-        console.error('Erreur lors de la récupération de la liste des utilisateurs :', error.message);
+        console.error(
+          "Erreur lors de la récupération de la liste des utilisateurs :",
+          error.message
+        );
+      }
+    });
+
+    socket.on("fetch-discussions", async () => {
+      try {
+        const discussionsList = await Discussion.find(
+          {},
+          "discussion_name discussion_uuid"
+        );
+        socket.emit("discussions-list", discussionsList);
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération de la liste des discussions :",
+          error.message
+        );
       }
     });
 

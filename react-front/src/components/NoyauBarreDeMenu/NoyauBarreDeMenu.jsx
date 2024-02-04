@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import FeatherIcon from 'feather-icons-react';
-import { Link } from 'react-router-dom';
-import "./NoyauBarreDeMenu.css"
-import '../ProfilOverlay/ProfilOverlay.css';
-import NoyauDeconnexion from '../../components/NoyauDeconnexion/NoyauDeconnexion';
+import { useState } from "react";
+import FeatherIcon from "feather-icons-react";
+import { Link } from "react-router-dom";
+import "./NoyauBarreDeMenu.css";
+import "../ProfilOverlay/ProfilOverlay.css";
+import NoyauDeconnexion from "../../components/NoyauDeconnexion/NoyauDeconnexion";
 
 const NoyauBarreDeMenu = () => {
   const [overlayVisible, setOverlayVisible] = useState(false);
@@ -21,7 +21,7 @@ const NoyauBarreDeMenu = () => {
   };
 
   const checkRole = () => {
-    return utilisateur.isAdmin ? 'Administrateur' : 'Utilisateur';
+    return utilisateur.isAdmin ? "Administrateur" : "Utilisateur";
   };
 
   const handleOverlayToggle = () => {
@@ -32,44 +32,92 @@ const NoyauBarreDeMenu = () => {
     <div className="barre-de-menu">
       <img src={logoImage} alt="Logo de l'entreprise" className="logo" />
       <div className="onglets">
-        <Link to="/messages">
-          <FeatherIcon icon="message-circle" size="40" strokeWidth="1" className="onglet" />
+        <Link to="/discussions">
+          <FeatherIcon
+            icon="message-circle"
+            size="40"
+            strokeWidth="1"
+            className="onglet"
+          />
         </Link>
         <Link to="/utilisateurs">
-          <FeatherIcon icon="users" size="40" strokeWidth="1" className="onglet" />
+          <FeatherIcon
+            icon="users"
+            size="40"
+            strokeWidth="1"
+            className="onglet"
+          />
         </Link>
         <Link to="/dossiers">
-          <FeatherIcon icon="folder" size="40" strokeWidth="1" className="onglet" />
+          <FeatherIcon
+            icon="folder"
+            size="40"
+            strokeWidth="1"
+            className="onglet"
+          />
         </Link>
         <Link to="/livres">
-          <FeatherIcon icon="book" size="40" strokeWidth="1" className="onglet" />
+          <FeatherIcon
+            icon="book"
+            size="40"
+            strokeWidth="1"
+            className="onglet"
+          />
         </Link>
         {checkRole() == "Administrateur" && (
           <Link to="/admin">
-            <FeatherIcon icon="settings" size="40" strokeWidth="1" className="onglet" />
+            <FeatherIcon
+              icon="settings"
+              size="40"
+              strokeWidth="1"
+              className="onglet"
+            />
           </Link>
         )}
       </div>
       <div className="profil-section" onClick={handleOverlayToggle}>
-        <div className={`statut-indicateur ${utilisateur.isConnected ? 'connecte' : 'deconnecte'}`} />
-        <img src={utilisateur.logo} alt="Logo de l'utilisateur" className="logo-utilisateur" />
+        <div
+          className={`statut-indicateur ${
+            utilisateur.isConnected ? "connecte" : "deconnecte"
+          }`}
+        />
+        <img
+          src={utilisateur.logo}
+          alt="Logo de l'utilisateur"
+          className="logo-utilisateur"
+        />
         {overlayVisible && (
           <div className={`profil-overlay`}>
             <div className="card">
               <div className="info-container">
-                <img src={utilisateur.logo} alt="Logo de l'utilisateur" className="overlay-logo" />
+                <img
+                  src={utilisateur.logo}
+                  alt="Logo de l'utilisateur"
+                  className="overlay-logo"
+                />
                 <div className="text-container">
-                  <p style={{ color: '#223A6A', fontWeight: 600 }}>{`${utilisateur.nom} ${utilisateur.prenom}`}</p>
+                  <p
+                    style={{ color: "#223A6A", fontWeight: 600 }}
+                  >{`${utilisateur.nom} ${utilisateur.prenom}`}</p>
                   <small>{`${utilisateur.job}`}</small>
                 </div>
               </div>
               <div className="onglets-overlay">
                 <Link to="/changer-status">
-                  <div className={`statut-connexion ${utilisateur.isConnected ? 'connecte' : 'deconnecte'}`} />
-                  {utilisateur.isConnected ? 'en ligne' : 'déconnecté'}
+                  <div
+                    className={`statut-connexion ${
+                      utilisateur.isConnected ? "connecte" : "deconnecte"
+                    }`}
+                  />
+                  {utilisateur.isConnected ? "en ligne" : "déconnecté"}
                 </Link>
                 <Link to="/parametres">
-                  <FeatherIcon icon="settings" size="20" strokeWidth="1" className="settings" />
+                  <FeatherIcon
+                    icon="settings"
+                    size="20"
+                    strokeWidth="1"
+                    className="settings"
+                  />
                   Paramètres
                 </Link>
                 <NoyauDeconnexion />

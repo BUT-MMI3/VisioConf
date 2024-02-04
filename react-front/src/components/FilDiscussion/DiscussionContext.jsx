@@ -13,6 +13,9 @@ import {
 } from "react";
 import SubscribeToEvent from "../SubscribeToEvent";
 import { socket } from "../../socket";
+import { useLocation } from "react-router-dom";
+import ChatInput from "../../components/ChatInput/ChatInput";
+import FilDiscussion from "../../components/FilDiscussion/FilDiscussion";
 
 // Initialisation du contexte avec une valeur par défaut
 const DiscussionContext = createContext({
@@ -21,12 +24,19 @@ const DiscussionContext = createContext({
   addMessage: (message) => {},
 });
 
-export function DiscussionContextProvider({ children }) {
+export function DiscussionContextProvider() {
+  const location = useLocation();
+  const [discussionId, setDiscussionId] = useState(
+    location.pathname.split("/")[2]
+  );
   const [messages, setMessages] = useState([]);
 
   // This is a trick to keep the same function reference
   const onMessageEventRef = useRef((message) => {
     setMessages((messages) => [...messages, message]);
+  });
+  const onDiscussionHistoryRef = useRef((history) => {
+    setMessages(history);
   });
 
   useEffect(() => {
@@ -38,6 +48,25 @@ export function DiscussionContextProvider({ children }) {
       unsub();
     };
   }, []);
+
+  useEffect(() => {
+    setDiscussionId(location.pathname.split("/")[2]);
+  }, [location]);
+
+  useEffect(() => {
+    socket.emit("fetch-discussion-history", discussionId);
+
+    // Subscribe to the event
+    const unsub = SubscribeToEvent(
+      "discussion-history",
+      onDiscussionHistoryRef.current
+    );
+
+    return () => {
+      // Clean up the subscription to avoid memory leaks
+      unsub();
+    };
+  }, [discussionId]);
 
   // Fonction pour ajouter un message au fil de discussion, gestion de l'ajout de message
   const addMessage = useCallback((message) => {
@@ -52,7 +81,19 @@ export function DiscussionContextProvider({ children }) {
 
   return (
     <DiscussionContext.Provider value={contextValue}>
-      <div className="discussion">{children}</div>
+      <div className="discussion">
+        {(discussionId === undefined && (
+          <div className="discussion--no-discussion">
+            <h2>Choisissez une discussion</h2>
+          </div>
+        )) || (
+          <>
+            <h2>Discussion ID: {discussionId}</h2>
+            <FilDiscussion />
+            <ChatInput />
+          </>
+        )}
+      </div>
     </DiscussionContext.Provider>
   );
 }

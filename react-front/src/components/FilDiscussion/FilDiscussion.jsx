@@ -21,15 +21,14 @@ function FilDiscussion() {
   }, [messages]);
 
   return (
-    <div className="fil-discussion-container" ref={messagesRef}>
-      <div className="fil-discussion">
-        {/* Affichage des messages */}
-        {messages.map((message, index) => (
-            <Message
-                key={index}
-                message={message}
-            />
-        ))}
+    <div className="fil-discussion-container">
+      <div className="fil-discussion-container--scroll" ref={messagesRef}>
+        <div className="fil-discussion">
+          {/* Affichage des messages */}
+          {messages.map((message, index) => (
+            <Message key={index} message={message} />
+          ))}
+        </div>
       </div>
     </div>
   );

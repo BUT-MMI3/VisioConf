@@ -6,9 +6,9 @@ import { Routes, Route } from "react-router-dom";
 import NoyauAccueil from "./components/NoyauAccueil/NoyauAccueil.jsx";
 import { socket } from "./socket";
 import { useState, useEffect } from "react";
-import Modale from "./components/Modale/Modale.jsx";
-import NoyauBarreDeMenu from "./components/NoyauBarreDeMenu/NoyauBarreDeMenu.jsx";
 import NotFound from "./components/NotFound.jsx";
+import Layout from "./components/Layout/Layout.jsx";
+import ListeDiscussion from "./components/ListeDiscussion/ListeDiscussion.jsx";
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -32,18 +32,33 @@ export default function App() {
       socket.off("disconnect", onDisconnect);
     };
   });
-  
+
   return (
     <Routes>
-      <Route path="/" element={<NoyauAccueil isConnected={isConnected} />} />
-      <Route
-        path="/dev_route_nav"
-        element={
-          <NoyauBarreDeMenu/>
-        }
-      />
-      {/*<Route path="/:room" element={<Home />} />*/}
-      <Route path="*" element={<NotFound />} />
+      <Route path="/" element={<Layout />}>
+        <Route
+          index
+          path="discussions"
+          element={
+            /* l'élément à l'interieur de <></> sera affiché grâce au composant <Outlet /> dans <Layout /> */
+            <>
+              <ListeDiscussion />
+              <NoyauAccueil isConnected={isConnected} />
+            </>
+          }
+        />
+        <Route
+          path="discussion/:id"
+          element={
+            <>
+              <ListeDiscussion />
+              <NoyauAccueil isConnected={isConnected} />
+            </>
+          }
+        />
+
+        <Route path="*" element={<NotFound />} />
+      </Route>
     </Routes>
   );
 }

@@ -1,6 +1,6 @@
 const NotFound = () => {
   return (
-    <div>
+    <div className="layout-content--full">
       <img
         src="/others/not-found.png"
         alt="Page non trouvée"
