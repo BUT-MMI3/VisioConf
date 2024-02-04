@@ -6,6 +6,7 @@ Date: Janvier 2024
 import { useDiscussion } from "./DiscussionContext";
 import "./FilDiscussion.scss";
 import { useRef, useEffect } from "react";
+import Message from "../Message/Message.jsx";
 
 function FilDiscussion() {
   const { messages } = useDiscussion();
@@ -24,9 +25,10 @@ function FilDiscussion() {
       <div className="fil-discussion">
         {/* Affichage des messages */}
         {messages.map((message, index) => (
-          <div key={index} className="message">
-            {message}
-          </div>
+            <Message
+                key={index}
+                message={message}
+            />
         ))}
       </div>
     </div>
