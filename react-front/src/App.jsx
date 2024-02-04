@@ -32,28 +32,14 @@ export default function App() {
       socket.off("disconnect", onDisconnect);
     };
   });
-
-  const utilisateur = {
-    id: 123,
-    nom: "Doe",
-    prenom: "John",
-    email: "john.doe@example.com",
-    job: "Etudiant MMI3",
-    connecte: true,
-    isAdmin: true,
-    logo: "https://imgv3.fotor.com/images/gallery/a-girl-cartoon-character-with-pink-background-generated-by-cartoon-character-maker-in-Fotor.jpg",
-  };
-
+  
   return (
     <Routes>
       <Route path="/" element={<NoyauAccueil isConnected={isConnected} />} />
       <Route
         path="/dev_route_nav"
         element={
-          <BarreDeMenu
-            logoImage="https://jeremiahhaulin.fr/img/Logo%20MMI%20Toulon.png"
-            utilisateur={utilisateur}
-          />
+          <BarreDeMenu/>
         }
       />
       {/*<Route path="/:room" element={<Home />} />*/}

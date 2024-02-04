@@ -4,10 +4,12 @@ import { Link } from 'react-router-dom';
 import "./NoyauBarreDeMenu.css"
 import '../ProfilOverlay/ProfilOverlay.css';
 import Modale from '../Modale/Modale';
+import { useModal } from '../../components/Modale/ModaleContext';
 
 const BarreDeMenu = () => {
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const { newModal } = useModal();
   const logoImage = "https://jeremiahhaulin.fr/img/Logo%20MMI%20Toulon.png";
   const utilisateur = {
     id: 123,
@@ -27,14 +29,6 @@ const BarreDeMenu = () => {
 
   const handleOverlayToggle = () => {
     setOverlayVisible(!overlayVisible);
-  };
-
-  const handleValiderDeconnexion = () => {
-    console.log('Détruire la session');
-  };
-
-  const handleCloseModal = () => {
-    setModalVisible(false);
   };
 
   return (
@@ -81,23 +75,22 @@ const BarreDeMenu = () => {
                   <FeatherIcon icon="settings" size="20" strokeWidth="1" className="settings" />
                   Paramètres
                 </Link>
-                <button style={{ background: 'none', color:'red', cursor: 'pointer' }} onClick={() => setModalVisible(true)}>
+                <button style={{ background: 'none', color:'red', cursor: 'pointer' }} onClick={() => newModal({
+                        type: 'error',
+                        boutonClose: true,
+                        titre: 'Vous êtes sur le point de supprimer un élément.',
+                        texte: 'Vous êtes sur le point de vous déconnecter',
+                        texteBoutonAction: "Supprimer l'utilisateur",
+                        onValidate: () => {
+                            console.log('Utilisateur supprimé');
+                        },
+                    })}>
                   <FeatherIcon icon="log-out" size="20" strokeWidth="1" className="log-out" />
                   Déconnexion
                 </button>
               </div>
             </div>
           </div>
-        )}
-        {modalVisible && (
-          <Modale
-            type="error"
-            titre="Vous êtes sur le point de vous déconnecter"
-            texte="Souhaitez-vous vraiment vous déconnecter"
-            texteBoutonAction="déconnexion"
-            onClose={handleCloseModal}
-            onValidate={handleValiderDeconnexion}
-          />
         )}
       </div>
     </div>
