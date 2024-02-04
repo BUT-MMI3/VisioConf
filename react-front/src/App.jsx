@@ -57,27 +57,6 @@ export default function App() {
         }
       />
       {/*<Route path="/:room" element={<Home />} />*/}
-      <Route
-        path="/dev_route_modale"
-        element={
-          <Modale
-            type="error"
-            titre="Vous êtes sur le point de supprimer un élément."
-            texte="Toutes les données personnelles de l’utilisateur serront supprimées, mais l’ensemble des contenus associés au compte resteront visibles (messages, posts, etc...). Le profil de l’utilisateur apparaîtra comme “Utilisateur Supprimé”.."
-            texteBoutonAction="Supprimer l'utilisateur"
-            onClose={
-              /* Fonction à appeler pour fermer la modale */ () => {
-                console.log("Fermer la modale");
-              }
-            }
-            onValidate={
-              /* Fonction à appeler pour valider l'action */ () => {
-                console.log("Valider l'action");
-              }
-            }
-          />
-        }
-      />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
