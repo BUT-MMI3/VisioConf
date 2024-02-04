@@ -29,11 +29,7 @@ app.set("port", port);
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:3000",
-      "http://visioconf.mathislambert.fr:3000",
-      "http://www.visioconf.mathislambert.fr:3000",
-    ],
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });

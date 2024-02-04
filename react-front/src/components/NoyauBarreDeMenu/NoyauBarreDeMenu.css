@@ -1,0 +1,62 @@
+/* styles.css */
+#root {
+    padding: 0px;
+}
+
+.app-container {
+    display: flex;
+}
+
+.barre-de-menu {
+    width: 71px;
+    height: 100vh;
+    background-color: #234457;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+a {
+    color: unset;
+    text-decoration: unset;
+}
+
+.logo {
+    width: 60px;
+    max-height: 80px;
+    /* Ajustez la hauteur maximale du logo selon vos besoins */
+    object-fit: contain;
+    margin-bottom: 20px;
+    /* Espace entre le logo et le reste de la barre de menu */
+}
+
+.onglets {
+    display: flex;
+    flex-direction: column;
+}
+
+.onglet {
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.feather.onglet:hover {
+    color: #429BDB;
+}
+
+.profil-section {
+    bottom: -390px;
+    position: relative;
+}
+
+.logo-utilisateur {
+    width: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+}

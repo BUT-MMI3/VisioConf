@@ -19,6 +19,20 @@ module.exports = function (io) {
       console.log("User logged out:", userId);
     });
 
+    socket.on("chat-message", (message) => {
+      // Handle chat message logic here
+      const messageObj = {
+        message_uuid: "uuid",
+        message_content: message,
+        message_sender: "server",
+        message_date_create: new Date(),
+        message_react_list: [],
+        message_status: "sent",
+        from: "server",
+      };
+      io.emit("chat-message", messageObj);
+      console.log("Chat message received:", message);
+    });
     // Custom event
     socket.on("customEvent", (data) => {
       // Handle custom event logic here
@@ -70,9 +84,5 @@ module.exports = function (io) {
       // Handle disconnect logic here
       console.log("User disconnected");
     });
-
-    setInterval(() => {
-      socket.emit("foo", "bar");
-    }, 1000);
   });
 };
