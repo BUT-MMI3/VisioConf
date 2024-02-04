@@ -3,7 +3,7 @@
  * Date : Janvier 2024
  */
 import { Routes, Route } from "react-router-dom";
-import NoyauAccueil from "./pages/NoyauAccueil/NoyauAccueil.jsx";
+import NoyauAccueil from "./components/NoyauAccueil/NoyauAccueil.jsx";
 import { socket } from "./socket";
 import { useState, useEffect } from "react";
 import Modale from "./components/Modale/Modale.jsx";
