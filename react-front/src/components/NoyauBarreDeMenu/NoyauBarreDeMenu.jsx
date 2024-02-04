@@ -3,13 +3,10 @@ import FeatherIcon from 'feather-icons-react';
 import { Link } from 'react-router-dom';
 import "./NoyauBarreDeMenu.css"
 import '../ProfilOverlay/ProfilOverlay.css';
-import Modale from '../Modale/Modale';
-import { useModal } from '../../components/Modale/ModaleContext';
+import NoyauDeconnexion from '../../components/NoyauDeconnexion/NoyauDeconnexion';
 
-const BarreDeMenu = () => {
+const NoyauBarreDeMenu = () => {
   const [overlayVisible, setOverlayVisible] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const { newModal } = useModal();
   const logoImage = "https://jeremiahhaulin.fr/img/Logo%20MMI%20Toulon.png";
   const utilisateur = {
     id: 123,
@@ -49,7 +46,7 @@ const BarreDeMenu = () => {
         </Link>
         {checkRole() == "Administrateur" && (
           <Link to="/admin">
-            <FeatherIcon icon="shield" size="40" strokeWidth="1" className="onglet" />
+            <FeatherIcon icon="settings" size="40" strokeWidth="1" className="onglet" />
           </Link>
         )}
       </div>
@@ -75,19 +72,7 @@ const BarreDeMenu = () => {
                   <FeatherIcon icon="settings" size="20" strokeWidth="1" className="settings" />
                   Paramètres
                 </Link>
-                <button style={{ background: 'none', color:'red', cursor: 'pointer' }} onClick={() => newModal({
-                        type: 'error',
-                        boutonClose: true,
-                        titre: 'Vous êtes sur le point de supprimer un élément.',
-                        texte: 'Vous êtes sur le point de vous déconnecter',
-                        texteBoutonAction: "Supprimer l'utilisateur",
-                        onValidate: () => {
-                            console.log('Utilisateur supprimé');
-                        },
-                    })}>
-                  <FeatherIcon icon="log-out" size="20" strokeWidth="1" className="log-out" />
-                  Déconnexion
-                </button>
+                <NoyauDeconnexion />
               </div>
             </div>
           </div>
@@ -97,4 +82,4 @@ const BarreDeMenu = () => {
   );
 };
 
-export default BarreDeMenu;
+export default NoyauBarreDeMenu;
