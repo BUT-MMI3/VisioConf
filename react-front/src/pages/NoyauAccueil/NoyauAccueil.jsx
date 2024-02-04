@@ -74,6 +74,7 @@ function NoyeauAccueil({ isConnected }) {
                 onClick={() => {
                     newModal({
                         type: 'error',
+                        boutonClose: true,
                         titre: 'Vous êtes sur le point de supprimer un élément.',
                         texte: 'Toutes les données personnelles de l’utilisateur serront supprimées, mais l’ensemble des contenus associés au compte resteront visibles (messages, posts, etc...). Le profil de l’utilisateur apparaîtra comme “Utilisateur Supprimé”..',
                         texteBoutonAction: "Supprimer l'utilisateur",
