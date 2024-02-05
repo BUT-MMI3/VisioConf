@@ -6,8 +6,8 @@ export default function TestComponents() {
   const { pushToast } = useToasts();
 
   return (
-    <>
-      <div>
+    <div className={"fc g1g"}>
+      <div className={"fr"}>
         <button
           onClick={() =>
             pushToast({
@@ -56,7 +56,7 @@ export default function TestComponents() {
           Afficher un toast d&apos;attention
         </button>
       </div>
-      <div>
+      <div className={"fr"}>
         <button
           onClick={() => {
             newModal({
@@ -99,6 +99,6 @@ export default function TestComponents() {
           Afficher une modale d&apos;attention
         </button>
       </div>
-    </>
+    </div>
   );
 }
