@@ -21,7 +21,7 @@ const NoyauAccueil = () => {
     useEffect(() => {
         // Exemple de données simulées
         const notificationsData = [
-            { id: 1, message: 'Nouveau message reéu' },
+            { id: 1, message: 'Nouveau message reçu' },
             { id: 2, message: 'Vous avez un appel en absence' },
         ];
 
