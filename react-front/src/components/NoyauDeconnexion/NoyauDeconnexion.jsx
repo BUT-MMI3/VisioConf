@@ -8,7 +8,9 @@ const NoyauDeconnexion = () => {
 
     return (
         <>
-            <button style={{ background: 'none', border: 'none', color: 'red', cursor: 'pointer' }} onClick={() => newModal({
+            <button style={{ background: 'none', border: 'none', color: 'red', cursor: 'pointer', padding:0 }}
+                    className={"fr ai-c g1 jc-fs"}
+            onClick={() => newModal({
                 type: 'error',
                 boutonClose: true,
                 titre: 'Souhaitez-vous vraiment vous déconnecter ?',
