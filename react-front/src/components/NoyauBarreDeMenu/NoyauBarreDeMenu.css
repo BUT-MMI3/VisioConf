@@ -49,7 +49,7 @@ a {
 }
 
 .profil-section {
-  bottom: -390px;
+  margin-top:auto;
   position: relative;
 }
 
