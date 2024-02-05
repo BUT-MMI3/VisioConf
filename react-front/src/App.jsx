@@ -4,12 +4,13 @@
  */
 import { Routes, Route } from "react-router-dom";
 import NoyauAccueil from "./components/NoyauAccueil/NoyauAccueil.jsx";
-import Accueil from "./components/Accueil/NoyauAccueil.jsx";
 import { socket } from "./socket";
 import { useState, useEffect } from "react";
 import NotFound from "./components/NotFound.jsx";
 import Layout from "./components/Layout/Layout.jsx";
 import ListeDiscussion from "./components/ListeDiscussion/ListeDiscussion.jsx";
+import NoyauProfil from "./components/NoyauProfil/NoyauProfil.jsx";
+import TestComponents from "./components/TestComponents.jsx";
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -58,10 +59,19 @@ export default function App() {
           }
         />
         <Route
-          path="/dev_route_accueil"
+          path="profil"
           element={
             <>
-              <Accueil/>
+              <NoyauProfil/>
+            </>
+          }
+        />
+
+        <Route
+          path="test"
+          element={
+            <>
+              <TestComponents />
             </>
           }
         />
