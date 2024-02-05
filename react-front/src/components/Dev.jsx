@@ -106,7 +106,7 @@ function Dev() {
                 >
                     Modale d'attention
                 </button>
-            </div>g
+            </div>
         </div>
     );
 }
