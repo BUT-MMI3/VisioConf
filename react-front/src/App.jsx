@@ -4,6 +4,7 @@
  */
 import { Routes, Route } from "react-router-dom";
 import NoyauAccueil from "./components/NoyauAccueil/NoyauAccueil.jsx";
+import Accueil from "./components/Accueil/NoyauAccueil.jsx";
 import { socket } from "./socket";
 import { useState, useEffect } from "react";
 import NotFound from "./components/NotFound.jsx";
@@ -53,6 +54,14 @@ export default function App() {
             <>
               <ListeDiscussion />
               <NoyauAccueil isConnected={isConnected} />
+            </>
+          }
+        />
+        <Route
+          path="/dev_route_accueil"
+          element={
+            <>
+              <Accueil/>
             </>
           }
         />
