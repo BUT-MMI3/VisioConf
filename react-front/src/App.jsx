@@ -10,6 +10,7 @@ import NotFound from "./components/NotFound.jsx";
 import Layout from "./components/Layout/Layout.jsx";
 import ListeDiscussion from "./components/ListeDiscussion/ListeDiscussion.jsx";
 import Dev from "./components/Dev";
+import NoyauProfil from "./components/NoyauProfil/NoyauProfil.jsx";
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -54,6 +55,14 @@ export default function App() {
             <>
               <ListeDiscussion />
               <NoyauAccueil isConnected={isConnected} />
+            </>
+          }
+        />
+        <Route
+          path="profil"
+          element={
+            <>
+              <NoyauProfil/>
             </>
           }
         />
