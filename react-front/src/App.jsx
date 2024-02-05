@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import NotFound from "./components/NotFound.jsx";
 import Layout from "./components/Layout/Layout.jsx";
 import ListeDiscussion from "./components/ListeDiscussion/ListeDiscussion.jsx";
+import Dev from "./components/Dev";
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -53,6 +54,15 @@ export default function App() {
             <>
               <ListeDiscussion />
               <NoyauAccueil isConnected={isConnected} />
+            </>
+          }
+        />
+
+        <Route
+          path="dev"
+          element={
+            <>
+              <Dev />
             </>
           }
         />
