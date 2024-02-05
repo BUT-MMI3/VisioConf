@@ -6,7 +6,7 @@ export default function TestComponents() {
   const { pushToast } = useToasts();
 
   return (
-    <div className={"fc g1g"}>
+    <div className={"fc g1"}>
       <div className={"fr"}>
         <button
           onClick={() =>

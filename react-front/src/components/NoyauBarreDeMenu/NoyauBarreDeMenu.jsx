@@ -103,23 +103,25 @@ const NoyauBarreDeMenu = () => {
                 </div>
               </div>
               <div className="onglets-overlay">
-                <Link to="/changer-status">
+                <Link to="/changer-status" className={"fr g1 ai-c"}>
                   <div
                     className={`statut-connexion ${
                       utilisateur.isConnected ? "connecte" : "deconnecte"
                     }`}
                   />
-                  {utilisateur.isConnected ? "en ligne" : "déconnecté"}
+                  <p>{utilisateur.isConnected ? "En ligne" : "déconnecté"}</p>
                 </Link>
-                <Link to="/parametres">
+
+                <Link to="parametres" className={"fr g1 ai-c"}>
                   <FeatherIcon
-                    icon="settings"
-                    size="20"
-                    strokeWidth="1"
-                    className="settings"
+                      icon="settings"
+                      size="20"
+                      strokeWidth="1"
+                      className="settings"
                   />
-                  Paramètres
+                  <p>Paramètres</p>
                 </Link>
+
                 <NoyauDeconnexion />
               </div>
             </div>
