@@ -1,6 +1,5 @@
-/* styles.css (ou tout autre nom que vous avez choisi) */
 #root {
-    max-width: 100%;
+    width: 100%;
 }
 
 .page-connexion {
@@ -8,8 +7,8 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-    width: 1920px;
     background-image: url("/others/bg-connexion.png");
+    background-size: cover;
 }
 
 .card-connexion {
@@ -40,8 +39,8 @@ label {
 }
 
 input {
-    width: 92%;
-    padding: 10px;
+    width: 100%;
+    padding: 0.5rem;
     border: 1px solid #F4F5F9;
     border-radius: 5px;
     outline: none;
@@ -62,11 +61,10 @@ input {
 .button-connexion {
     background-color: #1C376A;
     color: #fff;
-    padding: 10px;
+    padding: 0.3rem 6.5rem;
     border: 1px solid #1c376a;
     border-radius: 5px;
     cursor: pointer;
-    width: 345px;
     outline: none;
 }
 
@@ -81,9 +79,7 @@ input {
 }
 
 .lien-mot-de-passe-oublie {
-    margin-top: 19px;
-    text-align: right;
-    margin-right: 30px;
+    margin-top: 15px;
 }
 
 .lien-mot-de-passe-oublie>a:nth-child(1) {

@@ -39,6 +39,14 @@ export default function App() {
 
   return (
     <Routes>
+      <Route
+        path="/dev_route_connexion"
+        element={
+          <>
+            <NoyauConnexion />
+          </>
+        }
+      />
       <Route path="/" element={<Layout />}>
         <Route
           index
@@ -64,7 +72,7 @@ export default function App() {
           path="/dev_route_accueil"
           element={
             <>
-              <Accueil/>
+              <Accueil />
             </>
           }
         />
@@ -72,19 +80,10 @@ export default function App() {
           path="profil"
           element={
             <>
-              <NoyauProfil/>
+              <NoyauProfil />
             </>
           }
         />
-        <Route
-          path="/dev_route_connexion"
-          element={
-            <>
-              <NoyauConnexion/>
-            </>
-          }
-        />
-
         <Route
           path="test"
           element={

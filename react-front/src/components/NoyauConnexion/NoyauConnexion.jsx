@@ -46,7 +46,7 @@ const NoyauConnexion = () => {
     <div className={`page-connexion ${utilisateur.isConnected ? 'online' : ''}`}>
       <div className={`card-connexion ${utilisateur.isConnected ? 'online' : ''}`}>
         <img src={logoImage} alt="Logo de l'entreprise" className="logo-connexion" />
-        <form>
+        <form className='from-controller'>
           <div className="form-group">
             <label htmlFor="email" style={{ fontWeight: 600 }} className={erreur ? 'erreur' : ''}>Adresse Email :</label>
             <input
