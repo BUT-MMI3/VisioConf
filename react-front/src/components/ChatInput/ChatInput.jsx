@@ -21,14 +21,15 @@ export default function ChatInput() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="chat-input">
+    <form onSubmit={handleSubmit} className="chat-form">
       <input
         type="text"
         value={newMessage}
         onChange={(event) => setNewMessage(event.target.value)}
         placeholder="Votre message"
+        className="chat-input"
       />
-      <button type="submit">Envoyer</button>
+      <button type="submit" className="chat-send">Envoyer</button>
     </form>
   );
 }
