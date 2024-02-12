@@ -4,12 +4,14 @@
  */
 import { Routes, Route } from "react-router-dom";
 import NoyauAccueil from "./components/NoyauAccueil/NoyauAccueil.jsx";
+import Accueil from "./components/Accueil/NoyauAccueil.jsx";
 import { socket } from "./socket";
 import { useState, useEffect } from "react";
 import NotFound from "./components/NotFound.jsx";
 import Layout from "./components/Layout/Layout.jsx";
 import ListeDiscussion from "./components/ListeDiscussion/ListeDiscussion.jsx";
 import NoyauProfil from "./components/NoyauProfil/NoyauProfil.jsx";
+import NoyauConnexion from "./components/NoyauConnexion/NoyauConnexion.jsx";
 import TestComponents from "./components/TestComponents.jsx";
 
 export default function App() {
@@ -37,6 +39,14 @@ export default function App() {
 
   return (
     <Routes>
+      <Route
+        path="/dev_route_connexion"
+        element={
+          <>
+            <NoyauConnexion />
+          </>
+        }
+      />
       <Route path="/" element={<Layout />}>
         <Route
           index
@@ -59,14 +69,21 @@ export default function App() {
           }
         />
         <Route
-          path="profil"
+          path="/dev_route_accueil"
           element={
             <>
-              <NoyauProfil/>
+              <Accueil />
             </>
           }
         />
-
+        <Route
+          path="profil"
+          element={
+            <>
+              <NoyauProfil />
+            </>
+          }
+        />
         <Route
           path="test"
           element={
