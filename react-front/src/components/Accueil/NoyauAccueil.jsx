@@ -30,7 +30,6 @@ const NoyauAccueil = () => {
 
     // Simuler la récupération de l'historique des appels depuis une source de données
     useEffect(() => {
-        // Exemple de données simulées
         const historiqueAppelsData = [
             { id: 1, date: '2024-02-01', duree: '10 min', participants: ['John', 'Alice'] },
             { id: 2, date: '2024-02-02', duree: '15 min', participants: ['Bob', 'Eva'] },
@@ -40,7 +39,7 @@ const NoyauAccueil = () => {
     }, []);
 
     return (
-        <div className="noyau-accueil">
+        <div className="noyau-accueil layout-content--full">
             {/* Section d'informations du profil */}
             <div className="container">
                 {/* Section 1 */}
