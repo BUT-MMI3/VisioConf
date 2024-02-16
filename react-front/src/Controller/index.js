@@ -8,6 +8,7 @@ const canal = new CanalSocketIO(socket, controller, "canalsocketio");
 
 // Verbose
 controller.verbose = true;
+canal.verbose = true;
 
 // Export instances
 export {controller, canal};

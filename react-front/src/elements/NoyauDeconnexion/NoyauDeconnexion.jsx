@@ -1,4 +1,4 @@
-import { useModal } from '../../components/Modale/ModaleContext';
+import { useModal } from '../../elements/Modale/ModaleContext';
 import FeatherIcon from 'feather-icons-react';
 
 

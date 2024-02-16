@@ -3,7 +3,7 @@ import FeatherIcon from "feather-icons-react";
 import { Link } from "react-router-dom";
 import "./NoyauBarreDeMenu.css";
 import "../ProfilOverlay/ProfilOverlay.css";
-import NoyauDeconnexion from "../../components/NoyauDeconnexion/NoyauDeconnexion";
+import NoyauDeconnexion from "../../elements/NoyauDeconnexion/NoyauDeconnexion";
 
 const NoyauBarreDeMenu = () => {
   const [overlayVisible, setOverlayVisible] = useState(false);

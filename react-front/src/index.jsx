@@ -8,11 +8,11 @@ import "./styles/index.scss";
 import App from "./App.jsx";
 import './index.css'
 import {BrowserRouter} from "react-router-dom";
-import {ToastContextProvider} from "./components/Toasts/ToastContext.jsx";
-import {ModaleProvider} from "./components/Modale/ModaleContext.jsx";
+import {ToastContextProvider} from "./elements/Toasts/ToastContext.jsx";
+import {ModaleProvider} from "./elements/Modale/ModaleContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <React.StrictMode>
+    // <React.StrictMode>
         <BrowserRouter>
             <ModaleProvider>
                 <ToastContextProvider>
@@ -20,5 +20,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                 </ToastContextProvider>
             </ModaleProvider>
         </BrowserRouter>
-    </React.StrictMode>
+    // </React.StrictMode>
 );

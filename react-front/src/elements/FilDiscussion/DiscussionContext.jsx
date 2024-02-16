@@ -14,8 +14,8 @@ import {
 import SubscribeToEvent from "../SubscribeToEvent";
 import { socket } from "../../socket";
 import { useLocation } from "react-router-dom";
-import ChatInput from "../../components/ChatInput/ChatInput";
-import FilDiscussion from "../../components/FilDiscussion/FilDiscussion";
+import ChatInput from "../../elements/ChatInput/ChatInput";
+import FilDiscussion from "../../elements/FilDiscussion/FilDiscussion";
 
 // Initialisation du contexte avec une valeur par défaut
 const DiscussionContext = createContext({

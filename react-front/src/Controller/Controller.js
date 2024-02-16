@@ -1,7 +1,7 @@
 class Controller {
     listeEmission = {};
     listeAbonnement = {};
-    verbose = false;
+    verbose = true;
     verboseall = false;
 
     constructor() {
@@ -21,6 +21,9 @@ class Controller {
             if (typeof this.listeEmission[liste_emission[key]][emitter.nomDInstance] != "undefined") {
                 console.log("ERREUR (controleur): " + emitter.nomDInstance + " essaie de s'enregistrer une nouvelle fois pour le message en émission: " + liste_emission[key]);
             } else {
+                if (this.verbose || this.verboseall) {
+                    console.log("INFO (controleur): " + emitter.nomDInstance + " s'enregistre pour le message en émission: " + liste_emission[key]);
+                }
                 this.listeEmission[liste_emission[key]][emitter.nomDInstance] = emitter;
             }
         }
@@ -36,6 +39,9 @@ class Controller {
             if (typeof this.listeAbonnement[liste_abonnement[key]][emitter.nomDInstance] != "undefined") {
                 console.log("ERREUR (controleur): " + emitter.nomDInstance + " essaie de s'enregistrer une nouvelle fois pour le message en émission: " + liste_abonnement[key]);
             } else {
+                if (this.verbose || this.verboseall) {
+                    console.log("INFO (controleur): " + emitter.nomDInstance + " s'enregistre pour le message en abonnement: " + liste_abonnement[key]);
+                }
                 this.listeAbonnement[liste_abonnement[key]][emitter.nomDInstance] = emitter;
             }
         }
