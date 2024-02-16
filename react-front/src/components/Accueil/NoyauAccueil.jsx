@@ -17,6 +17,7 @@ const NoyauAccueil = () => {
         isAdmin: true,
         logo: "https://imgv3.fotor.com/images/gallery/a-girl-cartoon-character-with-pink-background-generated-by-cartoon-character-maker-in-Fotor.jpg",
     };
+    
     // Simuler la récupération des notifications depuis une source de données
     useEffect(() => {
         // Exemple de données simulées
@@ -26,10 +27,7 @@ const NoyauAccueil = () => {
         ];
 
         setNotifications(notificationsData);
-    }, []);
-
-    // Simuler la récupération de l'historique des appels depuis une source de données
-    useEffect(() => {
+        
         const historiqueAppelsData = [
             { id: 1, date: '2024-02-01', duree: '10 min', participants: ['John', 'Alice'] },
             { id: 2, date: '2024-02-02', duree: '15 min', participants: ['Bob', 'Eva'] },
