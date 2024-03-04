@@ -27,7 +27,7 @@ const NoyauConnexion = () => {
       setUtilisateur((prevState) => ({ ...prevState, isConnected: true }));
 
       openSocket();
-      goto('/NoyauAccueil');
+      goto('/dev_route_accueil');
     } else {
       // Informations invalides, affichez un message d'erreur
       setErreur('Adresse email ou mot de passe invalide.');

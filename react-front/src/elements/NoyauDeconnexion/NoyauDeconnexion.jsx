@@ -17,7 +17,7 @@ const NoyauDeconnexion = () => {
                 texteBoutonAction: "déconnexion",
                 onValidate: () => {
                     console.log('Utilisateur déconnecté');
-                    window.location.href = "/";
+                    window.location.href = "/dev_route_connexion";
                 },
             })}>
                 <FeatherIcon icon="log-out" size="20" strokeWidth="1" className="log-out" />
