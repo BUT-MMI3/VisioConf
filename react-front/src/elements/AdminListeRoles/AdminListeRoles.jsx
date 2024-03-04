@@ -1,47 +1,31 @@
 import "./AdminListeRoles.scss";
 import { useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
-import Controller from "../../Controller/Controller";
+import { controller } from "../../Controller/index.js";
 
-export default function AdminListeRoles() {
-    const location = useLocation();
+const AdminListeRoles = () => {
     const [roles, setRoles] = useState([]);
-    const controller = useRef(new Controller());
+    const nomDInstance = "AdminListeRoles";
+    const listeMessagesEmis = ["fetch-roles"];
+    const listeMessagesRecus = ["get-roles"];
+
+    const { current } = useRef({
+        nomDInstance,
+        traitementMessage: (msg) => {
+            console.log("Traitement message NoyauAccueil:", msg);
+        },
+    });
 
     useEffect(() => {
-        const emitter = {
-            nomDInstance: "AdminListeRoles",
-        };
-        const listeMessagesEmis = ["fetch-roles"];
-        const listeMessagesRecus = ["get-roles"];
+        controller.subscribe(current, listeMessagesEmis, listeMessagesRecus);
 
-        controller.current.subscribe(
-            emitter,
-            listeMessagesEmis,
-            listeMessagesRecus
-        );
         return () => {
-            controller.current.unsubscribe(
-                emitter,
+            controller.unsubscribe(
+                current,
                 listeMessagesEmis,
                 listeMessagesRecus
             );
         };
-    }, [location]);
-
-    useEffect(() => {
-        const traitementMessage = (message) => {
-            console.log("Received message:", message);
-            setRoles(message);
-        };
-
-        controller.current.traitementMessage = traitementMessage;
-
-        return () => {
-            controller.current.traitementMessage = null;
-        };
-    }, []);
+    });
 
     return (
         <div className="liste-roles layout-content--full">
@@ -89,4 +73,6 @@ export default function AdminListeRoles() {
             </div>
         </div>
     );
-}
+};
+
+export default AdminListeRoles;

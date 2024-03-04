@@ -1,47 +1,31 @@
 import "./AdminListeUtilisateurs.scss";
 import { useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
-import Controller from "../../Controller/Controller";
+import { controller } from "../../Controller/index.js";
 
-export default function AdminListeUtilisateurs() {
-    const location = useLocation();
+const AdminListeUtilisateurs = () => {
     const [utilisateurs, setUtilisateurs] = useState([]);
-    const controller = useRef(new Controller());
+    const nomDInstance = "AdminListeUtilisateurs";
+    const listeMessagesEmis = ["fetch-utilisateurs"];
+    const listeMessagesRecus = ["get-utilisateurs"];
+
+    const { current } = useRef({
+        nomDInstance,
+        traitementMessage: (msg) => {
+            console.log("Traitement message NoyauAccueil:", msg);
+        },
+    });
 
     useEffect(() => {
-        const emitter = {
-            nomDInstance: "AdminListeUtilisateurs",
-        };
-        const listeMessagesEmis = ["fetch-users"];
-        const listeMessagesRecus = ["get-users"];
+        controller.subscribe(current, listeMessagesEmis, listeMessagesRecus);
 
-        controller.current.subscribe(
-            emitter,
-            listeMessagesEmis,
-            listeMessagesRecus
-        );
         return () => {
-            controller.current.unsubscribe(
-                emitter,
+            controller.unsubscribe(
+                current,
                 listeMessagesEmis,
                 listeMessagesRecus
             );
         };
-    }, [location]);
-
-    useEffect(() => {
-        const traitementMessage = (message) => {
-            console.log("Received message:", message);
-            setUtilisateurs(message);
-        };
-
-        controller.current.traitementMessage = traitementMessage;
-
-        return () => {
-            controller.current.traitementMessage = null;
-        };
-    }, []);
+    });
 
     return (
         <div className="liste-utilisateurs layout-content--full">
@@ -93,4 +77,6 @@ export default function AdminListeUtilisateurs() {
             </div>
         </div>
     );
-}
+};
+
+export default AdminListeUtilisateurs;
