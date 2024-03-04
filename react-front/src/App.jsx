@@ -13,6 +13,8 @@ import ListeDiscussion from "./elements/ListeDiscussion/ListeDiscussion.jsx";
 import NoyauProfil from "./elements/NoyauProfil/NoyauProfil.jsx";
 import NoyauConnexion from "./elements/NoyauConnexion/NoyauConnexion.jsx";
 import AdminListeUtilisateurs from "./elements/AdminListeUtilisateurs/AdminListeUtilisateurs.jsx";
+import AdminListeRoles from "./elements/AdminListeRoles/AdminListeRoles.jsx";
+import AdminListePermissions from "./elements/AdminListePermissions/AdminListePermissions.jsx";
 import TestComponents from "./elements/TestComponents.jsx";
 
 export default function App() {
@@ -90,6 +92,30 @@ export default function App() {
                     element={
                         <>
                             <AdminListeUtilisateurs />
+                        </>
+                    }
+                />
+                <Route
+                    path="admin/users"
+                    element={
+                        <>
+                            <AdminListeUtilisateurs />
+                        </>
+                    }
+                />
+                <Route
+                    path="admin/roles"
+                    element={
+                        <>
+                            <AdminListeRoles />
+                        </>
+                    }
+                />
+                <Route
+                    path="admin/permissions"
+                    element={
+                        <>
+                            <AdminListePermissions />
                         </>
                     }
                 />

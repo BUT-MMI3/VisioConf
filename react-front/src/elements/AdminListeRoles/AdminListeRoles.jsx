@@ -1,20 +1,20 @@
-import "./AdminListeUtilisateurs.scss";
+import "./AdminListeRoles.scss";
 import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Controller from "../../Controller/Controller";
 
-export default function AdminListeUtilisateurs() {
+export default function AdminListeRoles() {
     const location = useLocation();
-    const [utilisateurs, setUtilisateurs] = useState([]);
+    const [roles, setRoles] = useState([]);
     const controller = useRef(new Controller());
 
     useEffect(() => {
         const emitter = {
-            nomDInstance: "AdminListeUtilisateurs",
+            nomDInstance: "AdminListeRoles",
         };
-        const listeMessagesEmis = ["fetch-users"];
-        const listeMessagesRecus = ["get-users"];
+        const listeMessagesEmis = ["fetch-roles"];
+        const listeMessagesRecus = ["get-roles"];
 
         controller.current.subscribe(
             emitter,
@@ -33,7 +33,7 @@ export default function AdminListeUtilisateurs() {
     useEffect(() => {
         const traitementMessage = (message) => {
             console.log("Received message:", message);
-            setUtilisateurs(message);
+            setRoles(message);
         };
 
         controller.current.traitementMessage = traitementMessage;
@@ -44,43 +44,39 @@ export default function AdminListeUtilisateurs() {
     }, []);
 
     return (
-        <div className="liste-utilisateurs layout-content--full">
-            <div className="liste-utilisateurs--card">
-                <h2>Liste des utilisateurs</h2>
+        <div className="liste-roles layout-content--full">
+            <div className="liste-roles--card">
+                <h2>Liste des rôles</h2>
             </div>
 
             {/* test with false data */}
-            <div className="liste-utilisateurs--container">
-                <div className="liste-utilisateurs--container">
-                    <table className="liste-utilisateurs--table">
+            <div className="liste-roles--container">
+                <div className="liste-roles--container">
+                    <table className="liste-roles--table">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Prénom</th>
-                                <th>Nom</th>
-                                <th>Email</th>
-                                <th>Rôles</th>
+                                <th>Libellé</th>
+                                <th>Permissions</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {utilisateurs.map((user, index) => (
+                            {roles.map((role, index) => (
                                 <tr key={index}>
-                                    <td>{user.id}</td>
-                                    <td>{user.prenom}</td>
-                                    <td>{user.nom}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.roles.join(", ")}</td>
+                                    <td>{role.id}</td>
+                                    <td>{role.label}</td>
+                                    <td>{role.permissions.join(", ")}</td>
                                     <td>
                                         <Link
-                                            to={`/modifier-utilisateur/${user.id}`}
-                                            className="liste-utilisateurs--modif"
+                                            to={`/modifier-role/${role.id}`}
+                                            className="liste-roles--modif"
                                         >
                                             Mod
                                         </Link>
                                         <Link
-                                            to={`/supprimer-utilisateur/${user.id}`}
-                                            className="liste-utilisateurs--supp"
+                                            to={`/supprimer-role/${role.id}`}
+                                            className="liste-roles--supp"
                                         >
                                             Sup
                                         </Link>
