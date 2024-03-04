@@ -12,88 +12,98 @@ import Layout from "./elements/Layout/Layout.jsx";
 import ListeDiscussion from "./elements/ListeDiscussion/ListeDiscussion.jsx";
 import NoyauProfil from "./elements/NoyauProfil/NoyauProfil.jsx";
 import NoyauConnexion from "./elements/NoyauConnexion/NoyauConnexion.jsx";
+import AdminListeUtilisateurs from "./elements/AdminListeUtilisateurs/AdminListeUtilisateurs.jsx";
 import TestComponents from "./elements/TestComponents.jsx";
+
 export default function App() {
-  // const [isConnected, setIsConnected] = useState(socket.connected);
+    // const [isConnected, setIsConnected] = useState(socket.connected);
 
-  // useEffect(() => {
-  //   function onConnect() {
-  //     console.log("connect");
-  //     setIsConnected(true);
-  //   }
-  //
-  //   function onDisconnect() {
-  //     console.log("disconnect");
-  //     setIsConnected(false);
-  //   }
-  //
-  //   socket.on("connect", onConnect);
-  //   socket.on("disconnect", onDisconnect);
-  //
-  //   return () => {
-  //     socket.off("connect", onConnect);
-  //     socket.off("disconnect", onDisconnect);
-  //   };
-  // });
+    // useEffect(() => {
+    //   function onConnect() {
+    //     console.log("connect");
+    //     setIsConnected(true);
+    //   }
+    //
+    //   function onDisconnect() {
+    //     console.log("disconnect");
+    //     setIsConnected(false);
+    //   }
+    //
+    //   socket.on("connect", onConnect);
+    //   socket.on("disconnect", onDisconnect);
+    //
+    //   return () => {
+    //     socket.off("connect", onConnect);
+    //     socket.off("disconnect", onDisconnect);
+    //   };
+    // });
 
-  return (
-    <Routes>
-      <Route
-        path="/dev_route_connexion"
-        element={
-          <>
-            <NoyauConnexion />
-          </>
-        }
-      />
-      <Route path="/" element={<Layout />}>
-        <Route
-          index
-          path="discussions"
-          element={
-            /* l'élément à l'interieur de <></> sera affiché grâce au composant <Outlet /> dans <Layout /> */
-            <>
-              <ListeDiscussion />
-              <NoyauAccueil />
-            </>
-          }
-        />
-        <Route
-          path="discussion/:id"
-          element={
-            <>
-              <ListeDiscussion />
-              <NoyauAccueil />
-            </>
-          }
-        />
-        <Route
-          path="/dev_route_accueil"
-          element={
-            <>
-              <Accueil />
-            </>
-          }
-        />
-        <Route
-          path="profil"
-          element={
-            <>
-              <NoyauProfil />
-            </>
-          }
-        />
-        <Route
-          path="test"
-          element={
-            <>
-              <TestComponents />
-            </>
-          }
-        />
+    return (
+        <Routes>
+            <Route
+                path="/dev_route_connexion"
+                element={
+                    <>
+                        <NoyauConnexion />
+                    </>
+                }
+            />
+            <Route path="/" element={<Layout />}>
+                <Route
+                    index
+                    path="discussions"
+                    element={
+                        /* l'élément à l'interieur de <></> sera affiché grâce au composant <Outlet /> dans <Layout /> */
+                        <>
+                            <ListeDiscussion />
+                            <NoyauAccueil />
+                        </>
+                    }
+                />
+                <Route
+                    path="discussion/:id"
+                    element={
+                        <>
+                            <ListeDiscussion />
+                            <NoyauAccueil />
+                        </>
+                    }
+                />
+                <Route
+                    path="/dev_route_accueil"
+                    element={
+                        <>
+                            <Accueil />
+                        </>
+                    }
+                />
+                <Route
+                    path="profil"
+                    element={
+                        <>
+                            <NoyauProfil />
+                        </>
+                    }
+                />
+                <Route
+                    path="admin"
+                    element={
+                        <>
+                            <AdminListeUtilisateurs />
+                        </>
+                    }
+                />
+                <Route
+                    path="test"
+                    element={
+                        <>
+                            <TestComponents />
+                        </>
+                    }
+                />
 
-        <Route path="*" element={<NotFound />} />
-      </Route>
-    </Routes>
-  );
+                <Route path="*" element={<NotFound />} />
+            </Route>
+        </Routes>
+    );
 }
