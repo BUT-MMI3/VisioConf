@@ -70,5 +70,4 @@ Elle s'inspire grandement des applications de communication telles que Discord o
 - Florian THOMY
 - Kyllian DIOCHON
 - Alan THOB
-- Alexandre MAUGY
 - Mathieu ROMAIN
