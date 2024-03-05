@@ -17,7 +17,6 @@ export default function Layout() {
           }}
         />
         <div className="layout-content">
-            <h1>Contenu</h1>
           <Outlet />
         </div>
       </div>
