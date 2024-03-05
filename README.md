@@ -16,7 +16,7 @@ Elle s'inspire grandement des applications de communication telles que Discord o
 - Cloner le projet
 
 ### Pour lancer le projet en mode dev (container + serveur)
-- Commentez les services "api-express" et "react-front" dans le fichier docker-compose.yml
+- Commentez les services "api-express" et "react-front" dans le fichier docker-compose.yml.
 - Lancer la commande `docker-compose up --build`
 - Ouvrez 2 autres terminaux et lancez les commandes `npm run start` et `npm run dev` dans le dossier "api-express" et "react-front"
 
