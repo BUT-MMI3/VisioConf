@@ -82,7 +82,9 @@ const NoyauAccueil = () => {
                                     <p>Date: {appel.date}</p>
                                     <p>Durée: {appel.duree}</p>
                                     <p>Participants: {appel.participants.join(', ')}</p>
+                                    <hr/>
                                 </li>
+
                             ))}
                         </ul>
                     </div>
