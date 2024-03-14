@@ -99,12 +99,13 @@ class WebRTCManager {
 
         this.peers[socketId].onicecandidate = event => {
             if (event.candidate) {
-                if (this.verbose)
-                    console.log("Sending ice candidate: ", event.candidate)
-                this.socket.emit("send_ice_candidate", {
-                    target: socketId,
-                    candidate: event.candidate,
-                    discussion: this.discussion
+                if (this.verbose) console.log("Sending ice candidate: ", event.candidate)
+                this.controller.send(this, {
+                    "send_ice_candidate": {
+                        target: socketId,
+                        candidate: event.candidate,
+                        discussion: this.discussion
+                    }
                 })
             }
         }
@@ -191,13 +192,16 @@ class WebRTCManager {
             await this.addStreamTrack(type)
             const offer = await this.peers[member].createOffer()
             await this.peers[member].setLocalDescription(offer)
-            this.socket.emit("send_offer", {
-                target: member,
-                offer,
-                type: type,
-                discussion: discussion,
-                members: members,
-                initiator: initiator
+
+            this.controller.send(this, {
+                "send_offer": {
+                    target: member,
+                    offer: offer,
+                    type: type,
+                    discussion: discussion,
+                    members: members,
+                    initiator: initiator
+                }
             })
         }
     }
@@ -309,10 +313,14 @@ class WebRTCManager {
             await this.newPeerConnection(offer.sender)
             await this.acceptIncomingCall(true, offer)
         } else {
-            if (this.verbose)
-                console.log("Call not accepted, rejecting offer from: ", offer.sender)
+            if (this.verbose) console.log("Call not accepted, rejecting offer from: ", offer.sender)
 
-            this.socket.emit("reject_offer", {target: offer.sender})
+            this.controller.send(this, {"reject_offer": {target: offer.sender}})
+
+            if (this.peers[offer.sender]) {
+                this.peers[offer.sender].close()
+                delete this.peers[offer.sender]
+            }
         }
     }
 
@@ -329,7 +337,7 @@ class WebRTCManager {
         this.callAccepted = accepted
 
         if (!accepted) {
-            this.socket.emit("reject_offer", {target: offer.sender})
+            this.controller.send(this, {"reject_offer": {target: offer.sender}})
             this.peers[offer.sender].close()
             delete this.peers[offer.sender]
             return
@@ -341,11 +349,8 @@ class WebRTCManager {
         await this.peers[offer.sender].setLocalDescription(answer)
         await this.handlePendingIceCandidates(offer.sender) // Handle any pending ice candidates
         this.callbacks.setInCall(true)
-        this.socket.emit("send_answer", {
-            target: offer.sender,
-            answer: answer,
-            discussion: this.discussion
-        })
+
+        this.controller.send(this, {"send_answer": {target: offer.sender, answer: answer, discussion: this.discussion}})
 
         for (const member of this.connectedMembers) {
             if (member === this.self.id) continue
@@ -470,7 +475,7 @@ class WebRTCManager {
             delete this.peers[peer]
         }
 
-        this.socket.emit("hang_up", {discussion: this.discussion})
+        this.controller.send(this, {"hang_up": {discussion: this.discussion}})
         this.reset()
     }
 
