@@ -35,6 +35,13 @@ module.exports = function (io) {
       io.emit("chat-message", messageObj);
       console.log("Chat message received:", message);
     });
+
+    socket.on("test-send", (data) => {
+      // Handle chat message logic here
+      console.log("Test message received:", data);
+      io.emit("test-receive", data);
+    });
+
     // Custom event
     socket.on("customEvent", (data) => {
       // Handle custom event logic here

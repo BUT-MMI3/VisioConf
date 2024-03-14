@@ -60,7 +60,7 @@ Elle s'inspire grandement des applications de communication telles que Discord o
 - Lancer la commande `docker-compose up --build`
 
 ## Documentation
-- [Lien vers la documentation](https://mathis-organization.gitbook.io/mmi-visioconf/)
+- [Lien vers la documentation](https://github.com/BUT-MMI3/VisioConf/wiki)
 
 
 ## Auteurs
@@ -70,5 +70,4 @@ Elle s'inspire grandement des applications de communication telles que Discord o
 - Florian THOMY
 - Kyllian DIOCHON
 - Alan THOB
-- Alexandre MAUGY
 - Mathieu ROMAIN

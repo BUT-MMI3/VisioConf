@@ -3,98 +3,133 @@
  * Date : Janvier 2024
  */
 import { Routes, Route } from "react-router-dom";
-import NoyauAccueil from "./components/NoyauAccueil/NoyauAccueil.jsx";
-import Accueil from "./components/Accueil/NoyauAccueil.jsx";
-import { socket } from "./socket";
+import NoyauAccueil from "./elements/NoyauAccueil/NoyauAccueil.jsx";
+import Accueil from "./elements/Accueil/NoyauAccueil.jsx";
+// import { socket } from "./socket";
 import { useState, useEffect } from "react";
-import NotFound from "./components/NotFound.jsx";
-import Layout from "./components/Layout/Layout.jsx";
-import ListeDiscussion from "./components/ListeDiscussion/ListeDiscussion.jsx";
-import NoyauProfil from "./components/NoyauProfil/NoyauProfil.jsx";
-import NoyauConnexion from "./components/NoyauConnexion/NoyauConnexion.jsx";
-import TestComponents from "./components/TestComponents.jsx";
+import NotFound from "./elements/NotFound.jsx";
+import Layout from "./elements/Layout/Layout.jsx";
+import ListeDiscussion from "./elements/ListeDiscussion/ListeDiscussion.jsx";
+import NoyauProfil from "./elements/NoyauProfil/NoyauProfil.jsx";
+import NoyauConnexion from "./elements/NoyauConnexion/NoyauConnexion.jsx";
+import AdminListeUtilisateurs from "./elements/AdminListeUtilisateurs/AdminListeUtilisateurs.jsx";
+import AdminListeRoles from "./elements/AdminListeRoles/AdminListeRoles.jsx";
+import AdminListePermissions from "./elements/AdminListePermissions/AdminListePermissions.jsx";
+import TestComponents from "./elements/TestComponents.jsx";
 
 export default function App() {
-  const [isConnected, setIsConnected] = useState(socket.connected);
+    // const [isConnected, setIsConnected] = useState(socket.connected);
 
-  useEffect(() => {
-    function onConnect() {
-      console.log("connect");
-      setIsConnected(true);
-    }
+    // useEffect(() => {
+    //   function onConnect() {
+    //     console.log("connect");
+    //     setIsConnected(true);
+    //   }
+    //
+    //   function onDisconnect() {
+    //     console.log("disconnect");
+    //     setIsConnected(false);
+    //   }
+    //
+    //   socket.on("connect", onConnect);
+    //   socket.on("disconnect", onDisconnect);
+    //
+    //   return () => {
+    //     socket.off("connect", onConnect);
+    //     socket.off("disconnect", onDisconnect);
+    //   };
+    // });
 
-    function onDisconnect() {
-      console.log("disconnect");
-      setIsConnected(false);
-    }
+    return (
+        <Routes>
+            <Route
+                path="/dev_route_connexion"
+                element={
+                    <>
+                        <NoyauConnexion />
+                    </>
+                }
+            />
+            <Route path="/" element={<Layout />}>
+                <Route
+                    index
+                    path="discussions"
+                    element={
+                        /* l'élément à l'interieur de <></> sera affiché grâce au composant <Outlet /> dans <Layout /> */
+                        <>
+                            <ListeDiscussion />
+                            <NoyauAccueil />
+                        </>
+                    }
+                />
+                <Route
+                    path="discussion/:id"
+                    element={
+                        <>
+                            <ListeDiscussion />
+                            <NoyauAccueil />
+                        </>
+                    }
+                />
+                <Route
+                    path="/dev_route_accueil"
+                    element={
+                        <>
+                            <Accueil />
+                        </>
+                    }
+                />
+                <Route
+                    path="profil"
+                    element={
+                        <>
+                            <NoyauProfil />
+                        </>
+                    }
+                />
+                <Route
+                    path="admin"
+                    element={
+                        <>
+                            <AdminListeUtilisateurs />
+                        </>
+                    }
+                />
+                <Route
+                    path="admin/users"
+                    element={
+                        <>
+                            <AdminListeUtilisateurs />
+                        </>
+                    }
+                />
+                <Route
+                    path="admin/roles"
+                    element={
+                        <>
+                            <AdminListeRoles />
+                        </>
+                    }
+                />
+                <Route
+                    path="admin/permissions"
+                    element={
+                        <>
+                            <AdminListePermissions />
+                        </>
+                    }
+                />
+                <Route
+                    path="test"
+                    element={
+                        <>
+                            <TestComponents />
+                        </>
+                    }
+                />
 
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-    };
-  });
-
-  return (
-    <Routes>
-      <Route
-        path="/dev_route_connexion"
-        element={
-          <>
-            <NoyauConnexion />
-          </>
-        }
-      />
-      <Route path="/" element={<Layout />}>
-        <Route
-          index
-          path="discussions"
-          element={
-            /* l'élément à l'interieur de <></> sera affiché grâce au composant <Outlet /> dans <Layout /> */
-            <>
-              <ListeDiscussion />
-              <NoyauAccueil isConnected={isConnected} />
-            </>
-          }
-        />
-        <Route
-          path="discussion/:id"
-          element={
-            <>
-              <ListeDiscussion />
-              <NoyauAccueil isConnected={isConnected} />
-            </>
-          }
-        />
-        <Route
-          path="/dev_route_accueil"
-          element={
-            <>
-              <Accueil />
-            </>
-          }
-        />
-        <Route
-          path="profil"
-          element={
-            <>
-              <NoyauProfil />
-            </>
-          }
-        />
-        <Route
-          path="test"
-          element={
-            <>
-              <TestComponents />
-            </>
-          }
-        />
-
-        <Route path="*" element={<NotFound />} />
-      </Route>
-    </Routes>
-  );
+                <Route path="*" element={<NotFound />} />
+            </Route>
+        </Routes>
+    );
 }
