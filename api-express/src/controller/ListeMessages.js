@@ -13,6 +13,10 @@
 const ListeMessagesEmis = [
     "demande_de_connexion",
     "client_deconnexion",
+    "demande_liste_utilisateurs",
+    "chat_message",
+    "demande_liste_discussions",
+    "demande_historique_discussion",
 ]
 
 /**
@@ -23,6 +27,9 @@ const ListeMessagesRecus = [
     "liste_utilisateurs",
     "connexion_acceptee",
     "connexion_refusee",
+    "chat_message",
+    "liste_discussions",
+    "historique_discussion",
 ]
 
 module.exports = {

@@ -54,6 +54,8 @@ class CanalSocketIO {
 
 
             socket.on('disconnect', () => {
+                if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.nomDInstance + "): " + socket.id + " s'est déconnecté");
+
                 let message = {}
                 message.client_deconnexion = socket.id;
                 this.controller.send(this, message);
