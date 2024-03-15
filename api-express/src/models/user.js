@@ -16,7 +16,7 @@ const UserSchema = new Schema({
     user_firstname: { type: String, required: true },
     user_lastname: { type: String, required: true },
     user_email: { type: String, required: true },
-    user_phone: { type: Number, required: true },
+    user_phone: { type: String, required: true },
     user_status: {
         type: String,
         required: true,
@@ -52,7 +52,7 @@ const UserSchema = new Schema({
         default: "none",
         description: "User uuid of the direct manager",
     },
-    user_tokens: { type: Object, required: true },
+    user_tokens: { type: Object, default: {}},
     user_roles: {
         type: Array,
         required: true,

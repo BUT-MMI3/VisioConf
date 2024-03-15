@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { socket } from '../socket';
+import { useState, useEffect } from 'react';
+import { socket } from '../Controller/socket.js';
 
 const ChatCreationDeConversation = () => {
   const [searchInput, setSearchInput] = useState('');

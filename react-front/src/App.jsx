@@ -2,11 +2,11 @@
  * Author: @mathis-lambert
  * Date : Janvier 2024
  */
-import { Routes, Route } from "react-router-dom";
+import {Route, Routes} from "react-router-dom";
 import NoyauAccueil from "./elements/NoyauAccueil/NoyauAccueil.jsx";
 import Accueil from "./elements/Accueil/NoyauAccueil.jsx";
-// import { socket } from "./socket";
-import { useState, useEffect } from "react";
+// import { io } from "./io";
+import {useEffect, useRef, useState} from "react";
 import NotFound from "./elements/NotFound.jsx";
 import Layout from "./elements/Layout/Layout.jsx";
 import ListeDiscussion from "./elements/ListeDiscussion/ListeDiscussion.jsx";
@@ -16,120 +16,150 @@ import AdminListeUtilisateurs from "./elements/AdminListeUtilisateurs/AdminListe
 import AdminListeRoles from "./elements/AdminListeRoles/AdminListeRoles.jsx";
 import AdminListePermissions from "./elements/AdminListePermissions/AdminListePermissions.jsx";
 import TestComponents from "./elements/TestComponents.jsx";
+import {controller} from "./Controller/index.js";
 
-export default function App() {
-    // const [isConnected, setIsConnected] = useState(socket.connected);
+const listeMessageEmis = []
 
-    // useEffect(() => {
-    //   function onConnect() {
-    //     console.log("connect");
-    //     setIsConnected(true);
-    //   }
-    //
-    //   function onDisconnect() {
-    //     console.log("disconnect");
-    //     setIsConnected(false);
-    //   }
-    //
-    //   socket.on("connect", onConnect);
-    //   socket.on("disconnect", onDisconnect);
-    //
-    //   return () => {
-    //     socket.off("connect", onConnect);
-    //     socket.off("disconnect", onDisconnect);
-    //   };
-    // });
+const listeMessageRecu = [
+    "connexion_acceptee",
+]
+
+const App = () => {
+    const nomDInstance = "App";
+    const verbose = true;
+
+    const [loggedIn, setLoggedIn] = useState(false);
+
+    const {current} = useRef({
+        nomDInstance,
+        traitementMessage: (msg) => {
+            if (verbose || controller.verboseall) console.log(`INFO: (${nomDInstance}) - traitementMessage - `, msg);
+
+            if (typeof msg.connexion_acceptee !== "undefined") {
+                setLoggedIn(true);
+            }
+        }
+    });
+
+    useEffect(() => {
+        if (verbose || controller.verboseall) console.log(`INFO: (${nomDInstance}) - useEffect - `);
+        controller.subscribe(current, listeMessageEmis, listeMessageRecu);
+
+        return () => {
+            controller.unsubscribe(current, listeMessageEmis, listeMessageRecu);
+        };
+    }, []);
+
 
     return (
         <Routes>
-            <Route
-                path="/dev_route_connexion"
-                element={
-                    <>
-                        <NoyauConnexion />
-                    </>
-                }
-            />
-            <Route path="/" element={<Layout />}>
-                <Route
-                    index
-                    path="discussions"
-                    element={
-                        /* l'élément à l'interieur de <></> sera affiché grâce au composant <Outlet /> dans <Layout /> */
-                        <>
-                            <ListeDiscussion />
-                            <NoyauAccueil />
-                        </>
-                    }
-                />
-                <Route
-                    path="discussion/:id"
-                    element={
-                        <>
-                            <ListeDiscussion />
-                            <NoyauAccueil />
-                        </>
-                    }
-                />
-                <Route
-                    path="/dev_route_accueil"
-                    element={
-                        <>
-                            <Accueil />
-                        </>
-                    }
-                />
-                <Route
-                    path="profil"
-                    element={
-                        <>
-                            <NoyauProfil />
-                        </>
-                    }
-                />
-                <Route
-                    path="admin"
-                    element={
-                        <>
-                            <AdminListeUtilisateurs />
-                        </>
-                    }
-                />
-                <Route
-                    path="admin/users"
-                    element={
-                        <>
-                            <AdminListeUtilisateurs />
-                        </>
-                    }
-                />
-                <Route
-                    path="admin/roles"
-                    element={
-                        <>
-                            <AdminListeRoles />
-                        </>
-                    }
-                />
-                <Route
-                    path="admin/permissions"
-                    element={
-                        <>
-                            <AdminListePermissions />
-                        </>
-                    }
-                />
-                <Route
-                    path="test"
-                    element={
-                        <>
-                            <TestComponents />
-                        </>
-                    }
-                />
+            {loggedIn && (
+                <>
+                    <Route
+                        path="/dev_route_connexion"
+                        element={
+                            <>
+                                <NoyauConnexion/>
+                            </>
+                        }
+                    />
+                    <Route path="/" element={<Layout/>}>
+                        <Route
+                            index
+                            path="discussions"
+                            element={
+                                /* l'élément à l'interieur de <></> sera affiché grâce au composant <Outlet /> dans <Layout /> */
+                                <>
+                                    <ListeDiscussion/>
+                                    <NoyauAccueil/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="discussion/:id"
+                            element={
+                                <>
+                                    <ListeDiscussion/>
+                                    <NoyauAccueil/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="/dev_route_accueil"
+                            element={
+                                <>
+                                    <Accueil/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="profil"
+                            element={
+                                <>
+                                    <NoyauProfil/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="admin"
+                            element={
+                                <>
+                                    <AdminListeUtilisateurs/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="admin/users"
+                            element={
+                                <>
+                                    <AdminListeUtilisateurs/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="admin/roles"
+                            element={
+                                <>
+                                    <AdminListeRoles/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="admin/permissions"
+                            element={
+                                <>
+                                    <AdminListePermissions/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="test"
+                            element={
+                                <>
+                                    <TestComponents/>
+                                </>
+                            }
+                        />
 
-                <Route path="*" element={<NotFound />} />
-            </Route>
+                        <Route path="*" element={<NotFound/>}/>
+                    </Route>
+                </>
+            )}
+
+            {!loggedIn && (
+                <>
+                    <Route
+                        path="/"
+                        element={
+                            <>
+                                <NoyauConnexion/>
+                            </>
+                        }
+                    />
+                </>
+            )}
         </Routes>
     );
 }
+
+export default App;
