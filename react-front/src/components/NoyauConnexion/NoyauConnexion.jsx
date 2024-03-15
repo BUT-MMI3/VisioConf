@@ -63,7 +63,7 @@ const NoyauConnexion = () => {
             controller.send(current, {
                 "demande_de_connexion": {
                     "email": email,
-                    "challenge": await sha256(email + await sha256(motDePasse))
+                    "challenge": await sha256(email + await sha256(motDePasse)) // Challenge = sha256(email + sha256(motDePasse))
                 }
             })
         } else {
@@ -85,6 +85,7 @@ const NoyauConnexion = () => {
                             id="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            onKeyUp={(e) => e.key === 'Enter' && logIn()}
                             className={erreur ? 'erreur' : ''}
                             placeholder="Entrez votre adresse email"
                         />
@@ -97,6 +98,7 @@ const NoyauConnexion = () => {
                             id="password"
                             value={motDePasse}
                             onChange={(e) => setMotDePasse(e.target.value)}
+                            onKeyUp={(e) => e.key === 'Enter' && logIn()}
                             className={erreur ? 'erreur' : ''}
                             placeholder="Entrez votre mot de passe"
                         />
