@@ -22,6 +22,7 @@ const listeMessageEmis = []
 
 const listeMessageRecu = [
     "connexion_acceptee",
+    "deconnexion"
 ]
 
 const App = () => {
@@ -42,13 +43,12 @@ const App = () => {
     });
 
     useEffect(() => {
-        if (verbose || controller.verboseall) console.log(`INFO: (${nomDInstance}) - useEffect - `);
         controller.subscribe(current, listeMessageEmis, listeMessageRecu);
 
         return () => {
             controller.unsubscribe(current, listeMessageEmis, listeMessageRecu);
         };
-    }, []);
+    }, [current]);
 
 
     return (
