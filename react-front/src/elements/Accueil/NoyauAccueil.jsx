@@ -39,52 +39,86 @@ const NoyauAccueil = () => {
     return (
         <div className="noyau-accueil layout-content--full">
             {/* Section d'informations du profil */}
-            <div className="container">
+            <div className="container fr jc-sa g1">
                 {/* Section 1 */}
-                <div className="section">
+                <div className="section w-100">
 
-                    <div className="profil-info">
-                        <img src={utilisateur.logo} className='logo-band' alt="Photo de profil" />
+                    <div className="section-header fr">
+                        <h2>Mon Profil</h2>
+                    </div>
 
-                        {/* Informations du profil */}
-                        <div className="profil-details">
-                            <h2>{utilisateur.nom} {utilisateur.prenom}</h2>
-                            <p>{utilisateur.job}</p>
+                    <div className="section-profil">
+                        <div className="profil-info fr jc-sa ai-c">
+
+                            <div className="profil-info-image w-100">
+                                <img src={utilisateur.logo} className='logo-profil-info' alt="Photo de profil"/>
+                            </div>
+
+                            {/* Informations du profil */}
+                            <div className="profil-details w-100 fc ai-fs">
+                                <h2>{utilisateur.nom} {utilisateur.prenom}</h2>
+                                <p>{utilisateur.job}</p>
+                            </div>
+
+                            {/* Lien vers la page de modification du profil */}
+                            <div className="profil-modification w-100">
+                                <Link to="/modification-profil">
+                                    <FeatherIcon icon="edit-2" size="20" strokeWidth="1" className="icon"/>
+                                </Link>
+                            </div>
                         </div>
-
-                        {/* Lien vers la page de modification du profil */}
-                        <Link to="/modification-profil">
-                            <FeatherIcon icon="edit" size="20" strokeWidth="1" className="edit-icon" />
-                            Modifier le profil
-                        </Link>
                     </div>
                 </div>
 
-                <div className="section">
+                <div className="section w-100">
                     {/* Section des notifications */}
-                    <div className="notifications">
-                        <h3>Notifications</h3>
-                        <ul>
-                            {notifications.map((notification) => (
-                                <li key={notification.id}>{notification.message}</li>
-                            ))}
-                        </ul>
+                    <div className="section-header fr">
+                        <h2>Boite de réception</h2>
+                    </div>
+
+                    <div className="section-notification">
+
+                        <div className="notification-info fr jc-sa">
+                            <div className="profil-modification w-100 fr jc-c ai-c">
+                                <FeatherIcon icon="bell" size="20" strokeWidth="1" className="icon"/>
+                            </div>
+
+                            <div className="notifications w-100 fr jc-c ai-c">
+                                <ul>
+                                    {notifications.map((notification) => (
+                                        <li key={notification.id}>{notification.message}</li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div className="notification-affiche w-100 fr jc-c ai-c">
+                                <FeatherIcon icon="chevron-right" size="20" strokeWidth="1" className="icon"/>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
 
-                <div className="section">
+                <div className="section w-100">
                     {/* Section de l'historique des appels */}
-                    <div className="historique-appels">
-                        <h3>Historique des appels</h3>
-                        <ul>
-                            {historiqueAppels.map((appel) => (
-                                <li key={appel.id}>
-                                    <p>Date: {appel.date}</p>
-                                    <p>Durée: {appel.duree}</p>
-                                    <p>Participants: {appel.participants.join(', ')}</p>
-                                </li>
-                            ))}
-                        </ul>
+                    <div className="section-header fr">
+                        <h2>Historique des appels</h2>
+                    </div>
+
+                    <div className="section-historique" style={{height: 'auto'}}>
+                        <div className="historique-appels">
+                            <ul>
+                                {historiqueAppels.map((appel) => (
+                                    <li key={appel.id}>
+                                        <p>Date: {appel.date}</p>
+                                        <p>Durée: {appel.duree}</p>
+                                        <p>Participants: {appel.participants.join(', ')}</p>
+                                        <hr/>
+                                    </li>
+
+                                ))}
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
