@@ -1,31 +1,42 @@
 import "./ListeDiscussion.scss";
-import { useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
-import { socket } from "../../controller/socket.js";
-// import SubscribeToEvent from "../SubscribeToEvent";
-import { Link } from "react-router-dom";
+import {useEffect, useRef, useState} from "react";
+import {Link} from "react-router-dom";
+import {controller} from "../../controller/index.js";
+
+const listeMessageEmis = [
+    "nouvelle_discussion",
+]
+
+const listeMessageRecus = [
+    "liste_discussions",
+    "liste_messages",
+]
 
 export default function ListeDiscussion() {
-    const location = useLocation();
+    const instanceName = "ListeDiscussion";
+    const verbose = false;
+
     const [discussions, setDiscussions] = useState([]);
 
-    const onListeDiscussionsRef = useRef((listeDiscussions) => {
-        console.log("liste-discussions", listeDiscussions);
-        setDiscussions(listeDiscussions);
+    const {current} = useRef({
+        instanceName,
+        traitementMessage: (msg) => {
+            if (verbose || controller.verboseall) console.log(`INFO (${instanceName}) - traitementMessage : `, msg);
+
+
+            if (typeof msg.liste_discussions !== "undefined") {
+                setDiscussions(msg.liste_discussions);
+            }
+        }
     });
 
     useEffect(() => {
-        socket.emit("fetch-discussions");
-
-        const unsubscribe = SubscribeToEvent(
-            "discussions-list",
-            onListeDiscussionsRef.current
-        );
+        controller.subscribe(current, listeMessageEmis, listeMessageRecus);
 
         return () => {
-            unsubscribe();
-        };
-    }, [location]);
+            controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
+        }
+    }, [current]);
 
     return (
         <div className="liste-discussion">

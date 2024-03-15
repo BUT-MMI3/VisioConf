@@ -3,78 +3,102 @@ Author: @mathis-lambert
 Date: Janvier 2024
 */
 
-import {
-    createContext,
-    useContext,
-    useState,
-    useCallback,
-    useEffect,
-    useRef,
-} from "react";
-// import SubscribeToEvent from "../SubscribeToEvent";
-import { socket } from "../../controller/socket.js";
-import { useLocation } from "react-router-dom";
+import {createContext, useCallback, useContext, useEffect, useRef, useState,} from "react";
+import {controller} from "../../controller/index.js";
+import {useLocation} from "react-router-dom";
 import ChatInput from "../../elements/ChatInput/ChatInput";
 import FilDiscussion from "../../elements/FilDiscussion/FilDiscussion";
+import { useSelector } from 'react-redux';
+
 
 // Initialisation du contexte avec une valeur par défaut
 const DiscussionContext = createContext({
     messages: [],
     // eslint-disable-next-line no-unused-vars
-    addMessage: (message) => {},
+    addMessage: (message) => {
+    },
 });
 
+const listeMessagesEmis = [
+    "chat_message",
+    "demande_liste_discussions",
+    "demande_historique_discussion",
+];
+const listeMessagesRecus = [
+    "chat_message",
+    "liste_discussions",
+    "historique_discussion",
+];
+
 export function DiscussionContextProvider() {
+    const instanceName = "Discussion Context";
+    const verbose = true;
+
+
     const location = useLocation();
-    const [discussionId, setDiscussionId] = useState(
-        location.pathname.split("/")[2]
-    );
+
+    const [discussionId, setDiscussionId] = useState(undefined);
     const [messages, setMessages] = useState([]);
 
-    // This is a trick to keep the same function reference
-    const onMessageEventRef = useRef((message) => {
-        setMessages((messages) => [...messages, message]);
-    });
-    const onDiscussionHistoryRef = useRef((history) => {
-        setMessages(history);
-    });
+    const {current} = useRef({
+        instanceName,
+        traitementMessage: (msg) => {
+            if (verbose || controller.verboseall) console.log(`INFO (${instanceName}) - traitementMessage: `, msg);
+
+            if (typeof msg.chat_message !== "undefined") {
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    {
+                        discussionId: msg.chat_message.discussionId,
+                        message: msg.chat_message.message,
+                    },
+                ]);
+            } else if (typeof msg.liste_discussions !== "undefined") {
+                setMessages(msg.liste_discussions);
+            }
+        }
+    })
 
     useEffect(() => {
-        // Subscribe to the event
-        const unsub = SubscribeToEvent(
-            "chat-message",
-            onMessageEventRef.current
-        );
-
+        controller.subscribe(current, listeMessagesEmis, listeMessagesRecus);
         return () => {
-            // Clean up the subscription to avoid memory leaks
-            unsub();
+            controller.unsubscribe(current, listeMessagesEmis, listeMessagesRecus);
         };
-    }, []);
+    }, [current]);
 
     useEffect(() => {
-        setDiscussionId(location.pathname.split("/")[2]);
-    }, [location]);
+        if (location.pathname.split("/")[1] === "discussions") {
+            if (verbose || controller.verboseall) console.log(`INFO - (${instanceName}) : Demande de liste de discussions`);
+
+            controller.send(current, {
+                "demande_liste_discussions": null,
+            });
+        }
+    }, [current, location]);
 
     useEffect(() => {
-        socket.emit("fetch-discussion-history", discussionId);
+        let id = location.pathname.split("/")[2];
+        if (id !== discussionId) setDiscussionId(id);
+        console.log("Discussion ID: ", discussionId);
+    }, [discussionId, location]);
 
-        // Subscribe to the event
-        const unsub = SubscribeToEvent(
-            "discussion-history",
-            onDiscussionHistoryRef.current
-        );
+    useEffect(() => {
+        if (discussionId === undefined) return;
 
-        return () => {
-            // Clean up the subscription to avoid memory leaks
-            unsub();
-        };
-    }, [discussionId]);
+        controller.send(current, {
+            "demande_liste_discussions": discussionId,
+        })
+    }, [current, discussionId]);
 
     // Fonction pour ajouter un message au fil de discussion, gestion de l'ajout de message
     const addMessage = useCallback((message) => {
-        socket.emit("chat-message", message);
-    }, []);
+        controller.send(current, {
+            "chat_message": {
+                discussionId: discussionId,
+                message: message,
+            },
+        });
+    }, [current, discussionId]);
 
     // La valeur fournie au contexte inclut les messages et la fonction pour ajouter un message
     const contextValue = {
@@ -92,8 +116,8 @@ export function DiscussionContextProvider() {
                 )) || (
                     <>
                         <h2>Discussion ID: {discussionId}</h2>
-                        <FilDiscussion />
-                        <ChatInput />
+                        <FilDiscussion/>
+                        <ChatInput/>
                     </>
                 )}
             </div>

@@ -7,31 +7,19 @@ const listeMessageEmis = [
     "demande_de_connexion",
 ]
 
-const listeMessageRecu = [
+const listeMessageRecus = [
     "connexion_acceptee",
     "connexion_refusee",
 ]
 
-const utilisateur = {
-    id: 123,
-    nom: "Doe",
-    prenom: "John",
-    email: "john.doe@example.com",
-    motDePasse: "azerty",
-    job: "Etudiant MMI3",
-    isConnected: false,
-    isAdmin: true,
-    logo: "./user-base-icon.svg",
-}
-
 const NoyauConnexion = () => {
-    const nomDInstance = "NoyauConnexion";
+    const instanceName = "NoyauConnexion";
     const verbose = true;
 
     const {current} = useRef({
-        nomDInstance,
+        instanceName,
         traitementMessage: (msg) => {
-            if (verbose || controller.verboseall) console.log(`INFO: (${nomDInstance}) - traitementMessage - `, msg);
+            if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
             if (typeof msg.connexion_acceptee !== "undefined") {
                 console.log("Connexion établie");
@@ -43,12 +31,12 @@ const NoyauConnexion = () => {
     });
 
     useEffect(() => {
-        controller.subscribe(current, listeMessageEmis, listeMessageRecu);
+        controller.subscribe(current, listeMessageEmis, listeMessageRecus);
 
         return () => {
-            controller.unsubscribe(current, listeMessageEmis, listeMessageRecu);
+            controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
         };
-    }, []);
+    }, [current]);
 
     const [email, setEmail] = useState('');
     const [motDePasse, setMotDePasse] = useState('');
@@ -56,7 +44,7 @@ const NoyauConnexion = () => {
 
     const logIn = async () => {
         if (email && motDePasse) {
-            if (verbose || controller.verboseall) console.log(`INFO: (${nomDInstance}) - logIn - `, email, motDePasse);
+            if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - logIn - `, email, motDePasse);
 
             setErreur('');
             // Envoi de la demande de connexion
@@ -67,14 +55,14 @@ const NoyauConnexion = () => {
                 }
             })
         } else {
-            if (verbose || controller.verboseall) console.log(`INFO: (${nomDInstance}) - logIn - `, "Veuillez remplir tous les champs.");
+            if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - logIn - `, "Veuillez remplir tous les champs.");
             setErreur('Veuillez remplir tous les champs.');
         }
     };
 
     return (
-        <div className={`page-connexion ${utilisateur.isConnected ? 'online' : ''}`}>
-            <div className={`card-connexion ${utilisateur.isConnected ? 'online' : ''}`}>
+        <div className={`page-connexion`}>
+            <div className={`card-connexion`}>
                 <img src={'./others/logo-universite-toulon.png'} alt="Logo de l'entreprise" className="logo-connexion"/>
                 <form className='from-controller' onSubmit={(e) => e.preventDefault()}>
                     <div className="form-group">

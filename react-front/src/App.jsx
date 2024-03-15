@@ -2,11 +2,11 @@
  * Author: @mathis-lambert
  * Date : Janvier 2024
  */
-import {Route, Routes} from "react-router-dom";
+import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import NoyauAccueil from "./elements/NoyauAccueil/NoyauAccueil.jsx";
 import Accueil from "./elements/Accueil/NoyauAccueil.jsx";
 // import { io } from "./io";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useRef} from "react";
 import NotFound from "./elements/NotFound.jsx";
 import Layout from "./elements/Layout/Layout.jsx";
 import ListeDiscussion from "./elements/ListeDiscussion/ListeDiscussion.jsx";
@@ -17,43 +17,60 @@ import AdminListeRoles from "./elements/AdminListeRoles/AdminListeRoles.jsx";
 import AdminListePermissions from "./elements/AdminListePermissions/AdminListePermissions.jsx";
 import TestComponents from "./elements/TestComponents.jsx";
 import {controller} from "./controller/index.js";
+import {socket} from "./controller/socket.js";
+import { useSelector, useDispatch } from 'react-redux';
+import { signIn, signOut } from './features/session/sessionSlice';
 
 const listeMessageEmis = []
 
-const listeMessageRecu = [
+const listeMessageRecus = [
     "connexion_acceptee",
     "deconnexion"
 ]
 
 const App = () => {
-    const nomDInstance = "App";
+    const instanceName = "App";
     const verbose = true;
 
-    const [loggedIn, setLoggedIn] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const session = useSelector((state) => state.session);
+    const dispatch = useDispatch();
 
     const {current} = useRef({
-        nomDInstance,
+        instanceName,
         traitementMessage: (msg) => {
-            if (verbose || controller.verboseall) console.log(`INFO: (${nomDInstance}) - traitementMessage - `, msg);
+            if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
             if (typeof msg.connexion_acceptee !== "undefined") {
-                setLoggedIn(true);
+                dispatch(signIn(msg.connexion_acceptee.user_info));
+            } else if (typeof msg.deconnexion !== "undefined") {
+                socket.disconnect(); // déconnecte le socket pour éviter les erreurs
+                dispatch(signOut()); // déconnexion
+                socket.connect(); // reconnect
             }
         }
     });
 
     useEffect(() => {
-        controller.subscribe(current, listeMessageEmis, listeMessageRecu);
+        controller.subscribe(current, listeMessageEmis, listeMessageRecus);
 
         return () => {
-            controller.unsubscribe(current, listeMessageEmis, listeMessageRecu);
+            controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
         };
     }, [current]);
+
+    useEffect(() => {
+        if (!session.isSignedIn && (location.pathname !== "/login" || location.pathname !== "/forgot-password")) navigate("/login");
+
+        if (session.isSignedIn && (location.pathname === "/login" || location.pathname === "/forgot-password")) navigate("/");
+    }, [session.isSignedIn, location.pathname, navigate]);
 
 
     return (
         <Routes>
-            {loggedIn && (
+            {session.isSignedIn && (
                 <>
                     <Route
                         path="/dev_route_connexion"
@@ -146,16 +163,27 @@ const App = () => {
                 </>
             )}
 
-            {!loggedIn && (
+            {!session.isSignedIn && (
                 <>
                     <Route
-                        path="/"
+                        path="/login"
                         element={
                             <>
                                 <NoyauConnexion/>
                             </>
                         }
                     />
+
+                    <Route
+                        path="/forgot-password"
+                        element={
+                            <>
+                                <NoyauConnexion/>
+                            </>
+                        }
+                    />
+
+                    <Route path="*" element={<NotFound/>}/>
                 </>
             )}
         </Routes>

@@ -13,6 +13,7 @@ const DEFAULT_DISTURB_STATUS = "available";
 
 const UserSchema = new Schema({
     user_uuid: { type: String, required: true },
+    user_socket_id: { type: String, required: true, default: "none" },
     user_firstname: { type: String, required: true },
     user_lastname: { type: String, required: true },
     user_email: { type: String, required: true },
@@ -70,6 +71,25 @@ UserSchema.virtual("user_fullname").get(function () {
 // Virtual for user's URL
 UserSchema.virtual("url").get(function () {
     return "/user/" + this._id;
+});
+
+UserSchema.virtual("info").get(function () {
+    return {
+        user_uuid: this.user_uuid,
+        user_firstname: this.user_firstname,
+        user_lastname: this.user_lastname,
+        user_email: this.user_email,
+        user_phone: this.user_phone,
+        user_status: this.user_status,
+        user_job: this.user_job,
+        user_date_create: this.user_date_create,
+        user_picture: this.user_picture,
+        user_is_online: this.user_is_online,
+        user_disturb_status: this.user_disturb_status,
+        user_last_connection: this.user_last_connection,
+        user_direct_manager: this.user_direct_manager,
+        user_roles: this.user_roles,
+    };
 });
 
 // Export the model

@@ -18,13 +18,13 @@ class Controller {
                     console.log(this.listeEmission[liste_emission[key]]);
                 }
             }
-            if (typeof this.listeEmission[liste_emission[key]][emitter.nomDInstance] != "undefined") {
-                console.log("ERREUR (controller): " + emitter.nomDInstance + " essaie de s'enregistrer une nouvelle fois pour le message en émission: " + liste_emission[key]);
+            if (typeof this.listeEmission[liste_emission[key]][emitter.instanceName] != "undefined") {
+                console.log("ERREUR (controller): " + emitter.instanceName + " essaie de s'enregistrer une nouvelle fois pour le message en émission: " + liste_emission[key]);
             } else {
                 if (this.verbose || this.verboseall) {
-                    console.log("INFO (controller): " + emitter.nomDInstance + " s'enregistre pour le message en émission: " + liste_emission[key]);
+                    console.log("INFO (controller): " + emitter.instanceName + " s'enregistre pour le message en émission: " + liste_emission[key]);
                 }
-                this.listeEmission[liste_emission[key]][emitter.nomDInstance] = emitter;
+                this.listeEmission[liste_emission[key]][emitter.instanceName] = emitter;
             }
         }
         for (let key in liste_abonnement) {
@@ -36,13 +36,13 @@ class Controller {
                     console.log(this.listeAbonnement[liste_abonnement[key]]);
                 }
             }
-            if (typeof this.listeAbonnement[liste_abonnement[key]][emitter.nomDInstance] != "undefined") {
-                console.log("ERREUR (controller): " + emitter.nomDInstance + " essaie de s'enregistrer une nouvelle fois pour le message en émission: " + liste_abonnement[key]);
+            if (typeof this.listeAbonnement[liste_abonnement[key]][emitter.instanceName] != "undefined") {
+                console.log("ERREUR (controller): " + emitter.instanceName + " essaie de s'enregistrer une nouvelle fois pour le message en émission: " + liste_abonnement[key]);
             } else {
                 if (this.verbose || this.verboseall) {
-                    console.log("INFO (controller): " + emitter.nomDInstance + " s'enregistre pour le message en abonnement: " + liste_abonnement[key]);
+                    console.log("INFO (controller): " + emitter.instanceName + " s'enregistre pour le message en abonnement: " + liste_abonnement[key]);
                 }
-                this.listeAbonnement[liste_abonnement[key]][emitter.nomDInstance] = emitter;
+                this.listeAbonnement[liste_abonnement[key]][emitter.instanceName] = emitter;
             }
         }
 
@@ -53,12 +53,12 @@ class Controller {
             if (typeof this.listeEmission[liste_emission[key]] == "undefined") {
                 console.log("ERREUR (controller): le message en émission n'existe plus, on ne peut pas l'enlever: " + liste_emission[key]);
             } else {
-                if (typeof this.listeEmission[liste_emission[key]][emitter.nomDInstance] == "undefined") {
-                    console.log("ERREUR (controller): le message en émission  " + liste_emission[key] + " n'était pas enregistré par " + emitter.nomDInstance);
+                if (typeof this.listeEmission[liste_emission[key]][emitter.instanceName] == "undefined") {
+                    console.log("ERREUR (controller): le message en émission  " + liste_emission[key] + " n'était pas enregistré par " + emitter.instanceName);
                 } else {
-                    delete this.listeEmission[liste_emission[key]][emitter.nomDInstance];
+                    delete this.listeEmission[liste_emission[key]][emitter.instanceName];
                     if (this.verboseall || this.verbose) {
-                        console.log("INFO (controller): le message en émission " + liste_emission[key] + " a été enlevé de la liste pour " + emitter.nomDInstance);
+                        console.log("INFO (controller): le message en émission " + liste_emission[key] + " a été enlevé de la liste pour " + emitter.instanceName);
                     }
                 }
             }
@@ -68,12 +68,12 @@ class Controller {
             if (typeof this.listeAbonnement[liste_abonnement[key]] == "undefined") {
                 console.log("ERREUR (controller): le message en émission n'existe plus, on ne peut pas l'enlever: " + liste_abonnement[key]);
             } else {
-                if (typeof this.listeAbonnement[liste_abonnement[key]][emitter.nomDInstance] == "undefined") {
-                    console.log("ERREUR (controller): le message en émission  " + liste_abonnement[key] + " n'était pas enregistré par " + emitter.nomDInstance);
+                if (typeof this.listeAbonnement[liste_abonnement[key]][emitter.instanceName] == "undefined") {
+                    console.log("ERREUR (controller): le message en émission  " + liste_abonnement[key] + " n'était pas enregistré par " + emitter.instanceName);
                 } else {
-                    delete this.listeAbonnement[liste_abonnement[key]][emitter.nomDInstance];
+                    delete this.listeAbonnement[liste_abonnement[key]][emitter.instanceName];
                     if (this.verboseall || this.verbose) {
-                        console.log("INFO (controller): le message en abonnement " + liste_emission[key] + " a été enlevé de la liste pour " + emitter.nomDInstance);
+                        console.log("INFO (controller): le message en abonnement " + liste_emission[key] + " a été enlevé de la liste pour " + emitter.instanceName);
                     }
                 }
             }
@@ -85,17 +85,17 @@ class Controller {
     send(emitter, t) {
 
         if (this.verboseall || this.verbose) {
-            console.log("INFO (controller) : le controller a reçu de " + emitter.nomDInstance + " :");
+            console.log("INFO (controller) : le controller a reçu de " + emitter.instanceName + " :");
             console.log(t);
         }
 
         for (let item in t) {
             if (typeof this.listeEmission[item] == "undefined") {
-                console.log("ERREUR (controller) : Le message " + item + " envoyé par " + emitter.nomDInstance + " n'est pas enregistré par le contrôleur");
+                console.log("ERREUR (controller) : Le message " + item + " envoyé par " + emitter.instanceName + " n'est pas enregistré par le contrôleur");
                 return;
             }
-            if (this.listeEmission[item][emitter.nomDInstance] === "undefined") {
-                console.log("ERREUR (controller) : Le message " + item + " envoyé par " + emitter.nomDInstance + " n'a pas déjà enregistré par ");
+            if (this.listeEmission[item][emitter.instanceName] === "undefined") {
+                console.log("ERREUR (controller) : Le message " + item + " envoyé par " + emitter.instanceName + " n'a pas déjà enregistré par ");
                 return;
             }
             for (let recepteurkey in this.listeAbonnement[item]) {
