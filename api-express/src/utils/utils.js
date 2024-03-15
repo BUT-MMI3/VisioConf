@@ -48,8 +48,6 @@ const onListening = server => {
     console.log("Listening on " + bind);
 }
 
-const { createHash } = require('crypto');
-
 const sha256 = async (text) => {
     // Encode le texte en un Uint8Array
     const encoder = new TextEncoder();
