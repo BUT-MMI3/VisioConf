@@ -12,7 +12,7 @@ import {
     useRef,
 } from "react";
 // import SubscribeToEvent from "../SubscribeToEvent";
-import { socket } from "../../socket";
+import { socket } from "../../Controller/socket.js";
 import { useLocation } from "react-router-dom";
 import ChatInput from "../../elements/ChatInput/ChatInput";
 import FilDiscussion from "../../elements/FilDiscussion/FilDiscussion";

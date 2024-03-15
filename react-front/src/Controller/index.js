@@ -1,13 +1,14 @@
 import Controller from "./Controller.js";
 import CanalSocketIO from "./CanalSocketIO.js";
-import {socket} from "../socket.js";
+import {socket} from "./socket.js";
 
-// Init Controller and CanalSocketIO instances
+// Init controller and CanalSocketIO instances
 const controller = new Controller();
-const canal = new CanalSocketIO(socket, controller, "canalsocketio");
+const canal = new CanalSocketIO(socket, controller, "CanalSocketIO");
 
 // Verbose
-controller.verbose = true;
+controller.verbose = false;
+controller.verboseall = false;
 canal.verbose = true;
 
 // Export instances

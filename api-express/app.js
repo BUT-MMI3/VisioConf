@@ -2,27 +2,21 @@
  * Author: @mathis-lambert
  * Date : Janvier 2024
  */
+const { v4: uuidv4 } = require('uuid');
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const {
   initializeUsers,
   initializeDiscussions,
-} = require("./scripts/initializeDb");
+} = require("./src/scripts/initializeDb");
 
-const indexRouter = require("./routes/index");
+const dotenv = require("dotenv");
+dotenv.config();
+
+const indexRouter = require("./src/routes/index");
 
 const app = express();
-
-// generate random string
-const randomString = (len) => {
-  const chars =
-    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let result = "";
-  for (let i = len; i > 0; --i)
-    result += chars[Math.floor(Math.random() * chars.length)];
-  return result;
-};
 
 // Set up mongoose connection to MongoDB
 const mongoose = require("mongoose");
@@ -34,27 +28,27 @@ const url = process.env.MONGO_URL || "localhost";
 const port = process.env.MONGO_PORT || 27017;
 
 if (withAuth) {
-  mongoose
-    .connect(`mongodb://${user}:${password}@${url}:${port}/${dbName}`, {
-      authSource: "admin", // Specify the authentication database
-    })
-    .then(() => console.log("MongoDB Connected"))
-    .catch((err) => console.log(err));
+    mongoose
+        .connect(`mongodb://${user}:${password}@${url}:${port}/${dbName}`, {
+            authSource: "admin", // Specify the authentication mongo
+        })
+        .then(() => console.log("MongoDB Connected with auth"))
+        .catch((err) => console.log(err));
 } else {
-  console.log(`mongodb://${url}:${port}/${dbName}`);
-  mongoose
-    .connect(`mongodb://${url}:${port}/${dbName}`)
-    .then(() => console.log("MongoDB Connected"))
-    .catch((err) => console.log(err));
+    console.log(`mongodb://${url}:${port}/${dbName}`);
+    mongoose
+        .connect(`mongodb://${url}:${port}/${dbName}`)
+        .then(() => console.log("MongoDB Connected"))
+        .catch((err) => console.log(err));
 }
 
 const db = mongoose.connection;
 
 db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", function () {
-  console.log("We're connected to the database.");
-  initializeUsers();
-  initializeDiscussions();
+db.once("open", async () => {
+    console.log("We're connected to the mongo.");
+    await initializeUsers();
+    await initializeDiscussions();
 });
 
 // use sessions for tracking logins
@@ -62,48 +56,40 @@ const session = require("express-session");
 
 // configure sessions
 app.use(
-  session({
-    secret: randomString(32),
-    cookie: { maxAge: 60 * 60 * 1000 }, // 1 hour
-    resave: false,
-    saveUninitialized: true,
-  })
+    session({
+        secret: uuidv4(),
+        cookie: {maxAge: 60 * 60 * 1000}, // 1 hour
+        resave: false,
+        saveUninitialized: true,
+    })
 );
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 
 app.use(express.static(path.join(__dirname, "public")));
-
-// // redirect to /auth/login if not logged in
-// app.use(function (req, res, next) {
-//   if (!req.session.userId) {
-//     if (req.url.startsWith("/auth")) {
-//       return next();
-//     }
-//     return res.redirect("/auth/login");
-//   }
-
-//   next();
-// });
 
 // routes
 app.use("/", indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  next(createError(404));
+    next(createError(404)); // server error
 });
 
 // error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
+    // set locals, only providing error in development
+    console.log(err);
+    res.locals.message = err.message;
+    res.locals.error = req.app.get("env") === "development" ? err : {}; // development error
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render("error");
+    // render the error page
+    res.status(err.status || 500);
+    res.render("error");
 });
 
-module.exports = app;
+module.exports = {
+    app,
+    db,
+}
