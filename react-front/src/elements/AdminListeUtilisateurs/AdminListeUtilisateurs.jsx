@@ -1,6 +1,6 @@
 import "./AdminListeUtilisateurs.scss";
 import { useEffect, useState, useRef } from "react";
-import { controller } from "../../Controller/index.js";
+import { controller } from "../../controller/index.js";
 
 const AdminListeUtilisateurs = () => {
     const [utilisateurs, setUtilisateurs] = useState([]);

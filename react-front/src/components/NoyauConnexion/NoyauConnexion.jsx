@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import './NoyauConnexion.css';
-import {controller} from "../../Controller/index.js";
+import {controller} from "../../controller/index.js";
+import sha256 from "../../utils/sha256.js";
 
 const listeMessageEmis = [
     "demande_de_connexion",
@@ -53,7 +54,7 @@ const NoyauConnexion = () => {
     const [motDePasse, setMotDePasse] = useState('');
     const [erreur, setErreur] = useState('');
 
-    const logIn = () => {
+    const logIn = async () => {
         if (email && motDePasse) {
             if (verbose || controller.verboseall) console.log(`INFO: (${nomDInstance}) - logIn - `, email, motDePasse);
 
@@ -62,7 +63,7 @@ const NoyauConnexion = () => {
             controller.send(current, {
                 "demande_de_connexion": {
                     "email": email,
-                    "password": motDePasse
+                    "challenge": await sha256(email + await sha256(motDePasse))
                 }
             })
         } else {
