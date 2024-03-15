@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { controller } from '../../Controller/index.js';
+import { controller } from '../../controller/index.js';
 import { DiscussionContextProvider } from '../../elements/FilDiscussion/DiscussionContext';
 import './NoyauAccueil.scss';
 

@@ -1,7 +1,7 @@
 import "./ListeDiscussion.scss";
 import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { socket } from "../../Controller/socket.js";
+import { socket } from "../../controller/socket.js";
 // import SubscribeToEvent from "../SubscribeToEvent";
 import { Link } from "react-router-dom";
 

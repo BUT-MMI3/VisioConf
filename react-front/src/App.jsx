@@ -11,17 +11,18 @@ import NotFound from "./elements/NotFound.jsx";
 import Layout from "./elements/Layout/Layout.jsx";
 import ListeDiscussion from "./elements/ListeDiscussion/ListeDiscussion.jsx";
 import NoyauProfil from "./elements/NoyauProfil/NoyauProfil.jsx";
-import NoyauConnexion from "./elements/NoyauConnexion/NoyauConnexion.jsx";
+import NoyauConnexion from "./components/NoyauConnexion/NoyauConnexion.jsx";
 import AdminListeUtilisateurs from "./elements/AdminListeUtilisateurs/AdminListeUtilisateurs.jsx";
 import AdminListeRoles from "./elements/AdminListeRoles/AdminListeRoles.jsx";
 import AdminListePermissions from "./elements/AdminListePermissions/AdminListePermissions.jsx";
 import TestComponents from "./elements/TestComponents.jsx";
-import {controller} from "./Controller/index.js";
+import {controller} from "./controller/index.js";
 
 const listeMessageEmis = []
 
 const listeMessageRecu = [
     "connexion_acceptee",
+    "deconnexion"
 ]
 
 const App = () => {
@@ -42,13 +43,12 @@ const App = () => {
     });
 
     useEffect(() => {
-        if (verbose || controller.verboseall) console.log(`INFO: (${nomDInstance}) - useEffect - `);
         controller.subscribe(current, listeMessageEmis, listeMessageRecu);
 
         return () => {
             controller.unsubscribe(current, listeMessageEmis, listeMessageRecu);
         };
-    }, []);
+    }, [current]);
 
 
     return (
