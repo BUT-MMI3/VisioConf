@@ -27,7 +27,7 @@ const io = new Server(server, {
     },
     path: "/api/socket.io",
 });
-SocketApp(io, db);
+SocketApp(io);
 
 /**
  * Listen on provided port, on all network interfaces.

@@ -10,7 +10,7 @@ const uuid = require("uuid");
 const User = require("../models/user");
 const Discussion = require("../models/discussion");
 
-const SocketApp = (io, db) => {
+const SocketApp = (io) => {
   /**
    * Cette fonction initialise les événements de connexion et de déconnexion
    * pour le serveur de socket.
@@ -25,7 +25,7 @@ const SocketApp = (io, db) => {
     const controller = new Controller();
     const canalSocketIO = new CanalSocketIO(io, controller, "CanalSocketIO");
 
-    const login = new LogIn(controller, db, "LogIn");
+    const login = new LogIn(controller, "LogIn");
 
 
   // io.on("connection", (socket) => {

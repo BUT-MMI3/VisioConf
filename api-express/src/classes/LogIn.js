@@ -3,7 +3,6 @@ const {sha256} = require("../utils/utils");
 
 class LogIn {
     controller = null;
-    mongo = null;
     nomDInstance = "";
 
     listeMessagesEmis = ["connexion_acceptee", "connexion_refusee"];
@@ -14,9 +13,8 @@ class LogIn {
 
     verbose = true;
 
-    constructor(controller, database, nomDInstance) {
+    constructor(controller, nomDInstance) {
         this.controller = controller;
-        this.mongo = database;
         this.nomDInstance = nomDInstance;
 
         if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Création de l'instance LogIn : " + this.nomDInstance);
