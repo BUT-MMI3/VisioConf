@@ -1,9 +1,8 @@
-// TODO: Rework this class to be capable to use session Redux to send session token to the server on each message
 class CanalSocketIO {
     /**
      * Classe qui permet de gérer un canal de communication avec un client SocketIO
      *
-     * @param {SocketIO.Socket} s
+     * @param {Socket} s
      * @param {Controller} c
      * @param {string} nom
      */
@@ -14,6 +13,8 @@ class CanalSocketIO {
 
     listeDesMessagesEmis;
     listeDesMessagesRecus;
+
+    sessionToken = null;
 
     verbose = false;
 
@@ -42,7 +43,21 @@ class CanalSocketIO {
     }
 
     traitementMessage(msg) {
-        this.socket.emit("message", JSON.stringify(msg));
+        if (this.controller.verboseall || this.verbose) console.log(`INFO (${this.instanceName}): envoie ce message: ${msg}`);
+
+        if (!this.sessionToken && typeof msg.demande_de_connexion === "undefined") {
+            console.error("No session token")
+            return new Error("No session token");
+        }
+
+        this.socket.emit("message", JSON.stringify({
+            ...msg,
+            sessionToken: this.sessionToken
+        }));
+    }
+
+    setSessionToken(token) {
+        this.sessionToken = token;
     }
 }
 
