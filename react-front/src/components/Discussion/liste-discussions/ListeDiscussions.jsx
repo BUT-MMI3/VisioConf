@@ -1,7 +1,8 @@
-import "./ListeDiscussion.scss";
+import "./ListeDiscussions.scss";
 import {useEffect, useRef, useState} from "react";
 import {Link} from "react-router-dom";
-import {controller} from "../../controller/index.js";
+import {controller} from "../../../controller/index.js";
+import {useDiscussion} from "../context/DiscussionContext.jsx";
 
 const listeMessageEmis = [
     "nouvelle_discussion",
@@ -12,11 +13,12 @@ const listeMessageRecus = [
     "liste_messages",
 ]
 
-export default function ListeDiscussion() {
-    const instanceName = "ListeDiscussion";
+export default function ListeDiscussions() {
+    const instanceName = "ListeDiscussions";
     const verbose = false;
 
     const [discussions, setDiscussions] = useState([]);
+    const {newDiscussion} = useDiscussion();
 
     const {current} = useRef({
         instanceName,
@@ -29,6 +31,11 @@ export default function ListeDiscussion() {
             }
         }
     });
+
+    const handleNewDiscussion = () => {
+        console.log("handleNewDiscussion");
+        newDiscussion();
+    }
 
     useEffect(() => {
         controller.subscribe(current, listeMessageEmis, listeMessageRecus);
@@ -43,11 +50,9 @@ export default function ListeDiscussion() {
             <div className="liste-discussion--card">
                 <h2>Discussions</h2>
 
-                <Link to="/nouvelle-discussion">
-                    <button className="btn btn-primary">
-                        Nouvelle discussion
-                    </button>
-                </Link>
+                <button className="btn btn-primary" onClick={handleNewDiscussion}>
+                    Nouvelle discussion
+                </button>
 
                 <div className="liste-discussion--container">
                     <div className="liste-discussion--scroll">
