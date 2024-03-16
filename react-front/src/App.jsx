@@ -16,7 +16,7 @@ import AdminListeUtilisateurs from "./elements/AdminListeUtilisateurs/AdminListe
 import AdminListeRoles from "./elements/AdminListeRoles/AdminListeRoles.jsx";
 import AdminListePermissions from "./elements/AdminListePermissions/AdminListePermissions.jsx";
 import TestComponents from "./elements/TestComponents.jsx";
-import {controller} from "./controller/index.js";
+import {controller, canal} from "./controller/index.js";
 import {socket} from "./controller/socket.js";
 import { useSelector, useDispatch } from 'react-redux';
 import { signIn, signOut } from './features/session/sessionSlice';
@@ -44,7 +44,10 @@ const App = () => {
             if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
             if (typeof msg.connexion_acceptee !== "undefined") {
-                dispatch(signIn(msg.connexion_acceptee.user_info));
+                dispatch(signIn({
+                    session_token: msg.connexion_acceptee.session_token,
+                    user_info: msg.connexion_acceptee.user_info
+                }));
             } else if (typeof msg.deconnexion !== "undefined") {
                 socket.disconnect(); // déconnecte le socket pour éviter les erreurs
                 dispatch(signOut()); // déconnexion
@@ -67,6 +70,17 @@ const App = () => {
         if (session.isSignedIn && (location.pathname === "/login" || location.pathname === "/forgot-password")) navigate("/");
     }, [session.isSignedIn, location.pathname, navigate]);
 
+    useEffect(() => {
+        if (session.user_session_token) {
+            canal.setSessionToken(session.user_session_token);
+        }
+    }, [session.user_session_token]);
+
+    useEffect(() => {
+        if (session) {
+            console.log("session", session);
+        }
+    }, [session]);
 
     return (
         <Routes>

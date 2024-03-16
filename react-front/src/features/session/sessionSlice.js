@@ -23,21 +23,22 @@ export const sessionSlice = createSlice({
     },
     reducers: {
         signIn: (state, action) => {
-            state.user_uuid = action.payload.user_uuid;
-            state.user_firstname = action.payload.user_firstname;
-            state.user_lastname = action.payload.user_lastname;
-            state.user_email = action.payload.user_email;
-            state.user_phone = action.payload.user_phone;
-            state.user_status = action.payload.user_status;
-            state.user_job = action.payload.user_job;
-            state.user_date_create = action.payload.user_date_create;
-            state.user_picture = action.payload.user_picture;
+            console.log(action.payload);
+            state.user_uuid = action.payload.user_info.user_uuid;
+            state.user_firstname = action.payload.user_info.user_firstname;
+            state.user_lastname = action.payload.user_info.user_lastname;
+            state.user_email = action.payload.user_info.user_email;
+            state.user_phone = action.payload.user_info.user_phone;
+            state.user_status = action.payload.user_info.user_status;
+            state.user_job = action.payload.user_info.user_job;
+            state.user_date_create = action.payload.user_info.user_date_create;
+            state.user_picture = action.payload.user_info.user_picture;
             state.user_is_online = true;
-            state.user_disturb_status = action.payload.user_disturb_status;
-            state.user_last_connection = action.payload.user_last_connection;
-            state.user_direct_manager = action.payload.user_direct_manager;
-            state.user_roles = action.payload.user_roles;
-            state.user_session_token = action.payload.user_session_token;
+            state.user_disturb_status = action.payload.user_info.user_disturb_status;
+            state.user_last_connection = action.payload.user_info.user_last_connection;
+            state.user_direct_manager = action.payload.user_info.user_direct_manager;
+            state.user_roles = action.payload.user_info.user_roles;
+            state.user_session_token = action.payload.session_token;
             state.isSignedIn = true;
         },
         signOut: (state) => {
