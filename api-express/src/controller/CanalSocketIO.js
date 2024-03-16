@@ -40,6 +40,9 @@ class CanalSocketIO {
                 if (message.ecrit_message) console.log(message)
                 message.id = socket.id;
                 if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.nomDInstance + "): canalsocketio reçoit: " + msg + " de la part de " + socket.id);
+
+                // TODO: Vérifier si le session token est valide grâce a socketid + token stocké dans la base de donnée
+
                 this.controller.send(this, message);
             });
 
