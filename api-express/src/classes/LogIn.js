@@ -39,11 +39,12 @@ class LogIn {
                     user.user_socket_id = msg.id;
                     user.user_last_connection = new Date();
                     user.user_is_online = true;
+                    user.user_tokens["session"] = jwt.sign({user: user.user_email + user.user_password}, process.env.JWT_SECRET, {expiresIn: "1h"});
                     await user.save();
 
                     this.controller.send(this, {
                         "connexion_acceptee": {
-                            session_token: jwt.sign({user: user.user_email + user.user_password}, process.env.JWT_SECRET, {expiresIn: "1h"}),
+                            session_token: user.user_tokens["session"],
                             user_info: user.info
                         },
                         id: msg.id
