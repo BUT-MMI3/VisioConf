@@ -17,6 +17,7 @@ const ListeMessagesEmis = [
     "chat_message",
     "demande_liste_discussions",
     "demande_historique_discussion",
+    "demande_creation_discussion"
 ]
 
 /**
@@ -30,6 +31,7 @@ const ListeMessagesRecus = [
     "chat_message",
     "liste_discussions",
     "historique_discussion",
+    "discussion_creee"
 ]
 
 module.exports = {

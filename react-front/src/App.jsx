@@ -3,13 +3,11 @@
  * Date : Janvier 2024
  */
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
-import NoyauAccueil from "./elements/NoyauAccueil/NoyauAccueil.jsx";
 import Accueil from "./elements/Accueil/NoyauAccueil.jsx";
 // import { io } from "./io";
 import {useEffect, useRef} from "react";
 import NotFound from "./elements/NotFound.jsx";
 import Layout from "./elements/Layout/Layout.jsx";
-import ListeDiscussion from "./elements/ListeDiscussion/ListeDiscussion.jsx";
 import NoyauProfil from "./elements/NoyauProfil/NoyauProfil.jsx";
 import NoyauConnexion from "./components/NoyauConnexion/NoyauConnexion.jsx";
 import AdminListeUtilisateurs from "./elements/AdminListeUtilisateurs/AdminListeUtilisateurs.jsx";
@@ -20,6 +18,7 @@ import {controller, canal} from "./controller/index.js";
 import {socket} from "./controller/socket.js";
 import { useSelector, useDispatch } from 'react-redux';
 import { signIn, signOut } from './features/session/sessionSlice';
+import DiscussionComponent from "./components/Discussion/DiscussionComponent.jsx";
 
 const listeMessageEmis = []
 
@@ -101,8 +100,7 @@ const App = () => {
                             element={
                                 /* l'élément à l'interieur de <></> sera affiché grâce au composant <Outlet /> dans <Layout /> */
                                 <>
-                                    <ListeDiscussion/>
-                                    <NoyauAccueil/>
+                                    <DiscussionComponent/>
                                 </>
                             }
                         />
@@ -110,8 +108,7 @@ const App = () => {
                             path="discussion/:id"
                             element={
                                 <>
-                                    <ListeDiscussion/>
-                                    <NoyauAccueil/>
+                                    <DiscussionComponent/>
                                 </>
                             }
                         />
