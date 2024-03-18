@@ -4,7 +4,7 @@ Date: Janvier 2024
 */
 
 import { useState } from "react";
-import { useDiscussion } from "../FilDiscussion/DiscussionContext";
+import { useDiscussion } from "../../components/Discussion/context/DiscussionContext.jsx";
 import "./ChatInput.scss";
 
 export default function ChatInput() {

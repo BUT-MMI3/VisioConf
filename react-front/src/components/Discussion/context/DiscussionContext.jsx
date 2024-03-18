@@ -4,12 +4,12 @@ Date: Janvier 2024
 */
 
 import {createContext, useCallback, useContext, useEffect, useRef, useState,} from "react";
-import {controller} from "../../controller/index.js";
-import {useLocation} from "react-router-dom";
-import ChatInput from "../../elements/ChatInput/ChatInput";
-import FilDiscussion from "../../elements/FilDiscussion/FilDiscussion";
-import { useSelector } from 'react-redux';
-
+import {controller} from "../../../controller/index.js";
+import {useLocation, useNavigate} from "react-router-dom";
+import ChatInput from "../../../elements/ChatInput/ChatInput.jsx";
+import FilDiscussion from "../fil-discussion/FilDiscussion.jsx";
+import ListeDiscussions from "../liste-discussions/ListeDiscussions.jsx";
+import CreateDiscussion from "../create-discussion/CreateDiscussion.jsx";
 
 // Initialisation du contexte avec une valeur par défaut
 const DiscussionContext = createContext({
@@ -17,35 +17,41 @@ const DiscussionContext = createContext({
     // eslint-disable-next-line no-unused-vars
     addMessage: (message) => {
     },
+    newDiscussion: () => {
+    },
+    setCreateDiscussion: () => {
+    },
 });
 
 const listeMessagesEmis = [
-    "chat_message",
+    "envoie_message",
     "demande_liste_discussions",
     "demande_historique_discussion",
 ];
 const listeMessagesRecus = [
-    "chat_message",
+    "reception_message",
     "liste_discussions",
     "historique_discussion",
+    "discussion_creee"
 ];
 
 export function DiscussionContextProvider() {
     const instanceName = "Discussion Context";
     const verbose = true;
 
-
     const location = useLocation();
+    const navigate = useNavigate();
 
     const [discussionId, setDiscussionId] = useState(undefined);
     const [messages, setMessages] = useState([]);
+    const [createDiscussion, setCreateDiscussion] = useState(false);
 
     const {current} = useRef({
         instanceName,
         traitementMessage: (msg) => {
             if (verbose || controller.verboseall) console.log(`INFO (${instanceName}) - traitementMessage: `, msg);
 
-            if (typeof msg.chat_message !== "undefined") {
+            if (typeof msg.reception_message !== "undefined") {
                 setMessages((prevMessages) => [
                     ...prevMessages,
                     {
@@ -54,13 +60,23 @@ export function DiscussionContextProvider() {
                     },
                 ]);
             } else if (typeof msg.liste_discussions !== "undefined") {
-                setMessages(msg.liste_discussions);
+                const current_discussion = msg.liste_discussions.find((d) => d.discussion_uuid === discussionId);
+
+                if (current_discussion !== undefined) {
+                    setMessages(current_discussion.discussion_messages);
+                }
+            } else if (typeof msg.discussion_creee !== "undefined") {
+                console.log("INFO (" + instanceName + ") - traitementMessage : discussion_creee : ", msg.discussion_creee);
+                setCreateDiscussion(false);
+                setDiscussionId(msg.discussion_creee.discussion_uuid);
+                navigate("/discussion/" + msg.discussion_creee.discussion_uuid);
             }
         }
     })
 
     useEffect(() => {
         controller.subscribe(current, listeMessagesEmis, listeMessagesRecus);
+
         return () => {
             controller.unsubscribe(current, listeMessagesEmis, listeMessagesRecus);
         };
@@ -93,33 +109,47 @@ export function DiscussionContextProvider() {
     // Fonction pour ajouter un message au fil de discussion, gestion de l'ajout de message
     const addMessage = useCallback((message) => {
         controller.send(current, {
-            "chat_message": {
+            "envoie_message": {
                 discussionId: discussionId,
                 message: message,
             },
         });
     }, [current, discussionId]);
 
-    // La valeur fournie au contexte inclut les messages et la fonction pour ajouter un message
+    // Fonction pour créer une discussion
+    const newDiscussion = useCallback(() => {
+        setCreateDiscussion(true);
+    }, []);
+
+    // La valeur fournie au contexte
     const contextValue = {
         messages,
         addMessage,
+        newDiscussion,
+        setCreateDiscussion,
     };
 
     return (
         <DiscussionContext.Provider value={contextValue}>
-            <div className="discussion">
-                {(discussionId === undefined && (
-                    <div className="discussion--no-discussion">
+            <div className="discussion-context">
+                <ListeDiscussions/>
+
+                {createDiscussion && (
+                    <CreateDiscussion />
+                )}
+
+                {(!createDiscussion && discussionId === undefined && (
+                    <div className="discussion-content no-discussion">
                         <h2>Choisissez une discussion</h2>
                     </div>
-                )) || (
-                    <>
+                )) || (discussionId && !createDiscussion && (
+                    <div className="discussion-content">
                         <h2>Discussion ID: {discussionId}</h2>
                         <FilDiscussion/>
                         <ChatInput/>
-                    </>
-                )}
+                    </div>
+                ))}
+
             </div>
         </DiscussionContext.Provider>
     );

@@ -11,12 +11,13 @@
  * @type {string[]}
  */
 const ListeMessagesEmis = [
-    "demande_de_connexion",
     "client_deconnexion",
+    "demande_de_connexion",
     "demande_liste_utilisateurs",
-    "chat_message",
+    "envoie_message",
     "demande_liste_discussions",
     "demande_historique_discussion",
+    "demande_creation_discussion",
 ]
 
 /**
@@ -24,12 +25,14 @@ const ListeMessagesEmis = [
  * @type {string[]}
  */
 const ListeMessagesRecus = [
+    "client_deconnexion",
     "liste_utilisateurs",
     "connexion_acceptee",
     "connexion_refusee",
-    "chat_message",
+    "reception_message",
     "liste_discussions",
     "historique_discussion",
+    "discussion_creee",
 ]
 
 module.exports = {

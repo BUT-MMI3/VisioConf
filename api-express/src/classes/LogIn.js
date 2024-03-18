@@ -4,20 +4,20 @@ const jwt = require("jsonwebtoken");
 
 class LogIn {
     controller = null;
-    name = "";
+    instanceName = "";
 
     listeMessagesEmis = ["connexion_acceptee", "connexion_refusee"];
     listeMessagesRecus = ["demande_de_connexion", "client_deconnexion"];
 
     email = "";
 
-    verbose = false;
+    verbose = true;
 
     constructor(controller, name) {
         this.controller = controller;
-        this.name = name;
+        this.instanceName = name;
 
-        if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Création de l'instance LogIn : " + this.name);
+        if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Création de l'instance LogIn : " + this.instanceName);
 
         this.controller.subscribe(this, this.listeMessagesEmis, this.listeMessagesRecus);
     }
@@ -36,14 +36,21 @@ class LogIn {
                 if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur trouvé dans la base de données");
 
                 if (client_challenge === await sha256(user.user_email + user.user_password)) {
-                    user.user_socket_id = msg.id;
-                    user.user_last_connection = new Date();
-                    user.user_is_online = true;
-                    await user.save();
+                    user.set({
+                        'user_socket_id': msg.id,
+                        'user_last_connection': new Date(),
+                        'user_is_online': true,
+                        'user_tokens.session': jwt.sign({user: user.user_email + user.user_password}, process.env.JWT_SECRET, {expiresIn: "1h"})
+                    });
+                    try {
+                        await user.save();
+                    } catch (e) {
+                        console.log("ERROR (LogIn) - " + e);
+                    }
 
                     this.controller.send(this, {
                         "connexion_acceptee": {
-                            session_token: jwt.sign({user: user.user_email + user.user_password}, process.env.JWT_SECRET, {expiresIn: "1h"}),
+                            session_token: user.user_tokens["session"],
                             user_info: user.info
                         },
                         id: msg.id
@@ -52,15 +59,21 @@ class LogIn {
                     if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur connecté et token envoyé");
                 } else {
                     if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Mot de passe invalide");
-                    this.controller.send(this, {connexion_refusee: "Mot de passe invalide", id: msg.id}, this.name);
+                    this.controller.send(this, {
+                        connexion_refusee: "Mot de passe invalide",
+                        id: msg.id
+                    }, this.instanceName);
                 }
             } else {
                 if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur non trouvé dans la base de données");
-                this.controller.send(this, {connexion_refusee: "Utilisateur non trouvé", id: msg.id}, this.name);
+                this.controller.send(this, {
+                    connexion_refusee: "Utilisateur non trouvé",
+                    id: msg.id
+                }, this.instanceName);
             }
         } else {
             if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Adresse mail invalide");
-            this.controller.send(this, {connexion_refusee: "Adresse mail invalide", id: msg.id}, this.name);
+            this.controller.send(this, {connexion_refusee: "Adresse mail invalide", id: msg.id}, this.instanceName);
         }
     }
 
@@ -70,14 +83,13 @@ class LogIn {
         if (typeof msg.demande_de_connexion !== "undefined") {
             await this.handleLogin(msg);
         } else if (typeof msg.client_deconnexion !== "undefined") {
-            let user = await User.findOne({user_socket_id: msg.id});
-            if (user) {
-                user.user_socket_id = "";
-                user.user_is_online = false;
-                await user.save();
-
-                if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
-            }
+            await User.updateOne({user_socket_id: msg.id}, {
+                user_socket_id: "none",
+                user_is_online: false,
+                user_last_connection: new Date(),
+                user_tokens: {}
+            });
+            if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
         }
     }
 }

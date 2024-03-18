@@ -1,0 +1,152 @@
+.create-discussion {
+  padding: 1rem;
+
+  .header-create-discussion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 1rem;
+
+    .title {
+    }
+
+    .actions {
+      display: flex;
+      gap: 1rem;
+
+      button {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border-radius: 15px;
+        background-color: #ddd;
+        color: #000;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+        transition: background-color 0.25s;
+        line-height: 0;
+
+        &:hover {
+          background-color: #ccc;
+        }
+
+        &.close {
+          background-color: #DC4D38;
+          color: #fff;
+        }
+
+        &.close:hover {
+          background-color: #B94230;
+        }
+
+        &.create {
+          background-color: #5EE177;
+          color: #fff;
+        }
+
+        &.create:hover {
+          background-color: #44964B;
+        }
+      }
+    }
+  }
+
+  .membres {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 1rem;
+
+    .membre {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: #eee;
+      padding: 0.25rem 0.5rem;
+      border-radius: 15px;
+      color: #000;
+      font-size: 0.8rem;
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+      margin-block: 1rem;
+
+      .remove {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #DC4D38;
+        color: #fff;
+        border-radius: 50%;
+        padding: 0.2rem;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        transition: background-color 0.25s;
+
+        &:hover {
+          background-color: #B94230;
+        }
+      }
+
+
+
+      .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+    }
+  }
+
+  .form-create-discussion {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+  }
+
+  .search-results {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-block: 1rem;
+
+    .search-result {
+      list-style: none;
+      position: relative;
+
+      input[type="checkbox"] {
+        visibility: hidden;
+        position: absolute;
+      }
+
+      label {
+        display: block;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background-color: #eee;
+        border-radius: 15px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+        transition: background-color 0.25s;
+
+        &:hover {
+          background-color: #ddd;
+        }
+
+        &.selected {
+          background-color: #89D2FF;
+          color: #fff;
+        }
+      }
+
+    }
+  }
+}

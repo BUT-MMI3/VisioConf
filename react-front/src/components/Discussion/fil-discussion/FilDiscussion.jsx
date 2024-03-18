@@ -3,10 +3,10 @@ Author: @mathis-lambert
 Date: Janvier 2024
 */
 
-import { useDiscussion } from "./DiscussionContext";
+import { useDiscussion } from "../context/DiscussionContext.jsx";
 import "./FilDiscussion.scss";
 import { useRef, useEffect } from "react";
-import Message from "../Message/Message.jsx";
+import Message from "../../../elements/Message/Message.jsx";
 
 function FilDiscussion() {
   const { messages } = useDiscussion();
@@ -18,6 +18,7 @@ function FilDiscussion() {
     if (messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }
+    console.log(messages)
   }, [messages]);
 
   return (

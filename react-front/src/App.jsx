@@ -3,29 +3,27 @@
  * Date : Janvier 2024
  */
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
-import NoyauAccueil from "./elements/NoyauAccueil/NoyauAccueil.jsx";
 import Accueil from "./elements/Accueil/NoyauAccueil.jsx";
-// import { io } from "./io";
 import {useEffect, useRef} from "react";
 import NotFound from "./elements/NotFound.jsx";
 import Layout from "./elements/Layout/Layout.jsx";
-import ListeDiscussion from "./elements/ListeDiscussion/ListeDiscussion.jsx";
 import NoyauProfil from "./elements/NoyauProfil/NoyauProfil.jsx";
 import NoyauConnexion from "./components/NoyauConnexion/NoyauConnexion.jsx";
 import AdminListeUtilisateurs from "./elements/AdminListeUtilisateurs/AdminListeUtilisateurs.jsx";
 import AdminListeRoles from "./elements/AdminListeRoles/AdminListeRoles.jsx";
 import AdminListePermissions from "./elements/AdminListePermissions/AdminListePermissions.jsx";
 import TestComponents from "./elements/TestComponents.jsx";
-import {controller} from "./controller/index.js";
+import {controller, canal} from "./controller/index.js";
 import {socket} from "./controller/socket.js";
 import { useSelector, useDispatch } from 'react-redux';
 import { signIn, signOut } from './features/session/sessionSlice';
+import DiscussionComponent from "./components/Discussion/DiscussionComponent.jsx";
 
 const listeMessageEmis = []
 
 const listeMessageRecus = [
     "connexion_acceptee",
-    "deconnexion"
+    "client_deconnexion"
 ]
 
 const App = () => {
@@ -44,10 +42,15 @@ const App = () => {
             if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
             if (typeof msg.connexion_acceptee !== "undefined") {
-                dispatch(signIn(msg.connexion_acceptee.user_info));
-            } else if (typeof msg.deconnexion !== "undefined") {
+                dispatch(signIn({
+                    session_token: msg.connexion_acceptee.session_token,
+                    user_info: msg.connexion_acceptee.user_info
+                }));
+            } else if (typeof msg.client_deconnexion !== "undefined") {
                 socket.disconnect(); // déconnecte le socket pour éviter les erreurs
                 dispatch(signOut()); // déconnexion
+                canal.setSessionToken(null); // supprime le token de session
+                console.log(canal.sessionToken);
                 socket.connect(); // reconnect
             }
         }
@@ -67,6 +70,17 @@ const App = () => {
         if (session.isSignedIn && (location.pathname === "/login" || location.pathname === "/forgot-password")) navigate("/");
     }, [session.isSignedIn, location.pathname, navigate]);
 
+    useEffect(() => {
+        if (session.user_session_token) {
+            canal.setSessionToken(session.user_session_token);
+        }
+    }, [session.user_session_token]);
+
+    useEffect(() => {
+        if (session) {
+            console.log("session", session);
+        }
+    }, [session]);
 
     return (
         <Routes>
@@ -87,8 +101,7 @@ const App = () => {
                             element={
                                 /* l'élément à l'interieur de <></> sera affiché grâce au composant <Outlet /> dans <Layout /> */
                                 <>
-                                    <ListeDiscussion/>
-                                    <NoyauAccueil/>
+                                    <DiscussionComponent/>
                                 </>
                             }
                         />
@@ -96,8 +109,7 @@ const App = () => {
                             path="discussion/:id"
                             element={
                                 <>
-                                    <ListeDiscussion/>
-                                    <NoyauAccueil/>
+                                    <DiscussionComponent/>
                                 </>
                             }
                         />

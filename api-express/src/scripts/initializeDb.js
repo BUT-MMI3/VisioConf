@@ -56,6 +56,8 @@ const initializeUsers = async () => {
 
 const initializeDiscussions = async () => {
     try {
+        await Discussion.deleteMany({});
+
         // Trouvez les utilisateurs par email (ou un autre identifiant unique)
         const userJohn = await User.findOne({user_email: 'john.doe@example.com'});
         const userJanny = await User.findOne({user_email: 'janny.doey@example.com'});
@@ -73,7 +75,8 @@ const initializeDiscussions = async () => {
                 discussion_uuid: uuidv4(),
                 discussion_name: 'Project Discussion',
                 discussion_description: 'Discussion about the project',
-                discussion_members: [{user: userJohn._id}, {user: userJanny._id}],
+                discussion_members: [userJohn._id, userJanny._id],
+                discussion_creator: userJohn._id,
             },
         ];
 

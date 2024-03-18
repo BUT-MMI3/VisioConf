@@ -63,7 +63,7 @@ const UserSchema = new Schema({
     },
 });
 
-// Virtual for user's full name
+// Virtual for user's full instanceName
 UserSchema.virtual("user_fullname").get(function () {
     return this.user_firstname + " " + this.user_lastname;
 });

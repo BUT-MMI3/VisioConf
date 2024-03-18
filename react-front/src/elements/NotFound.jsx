@@ -1,6 +1,15 @@
 const NotFound = () => {
   return (
-    <div className="layout-content--full">
+    <div className="layout-content--full" style={
+        {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            padding: "20px"
+        }
+    }>
       <img
         src="/others/not-found.png"
         alt="Page non trouvée"

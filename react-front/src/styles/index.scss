@@ -35,8 +35,15 @@ body {
   min-height: 100vh;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.1;
+  color: #191919;
+  font-weight: bold;
+}
+
 h1 {
-  font-size: 3.2em;
+  font-size: 2em;
   line-height: 1.1;
 }
 h2 {
@@ -60,6 +67,13 @@ button {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  user-select: none;
+  pointer-events: none;
 }
 
 @media (prefers-color-scheme: light) {
