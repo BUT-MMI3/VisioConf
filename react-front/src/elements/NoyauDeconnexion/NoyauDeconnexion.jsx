@@ -4,7 +4,7 @@ import {controller} from "../../controller/index.js";
 import {useRef, useEffect} from "react";
 
 const listeMessageEmis = [
-    "deconnexion"
+    "client_deconnexion"
 ]
 
 const listeMessageRecus = []
@@ -24,7 +24,7 @@ const NoyauDeconnexion = () => {
 
     const validateLogout = () => {
         controller.send(current, {
-            "deconnexion": ""
+            "client_deconnexion": ""
         });
     }
 

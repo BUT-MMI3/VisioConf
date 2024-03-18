@@ -5,7 +5,7 @@ Date: Janvier 2024
 
 import {createContext, useCallback, useContext, useEffect, useRef, useState,} from "react";
 import {controller} from "../../../controller/index.js";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import ChatInput from "../../../elements/ChatInput/ChatInput.jsx";
 import FilDiscussion from "../fil-discussion/FilDiscussion.jsx";
 import ListeDiscussions from "../liste-discussions/ListeDiscussions.jsx";
@@ -19,15 +19,17 @@ const DiscussionContext = createContext({
     },
     newDiscussion: () => {
     },
+    setCreateDiscussion: () => {
+    },
 });
 
 const listeMessagesEmis = [
-    "chat_message",
+    "envoie_message",
     "demande_liste_discussions",
     "demande_historique_discussion",
 ];
 const listeMessagesRecus = [
-    "chat_message",
+    "reception_message",
     "liste_discussions",
     "historique_discussion",
     "discussion_creee"
@@ -38,6 +40,7 @@ export function DiscussionContextProvider() {
     const verbose = true;
 
     const location = useLocation();
+    const navigate = useNavigate();
 
     const [discussionId, setDiscussionId] = useState(undefined);
     const [messages, setMessages] = useState([]);
@@ -48,7 +51,7 @@ export function DiscussionContextProvider() {
         traitementMessage: (msg) => {
             if (verbose || controller.verboseall) console.log(`INFO (${instanceName}) - traitementMessage: `, msg);
 
-            if (typeof msg.chat_message !== "undefined") {
+            if (typeof msg.reception_message !== "undefined") {
                 setMessages((prevMessages) => [
                     ...prevMessages,
                     {
@@ -57,9 +60,16 @@ export function DiscussionContextProvider() {
                     },
                 ]);
             } else if (typeof msg.liste_discussions !== "undefined") {
-                setMessages(msg.liste_discussions);
+                const current_discussion = msg.liste_discussions.find((d) => d.discussion_uuid === discussionId);
+
+                if (current_discussion !== undefined) {
+                    setMessages(current_discussion.discussion_messages);
+                }
             } else if (typeof msg.discussion_creee !== "undefined") {
                 console.log("INFO (" + instanceName + ") - traitementMessage : discussion_creee : ", msg.discussion_creee);
+                setCreateDiscussion(false);
+                setDiscussionId(msg.discussion_creee.discussion_uuid);
+                navigate("/discussion/" + msg.discussion_creee.discussion_uuid);
             }
         }
     })
@@ -99,7 +109,7 @@ export function DiscussionContextProvider() {
     // Fonction pour ajouter un message au fil de discussion, gestion de l'ajout de message
     const addMessage = useCallback((message) => {
         controller.send(current, {
-            "chat_message": {
+            "envoie_message": {
                 discussionId: discussionId,
                 message: message,
             },
@@ -116,6 +126,7 @@ export function DiscussionContextProvider() {
         messages,
         addMessage,
         newDiscussion,
+        setCreateDiscussion,
     };
 
     return (

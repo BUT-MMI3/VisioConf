@@ -43,7 +43,10 @@ class CanalSocketIO {
     }
 
     traitementMessage(msg) {
-        if (this.controller.verboseall || this.verbose) console.log(`INFO (${this.instanceName}): envoie ce message: ${msg}`);
+        if (typeof msg.id !== "undefined") delete msg.id;
+        if (typeof msg.client_deconnexion !== "undefined") return;
+
+        if (this.controller.verboseall || this.verbose) console.log(`INFO (${this.instanceName}): envoie ce message: ${JSON.stringify(msg)}`);
 
         if (!this.sessionToken && typeof msg.demande_de_connexion === "undefined") {
             console.error("No session token")

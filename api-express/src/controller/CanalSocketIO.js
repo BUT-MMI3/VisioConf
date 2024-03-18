@@ -1,4 +1,6 @@
 const {ListeMessagesEmis, ListeMessagesRecus} = require("./ListeMessages");
+const User = require("../models/user");
+const jwt = require('jsonwebtoken');
 
 class CanalSocketIO {
     /**
@@ -35,15 +37,43 @@ class CanalSocketIO {
         this.controller.subscribe(this, this.listeDesMessagesEmis, this.listeDesMessagesRecus);
 
         this.io.on('connection', (socket) => {
-            socket.on('message', (msg) => {
-                let message = JSON.parse(msg);
-                if (message.ecrit_message) console.log(message)
-                message.id = socket.id;
-                if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.nomDInstance + "): canalsocketio reçoit: " + msg + " de la part de " + socket.id);
+            socket.on('message', async (msg) => {
+                try {
+                    if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.nomDInstance + "): canalsocketio reçoit: " + msg + " de la part de " + socket.id);
 
-                // TODO: Vérifier si le session token est valide grâce a socketid + token stocké dans la base de donnée
+                    const message = JSON.parse(msg);
+                    message.id = socket.id;
 
-                this.controller.send(this, message);
+                    // Si le token est valide, on peut continuer, sinon on refuse la connexion
+                    const token = message.sessionToken;
+
+                    if (token !== null) {
+                        const user = await User.findOne({"user_tokens.session": message.sessionToken});
+
+                        if (user) {
+                            jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+                                if (err) {
+                                    if (this.controller.verboseall || this.verbose) console.log("ERROR: Token invalide", err);
+                                    return;
+                                }
+                                if (this.controller.verboseall || this.verbose) console.log("INFO: Token valide");
+                                this.controller.send(this, message);
+                            });
+                        } else {
+                            if (this.controller.verboseall || this.verbose) console.log("ERROR: Token invalide");
+
+                            this.controller.send(this, {client_deconnexion: socket.id, id: socket.id});
+                        }
+                    } else if (typeof message.demande_de_connexion !== 'undefined') {
+                        if (this.controller.verboseall || this.verbose) console.log("INFO: Demande de connexion");
+                        this.controller.send(this, message);
+                    } else {
+                        if (this.controller.verboseall || this.verbose) console.log("ERROR: Token invalide");
+                    }
+
+                } catch (e) {
+                    console.log(e)
+                }
             });
 
 
@@ -59,9 +89,7 @@ class CanalSocketIO {
             socket.on('disconnect', () => {
                 if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.nomDInstance + "): " + socket.id + " s'est déconnecté");
 
-                let message = {}
-                message.client_deconnexion = socket.id;
-                this.controller.send(this, message);
+                this.controller.send(this, {client_deconnexion: socket.id, id: socket.id});
             });
         });
 

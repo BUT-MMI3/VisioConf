@@ -4,7 +4,6 @@
  */
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import Accueil from "./elements/Accueil/NoyauAccueil.jsx";
-// import { io } from "./io";
 import {useEffect, useRef} from "react";
 import NotFound from "./elements/NotFound.jsx";
 import Layout from "./elements/Layout/Layout.jsx";
@@ -24,7 +23,7 @@ const listeMessageEmis = []
 
 const listeMessageRecus = [
     "connexion_acceptee",
-    "deconnexion"
+    "client_deconnexion"
 ]
 
 const App = () => {
@@ -47,9 +46,11 @@ const App = () => {
                     session_token: msg.connexion_acceptee.session_token,
                     user_info: msg.connexion_acceptee.user_info
                 }));
-            } else if (typeof msg.deconnexion !== "undefined") {
+            } else if (typeof msg.client_deconnexion !== "undefined") {
                 socket.disconnect(); // déconnecte le socket pour éviter les erreurs
                 dispatch(signOut()); // déconnexion
+                canal.setSessionToken(null); // supprime le token de session
+                console.log(canal.sessionToken);
                 socket.connect(); // reconnect
             }
         }

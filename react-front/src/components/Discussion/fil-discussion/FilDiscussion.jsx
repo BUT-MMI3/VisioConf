@@ -18,6 +18,7 @@ function FilDiscussion() {
     if (messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }
+    console.log(messages)
   }, [messages]);
 
   return (
