@@ -11,7 +11,7 @@ const usersToInsert = [
         user_email: 'john.doe@example.com',
         user_phone: "00.00.00.00.00",
         user_job: "Responsable RH",
-        user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17', // hash = mdp
+        user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17',
     },
     {
         user_uuid: uuidv4(),
@@ -32,6 +32,17 @@ const usersToInsert = [
         user_phone: "00.00.00.00.00",
         user_job: "Responsable RH",
         user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17', // hash = mdp
+    },
+    {
+        user_uuid: uuidv4(),
+        user_firstname: 'Utilisateur',
+        user_lastname: 'Utilisateur',
+        user_job_desc: 'Student',
+        user_email: 'utilisateur@example.com',
+        user_phone: "00.00.00.00.00",
+        user_job: "Student",
+        user_password: ' ',
+        user_tokens: {inscription: 'azerty1234'},
     },
 ];
 const initializeUsers = async () => {
@@ -62,9 +73,10 @@ const initializeDiscussions = async () => {
         const userJohn = await User.findOne({user_email: 'john.doe@example.com'});
         const userJanny = await User.findOne({user_email: 'janny.doey@example.com'});
         const userJean = await User.findOne({user_email: 'jean.deau@example.com'});
+        const userUtilisateur = await User.findOne({user_email: 'utilisateur@example.com'});
 
         // Vérifiez si les utilisateurs existent
-        if (!userJohn || !userJanny || !userJean) {
+        if (!userJohn || !userJanny || !userJean || !userUtilisateur) {
             console.log("Certains utilisateurs sont manquants. Assurez-vous que les utilisateurs sont insérés d'abord.");
             return;
         }

@@ -5,6 +5,7 @@
 const Controller = require("../controller/Controller.js");
 const CanalSocketIO = require("../controller/CanalSocketIO.js");
 const LogIn = require("../classes/LogIn.js");
+const Register = require("../classes/Register.js");
 const Discussions = require("../classes/Discussions.js");
 const Utilisateurs = require("../classes/Utilisateurs.js");
 
@@ -28,6 +29,7 @@ const SocketApp = (io) => {
     new CanalSocketIO(io, controller, "CanalSocketIO");
 
     new LogIn(controller, "LogIn");
+    new Register(controller, "Register");
     new Discussions(controller, "Discussions");
     new Utilisateurs(controller, "Utilisateurs");
 }

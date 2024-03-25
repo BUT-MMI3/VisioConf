@@ -67,6 +67,10 @@ class CanalSocketIO {
                     } else if (typeof message.demande_de_connexion !== 'undefined') {
                         if (this.controller.verboseall || this.verbose) console.log("INFO: Demande de connexion");
                         this.controller.send(this, message);
+                    } else if (typeof message.demande_inscription !== 'undefined') {
+                        if (this.controller.verboseall || this.verbose) console.log("INFO: Demande d'inscription");
+                        console.log("mon message id",message.id);
+                        this.controller.send(this, message);
                     } else {
                         if (this.controller.verboseall || this.verbose) console.log("ERROR: Token invalide");
                     }

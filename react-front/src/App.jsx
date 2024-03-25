@@ -8,6 +8,7 @@ import {useEffect, useRef} from "react";
 import NotFound from "./elements/NotFound.jsx";
 import Layout from "./elements/Layout/Layout.jsx";
 import NoyauProfil from "./elements/NoyauProfil/NoyauProfil.jsx";
+import NoyauInscription from "./components/NoyauInscription/NoyauInscription.jsx";
 import NoyauConnexion from "./components/NoyauConnexion/NoyauConnexion.jsx";
 import AdminListeUtilisateurs from "./elements/AdminListeUtilisateurs/AdminListeUtilisateurs.jsx";
 import AdminListeRoles from "./elements/AdminListeRoles/AdminListeRoles.jsx";
@@ -15,14 +16,15 @@ import AdminListePermissions from "./elements/AdminListePermissions/AdminListePe
 import TestComponents from "./elements/TestComponents.jsx";
 import {controller, canal} from "./controller/index.js";
 import {socket} from "./controller/socket.js";
-import { useSelector, useDispatch } from 'react-redux';
-import { signIn, signOut } from './features/session/sessionSlice';
+import {useSelector, useDispatch} from 'react-redux';
+import {signIn, signOut} from './features/session/sessionSlice';
 import DiscussionComponent from "./components/Discussion/DiscussionComponent.jsx";
 
 const listeMessageEmis = []
 
 const listeMessageRecus = [
     "connexion_acceptee",
+    "inscription_acceptee",
     "client_deconnexion"
 ]
 
@@ -52,6 +54,11 @@ const App = () => {
                 canal.setSessionToken(null); // supprime le token de session
                 console.log(canal.sessionToken);
                 socket.connect(); // reconnect
+            } else if (typeof msg.inscription_acceptee !== "undefined") {
+                dispatch(signIn({
+                    session_token: msg.inscription_acceptee.session_token,
+                    user_info: msg.inscription_acceptee.user_info
+                }));
             }
         }
     });
@@ -65,7 +72,8 @@ const App = () => {
     }, [current]);
 
     useEffect(() => {
-        if (!session.isSignedIn && (location.pathname !== "/login" || location.pathname !== "/forgot-password")) navigate("/login");
+        if (!session.isSignedIn && location.pathname !== "/login" && location.pathname !== "/forgot-password" && location.pathname !== "/inscription") navigate("/login");
+
 
         if (session.isSignedIn && (location.pathname === "/login" || location.pathname === "/forgot-password")) navigate("/");
     }, [session.isSignedIn, location.pathname, navigate]);
@@ -86,14 +94,6 @@ const App = () => {
         <Routes>
             {session.isSignedIn && (
                 <>
-                    <Route
-                        path="/dev_route_connexion"
-                        element={
-                            <>
-                                <NoyauConnexion/>
-                            </>
-                        }
-                    />
                     <Route path="/" element={<Layout/>}>
                         <Route
                             index
@@ -177,6 +177,15 @@ const App = () => {
 
             {!session.isSignedIn && (
                 <>
+                    <Route
+                        path="/inscription"
+                        element={
+                            <>
+                                <NoyauInscription/>
+                            </>
+                        }
+                    />
+
                     <Route
                         path="/login"
                         element={
