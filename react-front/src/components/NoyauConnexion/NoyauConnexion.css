@@ -14,11 +14,10 @@
 .card-connexion {
     background-color: white;
     border-radius: 10px;
-    padding: 35px;
+    padding: 1.5rem;
     text-align: center;
-    width: 353px;
-    padding-top: 50px;
-    padding-bottom: 15px;
+    padding-top: 3rem;
+    padding-bottom: 1rem;
 }
 
 .logo-connexion {

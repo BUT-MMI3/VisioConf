@@ -6,13 +6,15 @@
     font-size: 19px;
     margin-bottom: 20px;
     margin-top: 10px;
+    white-space: wrap;
+    width: 18rem;
 }
 .valid {
     color: green;
 }
 .pass {
     display: flex;
-    font-size: 11px
+    font-size: 0.8rem;
 }
 .password-rules{
     margin-bottom: 10px;
@@ -34,27 +36,29 @@
 .card-inscription {
     background-color: white;
     border-radius: 10px;
-    padding: 35px;
+    padding: 2rem;
     text-align: center;
-    width: 353px;
-    padding-top: 50px;
-    padding-bottom: 15px;
+    padding-top: 3rem;
+    padding-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .logo-inscription {
     width: 280px;
     max-height: 80px;
     object-fit: contain;
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
 }
 
 label {
     display: flex;
-    margin-bottom: 5px;
+    margin-bottom: 0.5rem;
     color: #304978;
 }
 
@@ -74,8 +78,8 @@ input {
 
 .erreur-message {
     color: #CB0000;
-    margin-top: 5px;
-    font-size: 12px;
+    margin-top: 0.5rem;
+    font-size: 1rem;
 }
 
 .button-inscription {
@@ -99,7 +103,7 @@ input {
 }
 
 .lien-mot-de-passe-oublie {
-    margin-top: 15px;
+    margin-top: 1rem;
 }
 
 .lien-mot-de-passe-oublie>a:nth-child(1) {
