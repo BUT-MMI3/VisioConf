@@ -23,7 +23,6 @@ export const sessionSlice = createSlice({
     },
     reducers: {
         signIn: (state, action) => {
-            console.log(action.payload);
             state.user_uuid = action.payload.user_info.user_uuid;
             state.user_firstname = action.payload.user_info.user_firstname;
             state.user_lastname = action.payload.user_info.user_lastname;

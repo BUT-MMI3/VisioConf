@@ -31,7 +31,7 @@ const listeMessageRecus = [
 
 const App = () => {
     const instanceName = "App";
-    const verbose = true;
+    const verbose = false;
 
     const [loading, setLoading] = useState(initConnection.loading);
     const [controller, setController] = useState(initConnection.controller);
@@ -105,9 +105,9 @@ const App = () => {
 
     useEffect(() => {
         if (session) {
-            console.log("session", session);
+            if (verbose) console.log("session", session);
         }
-    }, [session]);
+    }, [verbose, session]);
 
     return (
         <Routes>
