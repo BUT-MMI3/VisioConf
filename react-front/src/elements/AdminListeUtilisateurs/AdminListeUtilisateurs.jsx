@@ -1,7 +1,7 @@
 import "./AdminListeUtilisateurs.scss";
 import {useEffect, useRef, useState} from "react";
 import {initConnection} from "../../controller/index.js";
-import {Link} from "react-router-dom";
+import LinkTo from "../LinkTo/LinkTo.jsx";
 
 const listeMessagesEmis = ["fetch-utilisateurs"];
 const listeMessagesRecus = ["get-utilisateurs"];
@@ -61,18 +61,18 @@ const AdminListeUtilisateurs = () => {
                                 <td>{user.email}</td>
                                 <td>{user.roles.join(", ")}</td>
                                 <td>
-                                    <Link
+                                    <LinkTo
                                         to={`/modifier-utilisateur/${user.id}`}
                                         className="liste-utilisateurs--modif"
                                     >
                                         Mod
-                                    </Link>
-                                    <Link
+                                    </LinkTo>
+                                    <LinkTo
                                         to={`/supprimer-utilisateur/${user.id}`}
                                         className="liste-utilisateurs--supp"
                                     >
                                         Sup
-                                    </Link>
+                                    </LinkTo>
                                 </td>
                             </tr>
                         ))}

@@ -19,6 +19,7 @@ const ListeMessagesEmis = [
     "demande_liste_discussions",
     "demande_historique_discussion",
     "demande_creation_discussion",
+    "naviguer_vers"
 ]
 
 /**

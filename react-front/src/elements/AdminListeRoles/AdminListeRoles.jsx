@@ -1,7 +1,7 @@
 import "./AdminListeRoles.scss";
 import {useEffect, useRef, useState} from "react";
 import {initConnection} from "../../controller/index.js";
-import {Link} from "react-router-dom";
+import LinkTo from "../LinkTo/LinkTo.jsx";
 
 const listeMessagesEmis = ["fetch-roles"];
 const listeMessagesRecus = ["get-roles"];
@@ -57,18 +57,18 @@ const AdminListeRoles = () => {
                                 <td>{role.label}</td>
                                 <td>{role.permissions.join(", ")}</td>
                                 <td>
-                                    <Link
+                                    <LinkTo
                                         to={`/modifier-role/${role.id}`}
                                         className="liste-roles--modif"
                                     >
                                         Mod
-                                    </Link>
-                                    <Link
+                                    </LinkTo>
+                                    <LinkTo
                                         to={`/supprimer-role/${role.id}`}
                                         className="liste-roles--supp"
                                     >
                                         Sup
-                                    </Link>
+                                    </LinkTo>
                                 </td>
                             </tr>
                         ))}
