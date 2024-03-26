@@ -1,6 +1,7 @@
 const {ListeMessagesEmis, ListeMessagesRecus} = require("./ListeMessages");
 const User = require("../models/user");
 const jwt = require('jsonwebtoken');
+const fs = require("fs");
 
 class CanalSocketIO {
     /**
@@ -69,7 +70,7 @@ class CanalSocketIO {
                         this.controller.send(this, message);
                     } else if (typeof message.demande_inscription !== 'undefined') {
                         if (this.controller.verboseall || this.verbose) console.log("INFO: Demande d'inscription");
-                        console.log("mon message id",message.id);
+                        console.log("mon message id", message.id);
                         this.controller.send(this, message);
                     } else {
                         if (this.controller.verboseall || this.verbose) console.log("ERROR: Token invalide");
@@ -80,6 +81,10 @@ class CanalSocketIO {
                 }
             });
 
+            socket.on('demande_fichier', async (msg) => {
+                if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.nomDInstance + "): demande de fichier reçue: " + msg);
+                this.envoiFichier(socket, msg);
+            })
 
             socket.on('demande_liste', (msg) => {
                 if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.nomDInstance + "): on donne les listes émission et abonnement");
@@ -96,8 +101,26 @@ class CanalSocketIO {
                 this.controller.send(this, {client_deconnexion: socket.id, id: socket.id});
             });
         });
+    }
 
+    envoiFichier = (socket, fichier) => {
+        if (this.verbose || this.controller.verboseall) console.log("INFO (" + this.instanceName + "): Envoi du fichier: " + fichier);
 
+        fs.readFile('./src/client-files/' + fichier, (err, data) => {
+            if (err) {
+                if (this.verbose || this.controller.verboseall) console.error("ERREUR (" + this.instanceName + "): Erreur lors de la lecture du fichier: " + err);
+
+                socket.emit("erreur_fichier", "Erreur lors de la lecture du fichier");
+                return;
+            }
+
+            socket.emit("envoi_fichier", {
+                nom: fichier,
+                data: data
+            });
+
+            if (this.verbose || this.controller.verboseall) console.log("INFO (" + this.instanceName + "): Fichier envoyé: " + fichier);
+        });
     }
 
 

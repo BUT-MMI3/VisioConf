@@ -1,4 +1,4 @@
-import {controller} from "../../../controller/index.js";
+import {initConnection} from "../../../controller/index.js";
 import {useEffect, useRef, useState} from "react";
 import './CreateDiscussion.scss';
 import {useDiscussion} from "../context/DiscussionContext.jsx";
@@ -18,6 +18,8 @@ const CreateDiscussion = () => {
     const verbose = false;
 
     const {setCreateDiscussion} = useDiscussion();
+
+    const [controller] = useState(initConnection.getController());
 
     const [search, setSearch] = useState("");
     const [searchResults, setSearchResults] = useState([]);
@@ -121,10 +123,10 @@ const CreateDiscussion = () => {
                                     <div className='membre'>
                                         <span>{user.user_firstname} {user.user_lastname} ({user.user_job})</span>
                                         <X
-                                           className='remove'
-                                           onClick={() => {
-                                               setDiscussionMembers(discussionMembers.filter((m) => m !== member));
-                                           }}/>
+                                            className='remove'
+                                            onClick={() => {
+                                                setDiscussionMembers(discussionMembers.filter((m) => m !== member));
+                                            }}/>
                                     </div>
                                 </div>
                             )

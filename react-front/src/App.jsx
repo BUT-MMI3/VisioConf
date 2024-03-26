@@ -4,7 +4,7 @@
  */
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import Accueil from "./elements/Accueil/NoyauAccueil.jsx";
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import NotFound from "./elements/NotFound.jsx";
 import Layout from "./elements/Layout/Layout.jsx";
 import NoyauProfil from "./elements/NoyauProfil/NoyauProfil.jsx";
@@ -14,11 +14,12 @@ import AdminListeUtilisateurs from "./elements/AdminListeUtilisateurs/AdminListe
 import AdminListeRoles from "./elements/AdminListeRoles/AdminListeRoles.jsx";
 import AdminListePermissions from "./elements/AdminListePermissions/AdminListePermissions.jsx";
 import TestComponents from "./elements/TestComponents.jsx";
-import {controller, canal} from "./controller/index.js";
+import {initConnection} from "./controller/index.js";
 import {socket} from "./controller/socket.js";
-import {useSelector, useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {signIn, signOut} from './features/session/sessionSlice';
 import DiscussionComponent from "./components/Discussion/DiscussionComponent.jsx";
+import Loader from "./elements/Loader/Loader.jsx";
 
 const listeMessageEmis = []
 
@@ -32,6 +33,10 @@ const App = () => {
     const instanceName = "App";
     const verbose = true;
 
+    const [loading, setLoading] = useState(initConnection.loading);
+    const [controller, setController] = useState(initConnection.controller);
+    const [canal, setCanal] = useState(initConnection.canal);
+
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -41,7 +46,7 @@ const App = () => {
     const {current} = useRef({
         instanceName,
         traitementMessage: (msg) => {
-            if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
+            if (verbose || (controller ? controller.verboseall : null)) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
             if (typeof msg.connexion_acceptee !== "undefined") {
                 dispatch(signIn({
@@ -51,8 +56,7 @@ const App = () => {
             } else if (typeof msg.client_deconnexion !== "undefined") {
                 socket.disconnect(); // déconnecte le socket pour éviter les erreurs
                 dispatch(signOut()); // déconnexion
-                canal.setSessionToken(null); // supprime le token de session
-                console.log(canal.sessionToken);
+                canal ? canal.setSessionToken(null) : null; // supprime le token de session
                 socket.connect(); // reconnect
             } else if (typeof msg.inscription_acceptee !== "undefined") {
                 dispatch(signIn({
@@ -64,12 +68,27 @@ const App = () => {
     });
 
     useEffect(() => {
-        controller.subscribe(current, listeMessageEmis, listeMessageRecus);
+        // Définir un callback pour être notifié des changements de `loading`
+        initConnection.setLoadingCallback(setLoading);
+        initConnection.setControllerCallback(setController);
+        initConnection.setCanalCallback(setCanal);
 
         return () => {
-            controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
-        };
-    }, [current]);
+            initConnection.setLoadingCallback(null);
+            initConnection.setControllerCallback(null);
+            initConnection.setCanalCallback(null);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!loading) {
+            controller.subscribe(current, listeMessageEmis, listeMessageRecus);
+
+            return () => {
+                controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
+            };
+        }
+    }, [controller, current, loading]);
 
     useEffect(() => {
         if (!session.isSignedIn && location.pathname !== "/login" && location.pathname !== "/forgot-password" && location.pathname !== "/inscription") navigate("/login");
@@ -82,7 +101,7 @@ const App = () => {
         if (session.user_session_token) {
             canal.setSessionToken(session.user_session_token);
         }
-    }, [session.user_session_token]);
+    }, [canal, session.user_session_token]);
 
     useEffect(() => {
         if (session) {
@@ -92,7 +111,12 @@ const App = () => {
 
     return (
         <Routes>
-            {session.isSignedIn && (
+            {loading && (
+                <>
+                    <Route path="*" element={<Loader/>}/>
+                </>
+            )}
+            {session.isSignedIn && !loading && (
                 <>
                     <Route path="/" element={<Layout/>}>
                         <Route
@@ -175,7 +199,7 @@ const App = () => {
                 </>
             )}
 
-            {!session.isSignedIn && (
+            {!session.isSignedIn && !loading && (
                 <>
                     <Route
                         path="/inscription"

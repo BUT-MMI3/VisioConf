@@ -81,7 +81,7 @@ input {
     margin-top: 15px;
 }
 
-.lien-mot-de-passe-oublie>a:nth-child(1) {
+.lien-mot-de-passe-oublie > a:nth-child(1) {
     color: #409cdc;
 }
 

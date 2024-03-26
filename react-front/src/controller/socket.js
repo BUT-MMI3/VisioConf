@@ -2,7 +2,7 @@
  * Author: @mathis-lambert
  * Date : Janvier 2024
  */
-import { io } from "socket.io-client";
+import {io} from "socket.io-client";
 
 const currentURL = window.location.hostname;
 const currentProtocol = window.location.protocol;

@@ -4,20 +4,24 @@
     align-items: center;
     justify-content: center;
 }
+
 .message p {
     margin: 0;
 }
-.message .content{
-    padding: 0.8rem ;
+
+.message .content {
+    padding: 0.8rem;
     border-radius: 5px;
     text-align: justify;
 }
-.message .profile-picture-and-content{
+
+.message .profile-picture-and-content {
     display: flex;
     flex-direction: row;
     gap: 1rem;
 }
-.message .profile-picture{
+
+.message .profile-picture {
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 50%;
@@ -26,7 +30,8 @@
     overflow: hidden;
     flex-shrink: 0;
 }
-.message .time-and-status{
+
+.message .time-and-status {
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
@@ -39,10 +44,12 @@
     align-self: flex-end;
     align-items: flex-end
 }
-.message.current-user .content{
+
+.message.current-user .content {
     background-color: #429BDB;
 }
-.message.current-user .profile-picture{
+
+.message.current-user .profile-picture {
     display: none;
 }
 
@@ -52,10 +59,12 @@
     align-self: flex-start;
     align-items: flex-start
 }
+
 .message:not(.current-user) .content {
     color: black;
     background-color: #F4F5F9;
 }
+
 .message:not(.current-user) .status {
     display: none;
 }

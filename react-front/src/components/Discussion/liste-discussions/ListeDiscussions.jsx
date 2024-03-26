@@ -1,7 +1,7 @@
 import "./ListeDiscussions.scss";
 import {useEffect, useRef, useState} from "react";
 import {Link} from "react-router-dom";
-import {controller} from "../../../controller/index.js";
+import {initConnection} from "../../../controller/index.js";
 import {useDiscussion} from "../context/DiscussionContext.jsx";
 
 const listeMessageEmis = [
@@ -16,6 +16,8 @@ const listeMessageRecus = [
 export default function ListeDiscussions() {
     const instanceName = "ListeDiscussions";
     const verbose = false;
+
+    const [controller] = useState(initConnection.getController());
 
     const [discussions, setDiscussions] = useState([]);
     const {newDiscussion} = useDiscussion();

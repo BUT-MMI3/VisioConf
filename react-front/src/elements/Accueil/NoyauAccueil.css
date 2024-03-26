@@ -1,51 +1,59 @@
 .container {
-  height: auto;
+    height: auto;
 }
 
 .section-profil, .section-notification, .section-notification-hidden, .section-historique {
-  background-color: #ffffff;
-  border-radius: 10px;
-  color: black;
-  box-shadow: rgba(0, 0, 0, 0.31) 0px 1px 4px;
-  height: 125px;
-}
-.section{
-  padding: 20px;
-  margin-top: 20px;
-  height:auto;
-}
-.section-header{
-  margin: 10px;
-}
-.section-notification{
-  margin-bottom: 2rem;
-}
-ul {
-  list-style: none;
+    background-color: #ffffff;
+    border-radius: 10px;
+    color: black;
+    box-shadow: rgba(0, 0, 0, 0.31) 0px 1px 4px;
+    height: 125px;
 }
 
-.logo-profil-info{
-  width: 80px;
-  border-radius: 50%;
+.section {
+    padding: 20px;
+    margin-top: 20px;
+    height: auto;
 }
-.profil-info, .notification-affiche, .notification-info{
-  height: 100%;
+
+.section-header {
+    margin: 10px;
 }
-.icon-button{
-  margin: auto;
-  border-radius: 50%;
-  background-color: #234457;
-  height: 30px;
-  width: 30px;
+
+.section-notification {
+    margin-bottom: 2rem;
 }
-.icon-button2{
-  margin: auto;
-  border-radius: 50%;
-  background-color: #429BDB;
-  height: 30px;
-  width: 30px;
+
+ul {
+    list-style: none;
 }
-.feather-edit-2, .feather-bell{
-  fill: white;
-  stroke: white;
+
+.logo-profil-info {
+    width: 80px;
+    border-radius: 50%;
+}
+
+.profil-info, .notification-affiche, .notification-info {
+    height: 100%;
+}
+
+.icon-button {
+    margin: auto;
+    border-radius: 50%;
+    background-color: #234457;
+    height: 30px;
+    width: 30px;
+}
+
+.icon-button2 {
+    margin: auto;
+    border-radius: 50%;
+    background-color: #429BDB;
+    height: 30px;
+    width: 30px;
+}
+
+.feather-edit-2, .feather-bell {
+    fill: white;
+    stroke: white;
 }

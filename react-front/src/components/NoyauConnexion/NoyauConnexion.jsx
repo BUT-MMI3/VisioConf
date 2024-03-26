@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import './NoyauConnexion.css';
-import {controller} from "../../controller/index.js";
+import {initConnection} from "../../controller/index.js";
 import sha256 from "../../utils/sha256.js";
 
 const listeMessageEmis = [
@@ -15,6 +15,8 @@ const listeMessageRecus = [
 const NoyauConnexion = () => {
     const instanceName = "NoyauConnexion";
     const verbose = true;
+
+    const [controller] = useState(initConnection.getController())
 
     const {current} = useRef({
         instanceName,

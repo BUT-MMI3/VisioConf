@@ -1,29 +1,35 @@
 #root {
     width: 100%;
 }
+
 .h2-inscription {
     color: black;
     font-size: 19px;
     margin-bottom: 20px;
     margin-top: 10px;
-    white-space: wrap;
+    word-wrap: break-word;
     width: 18rem;
 }
+
 .valid {
     color: green;
 }
+
 .pass {
     display: flex;
     font-size: 0.8rem;
 }
-.password-rules{
+
+.password-rules {
     margin-bottom: 10px;
 }
+
 .button-inscription.button-disabled {
     background-color: gray;
     border: gray;
     cursor: revert;
 }
+
 .page-inscription {
     display: flex;
     align-items: center;
@@ -106,7 +112,7 @@ input {
     margin-top: 1rem;
 }
 
-.lien-mot-de-passe-oublie>a:nth-child(1) {
+.lien-mot-de-passe-oublie > a:nth-child(1) {
     color: #409cdc;
 }
 

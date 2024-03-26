@@ -21,10 +21,12 @@
     min-width: 250px;
     position: relative;
 }
-.modale-footer{
+
+.modale-footer {
     gap: 0.5rem;
 }
-.modale-footer a, .modale-footer button{
+
+.modale-footer a, .modale-footer button {
     cursor: pointer;
     flex-grow: 1;
     text-align: center;
@@ -84,15 +86,17 @@
     border-radius: 5px;
 }
 
-.modale-icon{
+.modale-icon {
     display: flex;
     justify-content: flex-start;
     align-items: center;
 }
-.modale-container.info .modale-icon svg{
+
+.modale-container.info .modale-icon svg {
     color: #429BDB;
 }
-.modale-icon span{
+
+.modale-icon span {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -102,26 +106,30 @@
     padding: 0.2rem;
 }
 
-.modale-container.info .modale-action-button{
+.modale-container.info .modale-action-button {
     background-color: #429BDB;
 }
 
-.modale-container.warning .modale-icon svg{
+.modale-container.warning .modale-icon svg {
     color: #ff9100;
 }
-.modale-container.warning .modale-action-button{
+
+.modale-container.warning .modale-action-button {
     background-color: #ff9100;
 }
-.modale-container.warning .modale-icon span{
+
+.modale-container.warning .modale-icon span {
     background-color: rgba(255, 145, 0, 0.1);
 }
 
-.modale-container.error .modale-icon svg{
+.modale-container.error .modale-icon svg {
     color: red;
 }
-.modale-container.error .modale-action-button{
+
+.modale-container.error .modale-action-button {
     background-color: red;
 }
-.modale-container.error .modale-icon span{
+
+.modale-container.error .modale-icon span {
     background-color: rgba(255, 0, 0, 0.1);
 }

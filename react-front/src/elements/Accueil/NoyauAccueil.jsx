@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import FeatherIcon from 'feather-icons-react';
 import {Link} from 'react-router-dom';
 import "./NoyauAccueil.css";
@@ -101,7 +101,8 @@ const NoyauAccueil = () => {
                             </div>
 
                             <div className="notification-affiche w-100 fr jc-c ai-c" onClick={toggleNotifications}>
-                                <FeatherIcon icon={showNotifications ? 'chevron-down' : 'chevron-right'} size="20" strokeWidth="1" className="icon"/>
+                                <FeatherIcon icon={showNotifications ? 'chevron-down' : 'chevron-right'} size="20"
+                                             strokeWidth="1" className="icon"/>
                             </div>
                         </div>
                     </div>

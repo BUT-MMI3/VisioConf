@@ -4,7 +4,7 @@ Date: Janvier 2024
 */
 
 import {createContext, useCallback, useContext, useEffect, useRef, useState,} from "react";
-import {controller} from "../../../controller/index.js";
+import {initConnection} from "../../../controller/index.js";
 import {useLocation, useNavigate} from "react-router-dom";
 import ChatInput from "../../../elements/ChatInput/ChatInput.jsx";
 import FilDiscussion from "../fil-discussion/FilDiscussion.jsx";
@@ -38,6 +38,8 @@ const listeMessagesRecus = [
 export function DiscussionContextProvider() {
     const instanceName = "Discussion Context";
     const verbose = true;
+
+    const [controller] = useState(initConnection.getController());
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -135,7 +137,7 @@ export function DiscussionContextProvider() {
                 <ListeDiscussions/>
 
                 {createDiscussion && (
-                    <CreateDiscussion />
+                    <CreateDiscussion/>
                 )}
 
                 {(!createDiscussion && discussionId === undefined && (
