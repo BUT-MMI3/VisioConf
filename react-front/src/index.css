@@ -60,17 +60,18 @@
     justify-content: space-around;
 }
 
-.o0-5{
+.o0-5 {
     opacity: 0.5;
 }
 
-.ta-c{
+.ta-c {
     text-align: center;
 }
 
-.ta-l{
+.ta-l {
     text-align: left;
 }
-.w-100{
+
+.w-100 {
     width: 100%;
 }

@@ -1,15 +1,19 @@
 import "./AdminListePermissions.scss";
-import { useEffect, useState, useRef } from "react";
-import { controller } from "../../controller/index.js";
+import {useEffect, useRef, useState} from "react";
+import {initConnection} from "../../controller/index.js";
+
+const listeMessagesEmis = ["fetch-permissions"];
+const listeMessagesRecus = ["get-permissions"];
 
 const AdminListePermissions = () => {
-    const [permissions, setPermissions] = useState([]);
-    const nomDInstance = "AdminListePermissions";
-    const listeMessagesEmis = ["fetch-permissions"];
-    const listeMessagesRecus = ["get-permissions"];
+    const instanceName = "AdminListePermissions";
 
-    const { current } = useRef({
-        nomDInstance,
+    const [permissions, setPermissions] = useState([]);
+    const [controller] = useState(initConnection.getController());
+
+
+    const {current} = useRef({
+        instanceName,
         traitementMessage: (msg) => {
             console.log("Traitement message NoyauAccueil:", msg);
         },
@@ -38,18 +42,18 @@ const AdminListePermissions = () => {
                 <div className="liste-permissions--container">
                     <table className="liste-permissions--table">
                         <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Libellé</th>
-                            </tr>
+                        <tr>
+                            <th>ID</th>
+                            <th>Libellé</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            {permissions.map((permission, index) => (
-                                <tr key={index}>
-                                    <td>{permission.id}</td>
-                                    <td>{permission.label}</td>
-                                </tr>
-                            ))}
+                        {permissions.map((permission, index) => (
+                            <tr key={index}>
+                                <td>{permission.id}</td>
+                                <td>{permission.label}</td>
+                            </tr>
+                        ))}
                         </tbody>
                     </table>
                 </div>

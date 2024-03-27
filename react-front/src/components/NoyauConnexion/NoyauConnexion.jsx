@@ -1,7 +1,8 @@
 import {useEffect, useRef, useState} from 'react';
 import './NoyauConnexion.css';
-import {controller} from "../../controller/index.js";
+import {initConnection} from "../../controller/index.js";
 import sha256 from "../../utils/sha256.js";
+import LinkTo from "../../elements/LinkTo/LinkTo.jsx";
 
 const listeMessageEmis = [
     "demande_de_connexion",
@@ -15,6 +16,8 @@ const listeMessageRecus = [
 const NoyauConnexion = () => {
     const instanceName = "NoyauConnexion";
     const verbose = true;
+
+    const [controller] = useState(initConnection.getController())
 
     const {current} = useRef({
         instanceName,
@@ -98,7 +101,7 @@ const NoyauConnexion = () => {
                     </button>
                 </form>
                 <div className="lien-mot-de-passe-oublie">
-                    <a href="/mot-de-passe-oublie">Mot de passe oublié ?</a>
+                    <LinkTo to="/mot-de-passe-oublie">Mot de passe oublié ?</LinkTo>
                 </div>
             </div>
         </div>

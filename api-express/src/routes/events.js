@@ -9,10 +9,6 @@ const Register = require("../classes/Register.js");
 const Discussions = require("../classes/Discussions.js");
 const Utilisateurs = require("../classes/Utilisateurs.js");
 
-const uuid = require("uuid");
-const User = require("../models/user");
-const Discussion = require("../models/discussion");
-
 const SocketApp = (io) => {
     /**
      * Cette fonction initialise les événements de connexion et de déconnexion
@@ -32,6 +28,6 @@ const SocketApp = (io) => {
     new Register(controller, "Register");
     new Discussions(controller, "Discussions");
     new Utilisateurs(controller, "Utilisateurs");
-}
+};
 
 module.exports = SocketApp;

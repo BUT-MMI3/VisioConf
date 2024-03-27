@@ -1,15 +1,20 @@
 import "./AdminListeRoles.scss";
-import { useEffect, useState, useRef } from "react";
-import { controller } from "../../controller/index.js";
+import {useEffect, useRef, useState} from "react";
+import {initConnection} from "../../controller/index.js";
+import LinkTo from "../LinkTo/LinkTo.jsx";
+
+const listeMessagesEmis = ["fetch-roles"];
+const listeMessagesRecus = ["get-roles"];
 
 const AdminListeRoles = () => {
+    const instanceName = "AdminListeRoles";
     const [roles, setRoles] = useState([]);
-    const nomDInstance = "AdminListeRoles";
-    const listeMessagesEmis = ["fetch-roles"];
-    const listeMessagesRecus = ["get-roles"];
 
-    const { current } = useRef({
-        nomDInstance,
+    const [controller] = useState(initConnection.getController());
+
+
+    const {current} = useRef({
+        instanceName,
         traitementMessage: (msg) => {
             console.log("Traitement message NoyauAccueil:", msg);
         },
@@ -38,35 +43,35 @@ const AdminListeRoles = () => {
                 <div className="liste-roles--container">
                     <table className="liste-roles--table">
                         <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Libellé</th>
-                                <th>Permissions</th>
-                                <th>Actions</th>
-                            </tr>
+                        <tr>
+                            <th>ID</th>
+                            <th>Libellé</th>
+                            <th>Permissions</th>
+                            <th>Actions</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            {roles.map((role, index) => (
-                                <tr key={index}>
-                                    <td>{role.id}</td>
-                                    <td>{role.label}</td>
-                                    <td>{role.permissions.join(", ")}</td>
-                                    <td>
-                                        <Link
-                                            to={`/modifier-role/${role.id}`}
-                                            className="liste-roles--modif"
-                                        >
-                                            Mod
-                                        </Link>
-                                        <Link
-                                            to={`/supprimer-role/${role.id}`}
-                                            className="liste-roles--supp"
-                                        >
-                                            Sup
-                                        </Link>
-                                    </td>
-                                </tr>
-                            ))}
+                        {roles.map((role, index) => (
+                            <tr key={index}>
+                                <td>{role.id}</td>
+                                <td>{role.label}</td>
+                                <td>{role.permissions.join(", ")}</td>
+                                <td>
+                                    <LinkTo
+                                        to={`/modifier-role/${role.id}`}
+                                        className="liste-roles--modif"
+                                    >
+                                        Mod
+                                    </LinkTo>
+                                    <LinkTo
+                                        to={`/supprimer-role/${role.id}`}
+                                        className="liste-roles--supp"
+                                    >
+                                        Sup
+                                    </LinkTo>
+                                </td>
+                            </tr>
+                        ))}
                         </tbody>
                     </table>
                 </div>

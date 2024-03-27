@@ -1,6 +1,6 @@
-import {useState, useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import FeatherIcon from 'feather-icons-react';
-import {Link} from 'react-router-dom';
+import LinkTo from "../LinkTo/LinkTo.jsx";
 import "./NoyauAccueil.css";
 
 const NoyauAccueil = () => {
@@ -70,9 +70,9 @@ const NoyauAccueil = () => {
                             {/* Lien vers la page de modification du profil */}
                             <div className="profil-modification w-100">
                                 <div className="icon-button fr jc-c ai-c">
-                                    <Link to="/modification-profil">
+                                    <LinkTo to="/modification-profil">
                                         <FeatherIcon icon="edit-2" size="20" strokeWidth="1" className="icon fr"/>
-                                    </Link>
+                                    </LinkTo>
                                 </div>
                             </div>
                         </div>
@@ -101,7 +101,8 @@ const NoyauAccueil = () => {
                             </div>
 
                             <div className="notification-affiche w-100 fr jc-c ai-c" onClick={toggleNotifications}>
-                                <FeatherIcon icon={showNotifications ? 'chevron-down' : 'chevron-right'} size="20" strokeWidth="1" className="icon"/>
+                                <FeatherIcon icon={showNotifications ? 'chevron-down' : 'chevron-right'} size="20"
+                                             strokeWidth="1" className="icon"/>
                             </div>
                         </div>
                     </div>

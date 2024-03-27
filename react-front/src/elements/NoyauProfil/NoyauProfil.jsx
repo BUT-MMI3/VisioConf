@@ -1,4 +1,3 @@
-import { useState } from "react";
 const NoyauProfil = () => {
 
     const user = {
@@ -58,8 +57,14 @@ const NoyauProfil = () => {
                     Rôles
                 </p>
                 <div className={"fr g0-5"}>
-                    {  user.user_roles.map((role) => (
-                        <p style={{backgroundColor:"#223A6A", padding: '0.3rem 0.8rem', fontSize:'0.8rem', whiteSpace:"nowrap", borderRadius:'4rem'}}>
+                    {user.user_roles.map((role, index) => (
+                        <p key={index} style={{
+                            backgroundColor: "#223A6A",
+                            padding: '0.3rem 0.8rem',
+                            fontSize: '0.8rem',
+                            whiteSpace: "nowrap",
+                            borderRadius: '4rem'
+                        }}>
                             {role}
                         </p>
                     ))

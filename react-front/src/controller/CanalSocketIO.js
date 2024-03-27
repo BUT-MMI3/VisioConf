@@ -7,7 +7,7 @@ class CanalSocketIO {
      * @param {string} nom
      */
 
-    controller;
+    controller = null;
     instanceName;
     socket;
 
@@ -19,12 +19,16 @@ class CanalSocketIO {
     verbose = false;
 
     constructor(s, c, nom) {
-
-        this.controller = c;
         this.socket = s;
+        this.controller = c;
         this.instanceName = nom;
 
         this.socket.on("message", (msg) => {
+            if (!this.controller) {
+                console.error("No controller")
+                return new Error("No controller");
+            }
+
             if (this.controller.verboseall || this.verbose) console.log(`INFO (${this.instanceName}): reçoit ce message: ${msg}`);
             msg = JSON.parse(msg);
             if (typeof msg.id !== "undefined") delete msg.id;
@@ -32,6 +36,11 @@ class CanalSocketIO {
         });
 
         this.socket.on("donne_liste", (msg) => {
+            if (!this.controller) {
+                console.error("No controller")
+                return new Error("No controller");
+            }
+
             let listes = JSON.parse(msg);
             this.listeDesMessagesEmis = listes.emission || [];
             this.listeDesMessagesRecus = listes.reception || [];

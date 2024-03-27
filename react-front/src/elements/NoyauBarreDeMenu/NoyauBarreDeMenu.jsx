@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import FeatherIcon from "feather-icons-react";
-import {Link} from "react-router-dom";
+import LinkTo from "../../elements/LinkTo/LinkTo";
 import "./NoyauBarreDeMenu.css";
 import "../ProfilOverlay/ProfilOverlay.scss";
 import NoyauDeconnexion from "../../elements/NoyauDeconnexion/NoyauDeconnexion";
@@ -48,47 +48,47 @@ const NoyauBarreDeMenu = () => {
                     className="logo-band"
                 />
                 <div className="onglets">
-                    <Link to="/discussions">
+                    <LinkTo to="/discussions">
                         <FeatherIcon
                             icon="message-circle"
                             size="40"
                             strokeWidth="1"
                             className="onglet"
                         />
-                    </Link>
-                    <Link to="/utilisateurs">
+                    </LinkTo>
+                    <LinkTo to="/utilisateurs">
                         <FeatherIcon
                             icon="users"
                             size="40"
                             strokeWidth="1"
                             className="onglet"
                         />
-                    </Link>
-                    <Link to="/dossiers">
+                    </LinkTo>
+                    <LinkTo to="/dossiers">
                         <FeatherIcon
                             icon="folder"
                             size="40"
                             strokeWidth="1"
                             className="onglet"
                         />
-                    </Link>
-                    <Link to="/livres">
+                    </LinkTo>
+                    <LinkTo to="/livres">
                         <FeatherIcon
                             icon="book"
                             size="40"
                             strokeWidth="1"
                             className="onglet"
                         />
-                    </Link>
+                    </LinkTo>
                     {checkRole() === "Administrateur" && (
-                        <Link to="/admin">
+                        <LinkTo to="/admin">
                             <FeatherIcon
                                 icon="settings"
                                 size="40"
                                 strokeWidth="1"
                                 className="onglet"
                             />
-                        </Link>
+                        </LinkTo>
                     )}
                 </div>
             </div>
@@ -130,7 +130,7 @@ const NoyauBarreDeMenu = () => {
                                     </div>
                                 </div>
                                 <div className="onglets-overlay">
-                                    <Link to="/changer-status" className={"fr g1 ai-c"}>
+                                    <LinkTo to="/changer-status" className={"fr g1 ai-c"}>
                                         <div
                                             className={`statut-connexion ${
                                                 session.isSignedIn ? "connecte" : "deconnecte"
@@ -139,9 +139,9 @@ const NoyauBarreDeMenu = () => {
                                         <p>
                                             {session.isSignedIn ? "En ligne" : "déconnecté"}
                                         </p>
-                                    </Link>
+                                    </LinkTo>
 
-                                    <Link to="parametres" className={"fr g1 ai-c"}>
+                                    <LinkTo to="parametres" className={"fr g1 ai-c"}>
                                         <FeatherIcon
                                             icon="settings"
                                             size="20"
@@ -149,7 +149,7 @@ const NoyauBarreDeMenu = () => {
                                             className="settings"
                                         />
                                         <p>Paramètres</p>
-                                    </Link>
+                                    </LinkTo>
 
                                     <NoyauDeconnexion/>
                                 </div>

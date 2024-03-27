@@ -93,6 +93,8 @@ class Controller {
             }
         }
     }
-}
 
-export default Controller;
+    test() {
+        console.log("test");
+    }
+}

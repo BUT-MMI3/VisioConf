@@ -22,11 +22,13 @@ Date: Janvier 2024
     border-radius: 5px;
     color: #333;
     background-color: #fff;
+
     &::placeholder {
       color: #ccc;
       line-height: 1;
     }
   }
+
   .chat-send {
     width: fit-content;
     height: 100%;
@@ -35,6 +37,7 @@ Date: Janvier 2024
     background-color: #fff;
     color: #333;
     cursor: pointer;
+
     &:hover {
       background-color: #eee;
     }
