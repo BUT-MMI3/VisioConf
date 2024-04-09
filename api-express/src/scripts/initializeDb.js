@@ -8,6 +8,7 @@ const usersToInsert = [
         user_firstname: 'John',
         user_lastname: 'Doe',
         user_job_desc: 'Developer',
+        user_picture: 'https://play-lh.googleusercontent.com/15OKLti0ofnjK4XK1bgRXgsoblPvMi3hCA5z2o9WAcjssFNt2dXxemp2Om9vB3A_jYAe',
         user_email: 'john.doe@example.com',
         user_phone: "00.00.00.00.00",
         user_job: "Responsable RH",

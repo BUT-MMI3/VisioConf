@@ -3,7 +3,7 @@
  * Date : Janvier 2024
  */
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
-import Accueil from "./elements/Accueil/NoyauAccueil.jsx";
+import Accueil from "./components/Accueil/NoyauAccueil.jsx";
 import {useEffect, useRef, useState} from "react";
 import NotFound from "./elements/NotFound.jsx";
 import Layout from "./elements/Layout/Layout.jsx";
@@ -91,11 +91,15 @@ const App = () => {
     }, [controller, current, loading]);
 
     useEffect(() => {
-        if (!session.isSignedIn && location.pathname !== "/login" && location.pathname !== "/forgot-password" && location.pathname !== "/inscription") navigate("/login");
+        if (!session.isSignedIn && (location.pathname !== "/login" && location.pathname !== "/forgot-password" && location.pathname !== "/inscription")) {
+            navigate("/login");
+        }
 
-
-        if (session.isSignedIn && (location.pathname === "/login" || location.pathname === "/forgot-password")) navigate("/");
+        if (session.isSignedIn && (location.pathname === "/login" || location.pathname === "/forgot-password" || location.pathname === "/inscription")) {
+            navigate("/");
+        }
     }, [session.isSignedIn, location.pathname, navigate]);
+
 
     useEffect(() => {
         if (session.user_session_token) {
@@ -146,7 +150,7 @@ const App = () => {
                             }
                         />
                         <Route
-                            path="profil"
+                            path="/profil"
                             element={
                                 <>
                                     <NoyauProfil/>

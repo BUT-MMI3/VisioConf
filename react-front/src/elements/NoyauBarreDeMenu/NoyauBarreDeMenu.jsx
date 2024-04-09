@@ -41,12 +41,13 @@ const NoyauBarreDeMenu = () => {
     return (
         <div className="barre-de-menu">
             <div className="top">
-
-                <img
-                    src={"./others/mmi-toulon.png"}
-                    alt="Logo de l'entreprise"
-                    className="logo-band"
-                />
+                <LinkTo to="/">
+                    <img
+                        src={"./others/mmi-toulon.png"}
+                        alt="Logo de l'entreprise"
+                        className="logo-band"
+                    />
+                </LinkTo>
                 <div className="onglets">
                     <LinkTo to="/discussions">
                         <FeatherIcon

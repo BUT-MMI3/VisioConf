@@ -1,24 +1,64 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useRef, useState } from 'react';
 import FeatherIcon from 'feather-icons-react';
-import LinkTo from "../LinkTo/LinkTo.jsx";
+import { initConnection } from "../../controller/index.js";
+import LinkTo from "../../elements/LinkTo/LinkTo.jsx";
 import "./NoyauAccueil.css";
 
-const NoyauAccueil = () => {
-    const [notifications, setNotifications] = useState([]); // é remplir avec les notifications non-lues
-    const [historiqueAppels, setHistoriqueAppels] = useState([]); // é remplir avec l'historique des appels
-    const [showNotifications, setShowNotifications] = useState(false); // État pour contrôler l'affichage des notifications
+const listeMessageEmis = ["demande_user_info"];
 
-    const utilisateur = {
-        id: 123,
-        nom: "Doe",
-        prenom: "John",
-        email: "john.doe@example.com",
-        motDePasse: "azerty",
-        job: "Etudiant MMI3",
-        isConnected: true,
-        isAdmin: true,
-        logo: "https://imgv3.fotor.com/images/gallery/a-girl-cartoon-character-with-pink-background-generated-by-cartoon-character-maker-in-Fotor.jpg",
+const listeMessageRecus = ["information_user"];
+
+const NoyauAccueil = () => {
+
+    const instanceName = "NoyauAccueil";
+    const verbose = true;
+    const [controller] = useState(initConnection.getController());
+
+    const [notifications, setNotifications] = useState([]);
+    const [historiqueAppels, setHistoriqueAppels] = useState([]);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [utilisateur, setUtilisateur] = useState(null);
+
+    const {current} = useRef({
+        instanceName,
+        traitementMessage: (msg) => {
+            if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
+
+            if (typeof msg.information_user !== "undefined") {
+                console.log("Informations utilisateur obtenues");
+                setUtilisateur(msg.information_user);
+            } else {
+                console.log("Erreur lors du traitement de la demande d'information de l'utilisateur");
+            }
+        }
+    });
+
+    const logIn = async () => {
+        if (verbose || controller.verboseall) console.log(`INFO: (${instanceName})`);
+
+        return new Promise((resolve, reject) => {
+            try {
+                controller.send(current, {
+                    "demande_user_info": "information utilisateur"
+                });
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
+        });
     };
+
+    useEffect(() => {
+        controller.subscribe(current, listeMessageEmis, listeMessageRecus);
+
+        return () => {
+            controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
+        };
+    }, [current, controller]);
+
+    useEffect(() => {
+        logIn();
+    }, []);
 
     // Simuler la récupération des notifications depuis une source de données
     useEffect(() => {
@@ -47,7 +87,7 @@ const NoyauAccueil = () => {
         <div className="noyau-accueil layout-content--full">
             {/* Section d'informations du profil */}
             <div className="container fr jc-sa g1">
-                {/* Section 1 */}
+
                 <div className="section w-100">
 
                     <div className="section-header fr">
@@ -57,24 +97,26 @@ const NoyauAccueil = () => {
                     <div className="section-profil">
                         <div className="profil-info fr jc-sa ai-c">
 
-                            <div className="profil-info-image w-100">
-                                <img src={utilisateur.logo} className='logo-profil-info' alt="Photo de profil"/>
-                            </div>
-
-                            {/* Informations du profil */}
-                            <div className="profil-details w-100 fc ai-fs">
-                                <h2>{utilisateur.nom} {utilisateur.prenom}</h2>
-                                <p>{utilisateur.job}</p>
-                            </div>
-
-                            {/* Lien vers la page de modification du profil */}
-                            <div className="profil-modification w-100">
-                                <div className="icon-button fr jc-c ai-c">
-                                    <LinkTo to="/modification-profil">
-                                        <FeatherIcon icon="edit-2" size="20" strokeWidth="1" className="icon fr"/>
-                                    </LinkTo>
-                                </div>
-                            </div>
+                            {utilisateur && (
+                                <>
+                                    <div className="profil-info-image w-100">
+                                        <img src={utilisateur.user_picture} className='logo-profil-info fr ma'
+                                             alt="Photo de profil"/>
+                                    </div>
+                                    <div className="profil-details w-100 fc ai-fs">
+                                        <h2>{utilisateur.user_lastname} {utilisateur.user_firstname}</h2>
+                                        <p>{utilisateur.user_job}</p>
+                                    </div>
+                                    <div className="profil-modification w-100">
+                                        <div className="icon-button fr jc-c ai-c">
+                                            <LinkTo to="/profil">
+                                                <FeatherIcon icon="edit-2" size="20" strokeWidth="1"
+                                                             className="icon fr"/>
+                                            </LinkTo>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

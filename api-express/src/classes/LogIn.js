@@ -6,8 +6,8 @@ class LogIn {
     controller = null;
     instanceName = "";
 
-    listeMessagesEmis = ["connexion_acceptee", "connexion_refusee"];
-    listeMessagesRecus = ["demande_de_connexion", "client_deconnexion"];
+    listeMessagesEmis = ["connexion_acceptee", "connexion_refusee", "information_user"];
+    listeMessagesRecus = ["demande_de_connexion", "client_deconnexion", "demande_user_info"];
 
     email = "";
 
@@ -90,6 +90,22 @@ class LogIn {
                 user_tokens: {}
             });
             if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
+        }else if (typeof msg.demande_user_info !== "undefined") {
+            if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Demande d'informations de l'utilisateur pour NoyauAccueil");
+            let user = await User.findOne({user_socket_id: msg.id});
+            if (user) {
+                this.controller.send(this, {
+                    "information_user": {
+                        user_picture: user.user_picture,
+                        user_firstname: user.user_firstname,
+                        user_lastname: user.user_lastname,
+                        user_job: user.user_job
+                    },
+                    id: msg.id
+                });
+            } else {
+                if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur non trouvé dans la base de données");
+            }
         }
     }
 }
