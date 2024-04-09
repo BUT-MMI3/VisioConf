@@ -75,6 +75,12 @@ const NoyauInscription = () => {
     const token = urlParams.get('token');
     const navigate = useNavigate();
 
+    useEffect(() => {
+        if (!token) {
+            navigate("/login");
+        }
+    }, [token, navigate]);
+
     if (token) {
         const Register = async () => {
 
@@ -138,8 +144,6 @@ const NoyauInscription = () => {
             </div>
         );
 
-    } else {
-        navigate("/login");
     }
 };
 

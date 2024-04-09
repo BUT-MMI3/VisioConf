@@ -12,6 +12,7 @@
  */
 const ListeMessagesEmis = [
     "client_deconnexion",
+    "demande_user_info",
     "demande_de_connexion",
     "demande_inscription",
     "demande_liste_utilisateurs",
@@ -33,6 +34,7 @@ const ListeMessagesRecus = [
     "connexion_refusee",
     "inscription_acceptee",
     "inscription_refusee",
+    "information_user",
     "reception_message",
     "liste_discussions",
     "historique_discussion",
