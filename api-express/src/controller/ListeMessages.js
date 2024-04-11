@@ -20,7 +20,12 @@ const ListeMessagesEmis = [
     "demande_liste_discussions",
     "demande_historique_discussion",
     "demande_creation_discussion",
-    "naviguer_vers"
+    "demande_discussion_info",
+    "naviguer_vers",
+    "send_offer",
+    "send_answer",
+    "send_ice_candidate",
+    "reject_offer"
 ]
 
 /**
@@ -35,10 +40,17 @@ const ListeMessagesRecus = [
     "inscription_acceptee",
     "inscription_refusee",
     "information_user",
-    "reception_message",
+    "nouveau_message",
+    "erreur_envoi_message",
     "liste_discussions",
     "historique_discussion",
     "discussion_creee",
+    "discussion_non_creee",
+    "discussion_info",
+    "receive_offer",
+    "receive_answer",
+    "receive_ice_candidate",
+    "offer_rejected"
 ]
 
 module.exports = {

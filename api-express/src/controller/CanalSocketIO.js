@@ -22,7 +22,7 @@ class CanalSocketIO {
      */
 
     controller;
-    nomDInstance;
+    instanceName;
     io;
     listeDesMessagesEmis = ListeMessagesEmis
     listeDesMessagesRecus = ListeMessagesRecus;
@@ -32,15 +32,16 @@ class CanalSocketIO {
 
         this.io = io;
         this.controller = controller;
-        this.nomDInstance = name;
+        this.instanceName = name;
 
-        if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.nomDInstance + "): " + this.nomDInstance + " s'enregistre auprès du controller");
+        if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.instanceName + "): " + this.instanceName + " s'enregistre auprès du controller");
         this.controller.subscribe(this, this.listeDesMessagesEmis, this.listeDesMessagesRecus);
 
         this.io.on('connection', (socket) => {
+            console.log("INFO (" + this.instanceName + "): " + socket.id + " s'est connecté");
             socket.on('message', async (msg) => {
                 try {
-                    if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.nomDInstance + "): canalsocketio reçoit: " + msg + " de la part de " + socket.id);
+                    if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.instanceName + "): canalsocketio reçoit: " + msg + " de la part de " + socket.id);
 
                     const message = JSON.parse(msg);
                     message.id = socket.id;
@@ -82,12 +83,12 @@ class CanalSocketIO {
             });
 
             socket.on('demande_fichier', async (msg) => {
-                if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.nomDInstance + "): demande de fichier reçue: " + msg);
+                if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.instanceName + "): demande de fichier reçue: " + msg);
                 this.envoiFichier(socket, msg);
             })
 
             socket.on('demande_liste', (msg) => {
-                if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.nomDInstance + "): on donne les listes émission et abonnement");
+                if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.instanceName + "): on donne les listes émission et abonnement");
                 socket.emit("donne_liste", JSON.stringify({
                     reception: this.listeDesMessagesEmis,
                     emission: this.listeDesMessagesRecus
@@ -96,7 +97,7 @@ class CanalSocketIO {
 
 
             socket.on('disconnect', () => {
-                if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.nomDInstance + "): " + socket.id + " s'est déconnecté");
+                if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.instanceName + "): " + socket.id + " s'est déconnecté");
 
                 this.controller.send(this, {client_deconnexion: socket.id, id: socket.id});
             });
@@ -126,15 +127,18 @@ class CanalSocketIO {
 
     traitementMessage(msg) {
 
-        if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.nomDInstance + "): canalsocketio va emettre sur la/les io " + JSON.stringify(msg));
-        if (typeof msg.id != "undefined") {
+        if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.instanceName + "): canalsocketio va emettre sur la/les io ");
+        if (this.controller.verboseall || this.verbose) console.log(msg);
+        if (typeof msg.id === "undefined") {
+            console.log("Broadcasting");
             this.io.emit("message", JSON.stringify(msg));
         } else {
+            console.log("Emitting");
             let message = JSON.parse(JSON.stringify(msg));
             delete message.id;
             message = JSON.stringify(message);
 
-            if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.nomDInstance + "):emission sur la io: " + msg.id);
+            if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.instanceName + "):emission sur la io: " + msg.id);
             this.io.to(msg.id).emit("message", message);
         }
     }

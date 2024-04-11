@@ -19,27 +19,54 @@ Date: Janvier 2024
     outline: none;
     font-size: 1rem;
     line-height: 0;
-    border-radius: 5px;
-    color: #333;
-    background-color: #fff;
+    border-radius: 1rem;
+    color: #555;
+    background-color: var(--color-light);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 
     &::placeholder {
-      color: #ccc;
+      color: #aaa;
       line-height: 1;
     }
   }
 
   .chat-send {
-    width: fit-content;
-    height: 100%;
     border: none;
     outline: none;
-    background-color: #fff;
-    color: #333;
+    background-color: var(--color-primary);
     cursor: pointer;
+    height: 100%;
+    aspect-ratio: 1;
+    transition: background-color 0.25s;
+    border-radius: 50%;
+    position: relative;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      color: var(--color-font);
+      transition: color 0.25s;
+
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-54%, -46%);
+    }
 
     &:hover {
-      background-color: #eee;
+      background-color: var(--color-light);
+
+      svg {
+        color: var(--color-primary);
+      }
+    }
+
+    &:active {
+      background-color: #245F7D;
+
+      svg {
+        color: var(--color-font);
+      }
     }
   }
 }

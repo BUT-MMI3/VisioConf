@@ -1,6 +1,6 @@
 import {useModal} from '../../elements/Modale/ModaleContext';
 import FeatherIcon from 'feather-icons-react'
-import {initConnection} from "../../controller/index.js";
+import {appInstance} from "../../controller/index.js";
 import {useEffect, useRef, useState} from "react";
 
 const listeMessageEmis = [
@@ -13,7 +13,7 @@ const NoyauDeconnexion = () => {
     const instanceName = 'NoyauDeconnexion';
     const verbose = true;
 
-    const [controller] = useState(initConnection.getController());
+    const [controller] = useState(appInstance.getController());
 
     const {newModal} = useModal();
 

@@ -1,4 +1,4 @@
-import {initConnection} from "../../../controller/index.js";
+import {appInstance} from "../../../controller/index.js";
 import {useEffect, useRef, useState} from "react";
 import './CreateDiscussion.scss';
 import {useDiscussion} from "../context/DiscussionContext.jsx";
@@ -19,7 +19,7 @@ const CreateDiscussion = () => {
 
     const {setCreateDiscussion} = useDiscussion();
 
-    const [controller] = useState(initConnection.getController());
+    const [controller] = useState(appInstance.getController());
 
     const [search, setSearch] = useState("");
     const [searchResults, setSearchResults] = useState([]);

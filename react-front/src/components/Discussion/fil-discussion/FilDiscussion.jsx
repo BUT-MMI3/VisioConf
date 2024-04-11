@@ -18,7 +18,6 @@ function FilDiscussion() {
         if (messagesRef.current) {
             messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
         }
-        console.log(messages)
     }, [messages]);
 
     return (
@@ -26,7 +25,7 @@ function FilDiscussion() {
             <div className="fil-discussion-container--scroll" ref={messagesRef}>
                 <div className="fil-discussion">
                     {/* Affichage des messages */}
-                    {messages.map((message, index) => (
+                    {messages?.map((message, index) => (
                         <Message key={index} message={message}/>
                     ))}
                 </div>

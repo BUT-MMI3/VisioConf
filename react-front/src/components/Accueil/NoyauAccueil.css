@@ -40,7 +40,7 @@ ul {
 .icon-button {
     margin: auto;
     border-radius: 50%;
-    background-color: #234457;
+    background-color: var(--color-primary);
     height: 30px;
     width: 30px;
 }

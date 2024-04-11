@@ -6,6 +6,7 @@ Date: Janvier 2024
 import {useState} from "react";
 import {useDiscussion} from "../../components/Discussion/context/DiscussionContext.jsx";
 import "./ChatInput.scss";
+import { Send } from "react-feather";
 
 export default function ChatInput() {
     const {addMessage} = useDiscussion();
@@ -29,7 +30,11 @@ export default function ChatInput() {
                 placeholder="Votre message"
                 className="chat-input"
             />
-            <button type="submit" className="chat-send">Envoyer</button>
+            <button type="submit" className="chat-send">
+                <Send
+                    size={20}
+                />
+            </button>
         </form>
     );
 }

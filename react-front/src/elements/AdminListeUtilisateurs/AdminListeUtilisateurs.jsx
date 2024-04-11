@@ -1,6 +1,6 @@
 import "./AdminListeUtilisateurs.scss";
 import {useEffect, useRef, useState} from "react";
-import {initConnection} from "../../controller/index.js";
+import {appInstance} from "../../controller/index.js";
 import LinkTo from "../LinkTo/LinkTo.jsx";
 
 const listeMessagesEmis = ["fetch-utilisateurs"];
@@ -10,7 +10,7 @@ const AdminListeUtilisateurs = () => {
     const instanceName = "AdminListeUtilisateurs";
     const [utilisateurs, setUtilisateurs] = useState([]);
 
-    const [controller] = useState(initConnection.getController());
+    const [controller] = useState(appInstance.getController());
 
 
     const {current} = useRef({

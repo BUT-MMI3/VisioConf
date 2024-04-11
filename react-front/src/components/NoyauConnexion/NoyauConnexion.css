@@ -59,7 +59,7 @@ input {
 
 .button-connexion {
     background-color: #1C376A;
-    color: #fff;
+    color: var(--color-font);
     padding: 0.3rem 6.5rem;
     border: 1px solid #1c376a;
     border-radius: 5px;

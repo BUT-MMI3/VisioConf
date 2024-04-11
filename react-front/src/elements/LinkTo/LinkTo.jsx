@@ -1,14 +1,13 @@
-import {initConnection} from "../../controller/index.js";
+import {appInstance} from "../../controller/index.js";
 import {useState, useRef, useEffect} from "react";
 import {Link} from "react-router-dom";
-
 const listeMessagesEmis = ["naviguer_vers"];
 const listeMessagesRecus = [];
 
 const LinkTo = ({ to, children, className="" }) => {
     const instanceName = "LinkTo-" + to;
 
-    const [controller] = useState(initConnection.getController());
+    const [controller] = useState(appInstance.getController());
 
     const {current} = useRef({
         instanceName,

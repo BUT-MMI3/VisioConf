@@ -1,0 +1,93 @@
+.message {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  max-width: 75%;
+
+
+  p {
+    margin: 0;
+  }
+
+  .content {
+    padding: 0.3rem 0.75rem;
+    border-radius: 15px;
+    text-align: justify;
+    height: fit-content;
+    color: var(--color-font-dark);
+    background-color: var(--color-light);
+  }
+
+  .profile-picture-container {
+    display: flex;
+    gap: 1rem;
+
+    .profile-picture { // TODO: the profile picture should be at the top of the message box
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      object-fit: cover;
+      background-color: #6b6b6b;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+  }
+
+  .message-box {
+
+    .time-and-status {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: flex-start;
+      color: #6b6b6b;
+      height: 1.25rem;
+
+      .time {
+        font-size: 0.8rem;
+      }
+
+      .status {
+        display: none;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          width: 0.8rem;
+          height: 0.8rem;
+        }
+      }
+    }
+  }
+
+  &.current-user {
+    align-self: flex-end;
+    align-items: flex-end;
+
+    .content {
+      background-color: var(--color-primary);
+    }
+
+    .content p {
+      color: white;
+    }
+
+    .profile-picture-container {
+      display: none;
+    }
+
+    .message-box {
+      .time-and-status {
+        justify-content: flex-end;
+
+        .status {
+          display: flex;
+        }
+      }
+    }
+  }
+}

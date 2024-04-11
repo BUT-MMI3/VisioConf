@@ -10,7 +10,7 @@
 .barre-de-menu {
     width: 70px;
     height: 100vh;
-    background-color: #234457;
+    background-color: var(--color-primary);
     padding: 0.5rem;
     box-sizing: border-box;
     display: flex;
@@ -51,7 +51,7 @@ a {
 
 .onglet {
     object-fit: contain;
-    color: #fff;
+    color: var(--color-font);
     width: 2.25rem;
     height: 2.25rem;
     cursor: pointer;
@@ -66,7 +66,7 @@ a {
     position: relative;
     width: 100%;
     aspect-ratio: 1/1;
-    background: #eeeeeeaa;
+    background: var(--color-light)eeeaa;
     border-radius: 50%;
     display: flex;
     align-items: center;

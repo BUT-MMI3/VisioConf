@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import './NoyauConnexion.css';
-import {initConnection} from "../../controller/index.js";
+import {appInstance} from "../../controller/index.js";
 import sha256 from "../../utils/sha256.js";
 import LinkTo from "../../elements/LinkTo/LinkTo.jsx";
 
@@ -17,7 +17,7 @@ const NoyauConnexion = () => {
     const instanceName = "NoyauConnexion";
     const verbose = true;
 
-    const [controller] = useState(initConnection.getController())
+    const [controller] = useState(appInstance.getController())
 
     const {current} = useRef({
         instanceName,

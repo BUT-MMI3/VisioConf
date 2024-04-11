@@ -3,35 +3,40 @@ Author: @arthur-mdn
 Date: Janvier 2024
 */
 
-import './Message.css';
+import './Message.scss';
 import FeatherIcon from "feather-icons-react";
+import {useSelector} from "react-redux";
+import {
+    Loader,
+    Check,
+    CheckCircle
+} from "react-feather";
 
 const Message = ({message}) => {
-    const messageClass = (message.message_sender === "actualUser") ? 'message current-user' : 'message';// PS : comparer l'id de l'utilisateur actuel avec l'id de l'expéditeur (pour tester la vue current-user, changez "===" par "!==")
+    const session = useSelector((state) => state.session);
+
     const formattedTime = new Date(message.message_date_create).toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit'
     });
-    let statusIcon;
-    if (message.message_status === "sending") {
-        statusIcon = <FeatherIcon icon="loader"/>;
-    } else if (message.message_status === "sent") {
-        statusIcon = <FeatherIcon icon="check"/>;
-    } else if (message.message_status === "check-sent") {
-        statusIcon = <FeatherIcon icon="check-circle"/>;
-    }
+
     return (
 
-        <div className={messageClass}>
-            <div className={"profile-picture-and-content"}>
-                <img className={"profile-picture"} src={message.sender} alt={"profile pic"}/>
+        <div className={(message.message_sender.user_uuid === session.user_uuid) ? 'message current-user' : 'message'}>
+            <div className={"profile-picture-container"}>
+                <img className={"profile-picture"} src={message.message_sender.user_picture} alt={"profile pic"}/>
+            </div>
+            <div className="message-box">
                 <div className={"content"}>
                     <p>{message.message_content}</p>
                 </div>
-            </div>
-            <div className={"time-and-status"}>
-                <span className={"time"}>{formattedTime}</span>
-                <span className={"status"}>{statusIcon}</span>
+                <div className={"time-and-status"}>
+                    <span className={"time"}>{formattedTime}</span>
+                    <span className={"status"}>
+                    {message.message_status === "sending" ? <Loader/> : message.message_status === "sent" ? <Check/> :
+                        <CheckCircle/>}
+                </span>
+                </div>
             </div>
         </div>
     );

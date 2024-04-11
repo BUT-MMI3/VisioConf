@@ -1,0 +1,37 @@
+.header-fil-discussion {
+  padding: 1rem;
+  background-color: var(--color-light);
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+
+    button {
+      line-height: 0;
+      padding: 0.5rem;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+
+
+      svg {
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+  }
+}

@@ -6,10 +6,10 @@ class Discussions {
     instanceName = 'Discussions';
     controller = null;
 
-    listeMessagesEmis = ["liste_discussions", "historique_discussion", "discussion_creee"];
-    listeMessagesRecus = ["demande_liste_discussions", "demande_historique_discussion", "demande_creation_discussion"];
+    listeMessagesEmis = ["liste_discussions", "historique_discussion", "discussion_creee", "discussion_info"];
+    listeMessagesRecus = ["demande_liste_discussions", "demande_historique_discussion", "demande_creation_discussion", "demande_discussion_info"];
 
-    verbose = true;
+    verbose = false;
 
     constructor(controller, instanceName) {
         this.controller = controller;
@@ -27,13 +27,29 @@ class Discussions {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Demande de liste de discussions reçue`);
 
             const user = await User.findOne({user_socket_id: msg.id});
-            const user_discussions = await Discussion.find({discussion_members: user._id})
+            const user_discussions = await Discussion.find({discussion_members: user._id}).populate({
+                path: 'discussion_members',
+                model: 'User',
+                select: 'user_firstname user_lastname user_picture user_socket_id user_uuid'
+            }).populate({
+                path: 'discussion_messages.message_sender',
+                model: 'User',
+                select: 'user_firstname user_lastname user_picture user_socket_id user_uuid'
+            });
             this.controller.send(this, {liste_discussions: user_discussions, id: msg.id});
 
         } else if (typeof msg.demande_historique_discussion !== 'undefined') {
 
-            const discussion = await Discussion.findOne({_id: msg.demande_historique_discussion.discussion_id});
-            this.controller.send(this, {historique_discussion: discussion, id: msg.id});
+            const discussion = await Discussion.findOne({discussion_uuid: msg.demande_historique_discussion.discussionId}).populate({
+                path: 'discussion_messages.message_sender',
+                model: 'User',
+                select: 'user_firstname user_lastname user_picture user_socket_id user_uuid'
+            });
+            if (!discussion) {
+                this.controller.send(this, {historique_discussion: [], id: msg.id});
+                return;
+            }
+            this.controller.send(this, {historique_discussion: {historique: discussion.discussion_messages, discussionId: discussion.discussion_uuid}, id: msg.id});
 
         } else if (typeof msg.demande_creation_discussion !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Demande de création de discussion reçue`);
@@ -49,6 +65,15 @@ class Discussions {
             });
             await discussion.save();
             this.controller.send(this, {discussion_creee: discussion, id: msg.id});
+        } else if (typeof msg.demande_discussion_info !== 'undefined') {
+            if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Demande d'infos sur une discussion reçue`);
+
+            const discussion = await Discussion.findOne({discussion_uuid: msg.demande_discussion_info.discussionId});
+            if (!discussion) {
+                this.controller.send(this, {discussion_info: null, id: msg.id});
+                return;
+            }
+            this.controller.send(this, {discussion_info: discussion.info, id: msg.id});
         }
     }
 }

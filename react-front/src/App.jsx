@@ -14,7 +14,7 @@ import AdminListeUtilisateurs from "./elements/AdminListeUtilisateurs/AdminListe
 import AdminListeRoles from "./elements/AdminListeRoles/AdminListeRoles.jsx";
 import AdminListePermissions from "./elements/AdminListePermissions/AdminListePermissions.jsx";
 import TestComponents from "./elements/TestComponents.jsx";
-import {initConnection} from "./controller/index.js";
+import {appInstance} from "./controller/index.js";
 import {socket} from "./controller/socket.js";
 import {useDispatch, useSelector} from 'react-redux';
 import {signIn, signOut} from './features/session/sessionSlice';
@@ -33,9 +33,9 @@ const App = () => {
     const instanceName = "App";
     const verbose = false;
 
-    const [loading, setLoading] = useState(initConnection.loading);
-    const [controller, setController] = useState(initConnection.controller);
-    const [canal, setCanal] = useState(initConnection.canal);
+    const [loading, setLoading] = useState(appInstance.loading);
+    const [controller, setController] = useState(appInstance.controller);
+    const [canal, setCanal] = useState(appInstance.canal);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -69,14 +69,14 @@ const App = () => {
 
     useEffect(() => {
         // Définir un callback pour être notifié des changements de `loading`
-        initConnection.setLoadingCallback(setLoading);
-        initConnection.setControllerCallback(setController);
-        initConnection.setCanalCallback(setCanal);
+        appInstance.setLoadingCallback(setLoading);
+        appInstance.setControllerCallback(setController);
+        appInstance.setCanalCallback(setCanal);
 
         return () => {
-            initConnection.setLoadingCallback(null);
-            initConnection.setControllerCallback(null);
-            initConnection.setCanalCallback(null);
+            appInstance.setLoadingCallback(null);
+            appInstance.setControllerCallback(null);
+            appInstance.setCanalCallback(null);
         }
     }, []);
 

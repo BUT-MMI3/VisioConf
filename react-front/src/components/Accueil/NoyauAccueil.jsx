@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import FeatherIcon from 'feather-icons-react';
-import { initConnection } from "../../controller/index.js";
+import { appInstance } from "../../controller/index.js";
 import LinkTo from "../../elements/LinkTo/LinkTo.jsx";
 import "./NoyauAccueil.css";
 
@@ -12,7 +12,7 @@ const NoyauAccueil = () => {
 
     const instanceName = "NoyauAccueil";
     const verbose = true;
-    const [controller] = useState(initConnection.getController());
+    const [controller] = useState(appInstance.getController());
 
     const [notifications, setNotifications] = useState([]);
     const [historiqueAppels, setHistoriqueAppels] = useState([]);

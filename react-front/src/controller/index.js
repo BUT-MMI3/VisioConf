@@ -2,7 +2,7 @@ import CanalSocketIO from "./CanalSocketIO.js";
 import {socket} from "./socket.js";
 
 
-class InitConnection {
+class AppInstance {
     controller = null;
     canal = null;
     loading = true;
@@ -74,4 +74,4 @@ class InitConnection {
 }
 
 
-export const initConnection = new InitConnection();
+export const appInstance = new AppInstance();
