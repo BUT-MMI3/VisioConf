@@ -1,71 +1,53 @@
 import "./ListeDiscussions.scss";
 import {useEffect, useRef, useState} from "react";
 import LinkTo from "../../../elements/LinkTo/LinkTo.jsx";
-import {initConnection} from "../../../controller/index.js";
+import {appInstance} from "../../../controller/index.js";
 import {useDiscussion} from "../context/DiscussionContext.jsx";
 
-const listeMessageEmis = [
-    "nouvelle_discussion",
-]
-
-const listeMessageRecus = [
-    "liste_discussions",
-    "liste_messages",
-]
-
 export default function ListeDiscussions() {
-    const instanceName = "ListeDiscussions";
-    const verbose = false;
-
-    const [controller] = useState(initConnection.getController());
-
-    const [discussions, setDiscussions] = useState([]);
-    const {newDiscussion} = useDiscussion();
-
-    const {current} = useRef({
-        instanceName,
-        traitementMessage: (msg) => {
-            if (verbose || controller.verboseall) console.log(`INFO (${instanceName}) - traitementMessage : `, msg);
 
 
-            if (typeof msg.liste_discussions !== "undefined") {
-                setDiscussions(msg.liste_discussions);
-            }
-        }
-    });
+    const {listeDiscussions, newDiscussion} = useDiscussion();
 
     const handleNewDiscussion = () => {
         console.log("handleNewDiscussion");
         newDiscussion();
     }
 
-    useEffect(() => {
-        controller.subscribe(current, listeMessageEmis, listeMessageRecus);
-
-        return () => {
-            controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
-        }
-    }, [current]);
-
     return (
         <div className="liste-discussion">
             <div className="liste-discussion--card">
                 <h2>Discussions</h2>
 
-                <button className="btn btn-primary" onClick={handleNewDiscussion}>
+                <button className="btn btn-tertiary" onClick={handleNewDiscussion}>
                     Nouvelle discussion
                 </button>
 
                 <div className="liste-discussion--container">
                     <div className="liste-discussion--scroll">
                         <ul className="liste-discussion--list">
-                            {discussions.map((discussion) => (
+                            {listeDiscussions?.map((discussion) => (
                                 <li key={discussion.discussion_uuid}>
                                     <LinkTo
                                         to={`/discussion/${discussion.discussion_uuid}`}
                                         className="liste-discussion--item"
                                     >
                                         {discussion.discussion_name}
+                                        {discussion.discussion_messages.length > 0 && (
+                                        <span className="liste-discussion--last-message">
+                                            <span className="message">
+                                                De {discussion.discussion_messages[discussion.discussion_messages.length - 1].message_sender.user_firstname}
+                                            &nbsp;:&nbsp;
+                                            {discussion.discussion_messages[discussion.discussion_messages.length - 1].message_content}
+                                            </span>
+                                            <span className="date">
+                                                {new Date(discussion.discussion_messages[discussion.discussion_messages.length - 1].message_date_create?.split("T")[0]).toLocaleDateString("fr-FR", {
+                                                    month: "2-digit",
+                                                    day: "2-digit",
+                                                })}
+                                            </span>
+                                        </span>
+                                    )}
                                     </LinkTo>
                                 </li>
                             ))}

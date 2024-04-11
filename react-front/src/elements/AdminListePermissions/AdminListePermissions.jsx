@@ -1,6 +1,6 @@
 import "./AdminListePermissions.scss";
 import {useEffect, useRef, useState} from "react";
-import {initConnection} from "../../controller/index.js";
+import {appInstance} from "../../controller/index.js";
 
 const listeMessagesEmis = ["fetch-permissions"];
 const listeMessagesRecus = ["get-permissions"];
@@ -9,7 +9,7 @@ const AdminListePermissions = () => {
     const instanceName = "AdminListePermissions";
 
     const [permissions, setPermissions] = useState([]);
-    const [controller] = useState(initConnection.getController());
+    const [controller] = useState(appInstance.getController());
 
 
     const {current} = useRef({

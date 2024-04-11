@@ -32,7 +32,7 @@
 
         &.close {
           background-color: #DC4D38;
-          color: #fff;
+          color: var(--color-font);
         }
 
         &.close:hover {
@@ -41,7 +41,7 @@
 
         &.create {
           background-color: #5EE177;
-          color: #fff;
+          color: var(--color-font);
         }
 
         &.create:hover {
@@ -62,7 +62,7 @@
       flex-direction: row;
       align-items: center;
       gap: 0.5rem;
-      background-color: #eee;
+      background-color: var(--color-light);
       padding: 0.25rem 0.5rem;
       border-radius: 15px;
       color: #000;
@@ -75,7 +75,7 @@
         align-items: center;
         justify-content: center;
         background-color: #DC4D38;
-        color: #fff;
+        color: var(--color-font);
         border-radius: 50%;
         padding: 0.2rem;
         width: 20px;
@@ -131,7 +131,7 @@
         flex-direction: column;
         gap: 0.5rem;
         padding: 0.5rem 0.75rem;
-        background-color: #eee;
+        background-color: var(--color-light);
         border-radius: 15px;
         box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
         transition: background-color 0.25s;
@@ -142,7 +142,7 @@
 
         &.selected {
           background-color: #89D2FF;
-          color: #fff;
+          color: var(--color-font);
         }
       }
 

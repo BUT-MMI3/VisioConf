@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import './NoyauInscription.css';
 import {useNavigate} from "react-router-dom";
-import {initConnection} from "../../controller/index.js";
+import {appInstance} from "../../controller/index.js";
 import sha256 from "../../utils/sha256.js";
 
 const listeMessageEmis = [
@@ -17,7 +17,7 @@ const NoyauInscription = () => {
     const instanceName = "NoyauInscription";
     const verbose = true;
 
-    const [controller] = useState(initConnection.getController());
+    const [controller] = useState(appInstance.getController());
 
     const {current} = useRef({
         instanceName,

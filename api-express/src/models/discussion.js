@@ -61,5 +61,24 @@ discussionSchema.virtual("discussion_messages_count").get(function () {
     return this.discussion_messages.length;
 });
 
+discussionSchema.virtual("info").get(function () {
+    return {
+        discussion_uuid: this.discussion_uuid,
+        discussion_name: this.discussion_name,
+        discussion_description: this.discussion_description,
+        discussion_creator: this.discussion_creator,
+        discussion_type: this.discussion_type,
+        discussion_members: this.discussion_members,
+        discussion_date_create: this.discussion_date_create,
+        discussion_members_count: this.discussion_members_count,
+        discussion_messages_count: this.discussion_messages_count,
+    };
+});
+
+// findLastMessage
+discussionSchema.methods.findLastMessage = function () {
+    return this.discussion_messages[this.discussion_messages.length - 1]
+};
+
 // Export model
 module.exports = mongoose.model("Discussion", discussionSchema);

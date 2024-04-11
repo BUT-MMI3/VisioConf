@@ -4,18 +4,21 @@ Date: Janvier 2024
 */
 
 import {createContext, useCallback, useContext, useEffect, useRef, useState,} from "react";
-import {initConnection} from "../../../controller/index.js";
+import {appInstance} from "../../../controller/index.js";
 import {useLocation, useNavigate} from "react-router-dom";
 import ChatInput from "../../../elements/ChatInput/ChatInput.jsx";
 import FilDiscussion from "../fil-discussion/FilDiscussion.jsx";
 import ListeDiscussions from "../liste-discussions/ListeDiscussions.jsx";
 import CreateDiscussion from "../create-discussion/CreateDiscussion.jsx";
+import {useSelector} from "react-redux";
+import HeaderFilDiscussion from "../header-fil-de-discussion/HeaderFilDiscussion.jsx";
 
 // Initialisation du contexte avec une valeur par défaut
 const DiscussionContext = createContext({
     messages: [],
-    // eslint-disable-next-line no-unused-vars
+    listeDiscussions: [],
     addMessage: (message) => {
+        this.messages.push(message);
     },
     newDiscussion: () => {
     },
@@ -27,96 +30,147 @@ const listeMessagesEmis = [
     "envoie_message",
     "demande_liste_discussions",
     "demande_historique_discussion",
+    "demande_discussion_info",
 ];
 const listeMessagesRecus = [
-    "reception_message",
     "liste_discussions",
     "historique_discussion",
-    "discussion_creee"
+    "discussion_creee",
+    "discussion_info",
+    "nouveau_message",
+    "erreur_envoi_message",
 ];
 
 export function DiscussionContextProvider() {
     const instanceName = "Discussion Context";
     const verbose = true;
 
-    const [controller] = useState(initConnection.getController());
+    const [controller] = useState(appInstance.getController());
+
+    const session = useSelector((state) => state.session);
 
     const location = useLocation();
     const navigate = useNavigate();
 
     const [discussionId, setDiscussionId] = useState(undefined);
+    const [discussion, setDiscussion] = useState(undefined);
+    const [listeDiscussions, setListeDiscussions] = useState([]);
     const [messages, setMessages] = useState([]);
     const [createDiscussion, setCreateDiscussion] = useState(false);
 
-    const {current} = useRef({
-        instanceName,
-        traitementMessage: (msg) => {
-            if (verbose || controller.verboseall) console.log(`INFO (${instanceName}) - traitementMessage: `, msg);
-
-            if (typeof msg.reception_message !== "undefined") {
-                setMessages((prevMessages) => [
-                    ...prevMessages,
-                    {
-                        discussionId: msg.chat_message.discussionId,
-                        message: msg.chat_message.message,
-                    },
-                ]);
-            } else if (typeof msg.liste_discussions !== "undefined") {
-                const current_discussion = msg.liste_discussions.find((d) => d.discussion_uuid === discussionId);
-
-                if (current_discussion !== undefined) {
-                    setMessages(current_discussion.discussion_messages);
-                }
-            } else if (typeof msg.discussion_creee !== "undefined") {
-                console.log("INFO (" + instanceName + ") - traitementMessage : discussion_creee : ", msg.discussion_creee);
-                setCreateDiscussion(false);
-                setDiscussionId(msg.discussion_creee.discussion_uuid);
-                navigate("/discussion/" + msg.discussion_creee.discussion_uuid);
-            }
-        }
-    })
+    const discussionInstanceRef = useRef(null)
 
     useEffect(() => {
-        controller.subscribe(current, listeMessagesEmis, listeMessagesRecus);
+        discussionInstanceRef.current = {
+            instanceName,
+            traitementMessage: (msg) => {
+                if (verbose || controller.verboseall) console.log(`INFO (${instanceName}) - traitementMessage: `, msg);
+
+                if (typeof msg.liste_discussions !== "undefined") {
+                    setListeDiscussions(msg.liste_discussions);
+                } else if (typeof msg.discussion_creee !== "undefined") {
+                    setCreateDiscussion(false);
+                    setDiscussionId(msg.discussion_creee.discussion_uuid);
+                    navigate("/discussion/" + msg.discussion_creee.discussion_uuid);
+                } else if (typeof msg.historique_discussion !== "undefined") {
+
+                    if (msg.historique_discussion.historique.length >= 0 && discussionId === msg.historique_discussion.discussionId) {
+                        setMessages(msg.historique_discussion.historique);
+                    }
+                } else if (typeof msg.discussion_info !== "undefined") {
+                    setDiscussion(msg.discussion_info);
+                } else if (typeof msg.nouveau_message !== "undefined") {
+                    if (msg.nouveau_message.discussionId === discussionId) {
+                        if (messages[messages.length - 1].message_status === "sending" && messages[messages.length - 1].message_sender.user_uuid === msg.nouveau_message.message.message_sender.user_uuid) {
+                            console.log("INFO (" + instanceName + ") - traitementMessage : Message déjà envoyé");
+                            setMessages((prevMessages) => {
+                                const newMessages = [...prevMessages];
+                                newMessages[newMessages.length - 1] = msg.nouveau_message.message;
+                                return newMessages;
+                            });
+                        } else  {
+                            setMessages((prevMessages) => [
+                                ...prevMessages,
+                                msg.nouveau_message.message,
+                            ]);
+                        }
+                    }
+                } else if (typeof msg.erreur_envoi_message !== "undefined") {
+                    setMessages((prevMessages) => {
+                        const newMessages = [...prevMessages];
+                        newMessages[newMessages.length - 1].message_status = "error";
+                        return newMessages;
+                    });
+                }
+            }
+        };
+
+        controller.subscribe(discussionInstanceRef.current, listeMessagesEmis, listeMessagesRecus);
 
         return () => {
-            controller.unsubscribe(current, listeMessagesEmis, listeMessagesRecus);
+            controller.unsubscribe(discussionInstanceRef.current, listeMessagesEmis, listeMessagesRecus);
         };
-    }, [current]);
+    }, [controller, controller.verboseall, discussion, discussionId, location, navigate, verbose, messages]);
 
     useEffect(() => {
         if (location.pathname.split("/")[1] === "discussions") {
             if (verbose || controller.verboseall) console.log(`INFO - (${instanceName}) : Demande de liste de discussions`);
 
-            controller.send(current, {
+            controller.send(discussionInstanceRef.current, {
                 "demande_liste_discussions": null,
             });
         }
-    }, [current, location]);
+    }, [controller, location, verbose]);
 
     useEffect(() => {
-        let id = location.pathname.split("/")[2];
-        if (id !== discussionId) setDiscussionId(id);
-        console.log("Discussion ID: ", discussionId);
-    }, [discussionId, location]);
+        const id = location.pathname.split("/")[2];
+        if (id !== discussionId) {
+            setDiscussionId(id);
+        }
+    }, [discussionId, location, location.pathname]);
 
     useEffect(() => {
         if (discussionId === undefined) return;
 
-        controller.send(current, {
-            "demande_liste_discussions": discussionId,
+        controller.send(discussionInstanceRef.current, {
+            "demande_liste_discussions": {},
         })
-    }, [current, discussionId]);
+        controller.send(discussionInstanceRef.current, {
+            "demande_historique_discussion": {
+                discussionId: discussionId,
+            },
+        });
+        controller.send(discussionInstanceRef.current, {
+            "demande_discussion_info": {
+                discussionId: discussionId,
+            },
+        });
+    }, [controller, discussionId]);
 
     // Fonction pour ajouter un message au fil de discussion, gestion de l'ajout de message
     const addMessage = useCallback((message) => {
-        controller.send(current, {
+        console.log("INFO (" + instanceName + ") - addMessage : ", message);
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+                message_content: message,
+                message_date_create: Date.now(),
+                message_sender: {
+                    user_uuid: session.user_uuid,
+                    user_firstname: session.user_firstname,
+                    user_lastname: session.user_lastname,
+                    user_picture: session.user_picture,
+                },
+                message_status: "sending"
+            },
+        ]);
+        controller.send(discussionInstanceRef.current, {
             "envoie_message": {
                 discussionId: discussionId,
-                message: message,
+                content: message,
             },
         });
-    }, [current, discussionId]);
+    }, [controller, discussionId, session]);
 
     // Fonction pour créer une discussion
     const newDiscussion = useCallback(() => {
@@ -126,6 +180,7 @@ export function DiscussionContextProvider() {
     // La valeur fournie au contexte
     const contextValue = {
         messages,
+        listeDiscussions,
         addMessage,
         newDiscussion,
         setCreateDiscussion,
@@ -144,9 +199,9 @@ export function DiscussionContextProvider() {
                     <div className="discussion-content no-discussion">
                         <h2>Choisissez une discussion</h2>
                     </div>
-                )) || (discussionId && !createDiscussion && (
+                )) || (discussionId && !createDiscussion && discussion && (
                     <div className="discussion-content">
-                        <h2>Discussion ID: {discussionId}</h2>
+                        <HeaderFilDiscussion discussion={discussion} />
                         <FilDiscussion/>
                         <ChatInput/>
                     </div>
