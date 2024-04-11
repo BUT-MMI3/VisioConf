@@ -53,12 +53,14 @@
     gap: 0.25rem;
     padding: 0.7rem;
     border-radius: 0.5rem;
-    background-color: #182329;
+    background-color: var(--color-primary-dark);
     cursor: pointer;
     width: 100%;
+    transition: all 0.2s;
 
     &:hover {
-      background-color: #f5f5f5;
+      background-color:  var(--color-dark);
+      color: var(--color-font-secondary);
     }
 
   }

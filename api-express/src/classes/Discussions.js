@@ -68,7 +68,15 @@ class Discussions {
         } else if (typeof msg.demande_discussion_info !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Demande d'infos sur une discussion reçue`);
 
-            const discussion = await Discussion.findOne({discussion_uuid: msg.demande_discussion_info.discussionId});
+            const discussion = await Discussion.findOne({discussion_uuid: msg.demande_discussion_info.discussionId}).populate({
+                path: 'discussion_members',
+                model: 'User',
+                select: 'user_firstname user_lastname user_picture user_socket_id user_uuid'
+            }).populate({
+                path: 'discussion_messages.message_sender',
+                model: 'User',
+                select: 'user_firstname user_lastname user_picture user_socket_id user_uuid'
+            });
             if (!discussion) {
                 this.controller.send(this, {discussion_info: null, id: msg.id});
                 return;
