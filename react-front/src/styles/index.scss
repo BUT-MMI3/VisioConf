@@ -1,22 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: var(--color-font);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  --color-primary: #234457;
+  --color-primary-light: #2f5f8f;
+    --color-primary-dark: #1a3a5f;
+  --color-light: #f9f9f9;
+  --color-dark: #1a1a1a;
+  --color-font: rgba(255, 255, 255, 0.87);
+  --color-font-secondary: rgba(255, 255, 255, 0.6);
 }
 
 *,
 ::before,
 ::after {
+  font-family: 'Ubuntu', sans-serif;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -36,10 +46,10 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 600;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
   line-height: 1.1;
   color: #191919;
-  font-weight: bold;
 }
 
 h1 {
@@ -64,13 +74,19 @@ button {
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.25s;
+
+  &:focus,
+  &:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
+
+  &:hover {
+    border-color: #1a1a1a;
+    background-color: #4A4A4A;
+  }
 }
 
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
 
 img {
   max-width: 100%;
@@ -87,4 +103,86 @@ img {
   button {
     background-color: #f9f9f9;
   }
+}
+
+.fc {
+  display: flex;
+  flex-direction: column;
+}
+
+.fr {
+  display: flex;
+  flex-direction: row;
+}
+
+.ai-c {
+  align-items: center;
+}
+
+.ai-fs {
+  align-items: flex-start;
+}
+
+.g0-5 {
+  gap: 0.5rem;
+}
+
+.g1 {
+  gap: 1rem;
+}
+
+.g3 {
+  gap: 3rem;
+}
+
+.g4 {
+  gap: 4rem;
+}
+
+.fw-w {
+  flex-wrap: wrap;
+}
+
+.fw-nw {
+  flex-wrap: nowrap;
+}
+
+.jc-c {
+  justify-content: center;
+}
+
+.jc-fs {
+  justify-content: flex-start;
+}
+
+.jc-fe {
+  justify-content: flex-end;
+}
+
+.jc-sb {
+  justify-content: space-between;
+}
+
+.jc-sa {
+  justify-content: space-around;
+}
+
+.o0-5 {
+  opacity: 0.5;
+}
+
+.ta-c {
+  text-align: center;
+}
+
+.ta-l {
+  text-align: left;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.ma {
+  margin: auto;
 }
