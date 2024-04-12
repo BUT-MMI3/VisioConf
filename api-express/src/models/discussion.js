@@ -80,5 +80,19 @@ discussionSchema.methods.findLastMessage = function () {
     return this.discussion_messages[this.discussion_messages.length - 1]
 };
 
+async function findManyByUser(user) {
+    return await this.model("Discussion").find({
+        discussion_members: user._id,
+    }).populate({
+        path: 'discussion_members',
+        model: 'User',
+        select: 'user_firstname user_lastname user_picture user_socket_id user_uuid'
+    }).populate({
+        path: 'discussion_messages.message_sender',
+        model: 'User',
+        select: 'user_firstname user_lastname user_picture user_socket_id user_uuid'
+    });
+}
 // Export model
 module.exports = mongoose.model("Discussion", discussionSchema);
+module.exports.findManyByUser = findManyByUser;

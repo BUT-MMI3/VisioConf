@@ -12,6 +12,7 @@ const usersToInsert = [
         user_email: 'john.doe@example.com',
         user_phone: "00.00.00.00.00",
         user_job: "Responsable RH",
+        user_status: 'active',
         user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17',
     },
     {
@@ -22,6 +23,7 @@ const usersToInsert = [
         user_email: 'janny.doey@example.com',
         user_phone: "00.00.00.00.00",
         user_job: "Responsable RH",
+        user_status: 'active',
         user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17', // hash = mdp
     },
     {
@@ -32,6 +34,7 @@ const usersToInsert = [
         user_email: 'jean.deau@example.com',
         user_phone: "00.00.00.00.00",
         user_job: "Responsable RH",
+        user_status: 'active',
         user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17', // hash = mdp
     },
     {
@@ -43,6 +46,7 @@ const usersToInsert = [
         user_phone: "00.00.00.00.00",
         user_job: "Student",
         user_password: ' ',
+        user_status: 'waiting',
         user_tokens: {inscription: 'azerty1234'},
     },
 ];

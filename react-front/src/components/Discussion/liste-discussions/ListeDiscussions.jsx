@@ -1,7 +1,6 @@
 import "./ListeDiscussions.scss";
 import LinkTo from "../../../elements/LinkTo/LinkTo.jsx";
 import {useDiscussion} from "../context/DiscussionContext.jsx";
-import {useEffect} from "react";
 import {useSelector} from "react-redux";
 
 export default function ListeDiscussions() {
@@ -12,11 +11,6 @@ export default function ListeDiscussions() {
         console.log("handleNewDiscussion");
         newDiscussion();
     };
-
-    useEffect(() => {
-        console.log("ListeDiscussions::useEffect");
-        console.log(listeDiscussions);
-    }, [listeDiscussions]);
 
     return (
         <div className="liste-discussion">

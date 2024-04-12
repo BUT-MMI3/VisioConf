@@ -48,8 +48,7 @@ const NoyauInscription = () => {
         return () => {
             controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
         };
-    }, [controller, current, listeMessageEmis, listeMessageRecus]); // Ajoutez current comme dépendance
-
+    }, [controller, current]);
 
     useEffect(() => {
         const validatePassword = () => {
@@ -83,8 +82,6 @@ const NoyauInscription = () => {
 
     if (token) {
         const Register = async () => {
-
-
             console.log(token, motDePasse);
 
             if (token && motDePasse) {

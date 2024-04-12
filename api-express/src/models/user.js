@@ -92,5 +92,10 @@ UserSchema.virtual("info").get(function () {
     };
 });
 
+function findBySocketId (socketId) {
+    return this.model("User").findOne({ user_socket_id: socketId });
+};
+
 // Export the model
 module.exports = mongoose.model("User", UserSchema);
+module.exports.findBySocketId = findBySocketId;
