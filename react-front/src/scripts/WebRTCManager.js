@@ -4,6 +4,7 @@
 */
 
 class WebRTCManager {
+    instanceName = "WebRTCManager"
     config = {iceServers: [{urls: "stun:stun.l.google.com:19302"}]}
     peers = {} // The peer connections for each user
     remoteStreams = {} // The remote streams for each peer {socketId: {user, stream}}
@@ -31,7 +32,7 @@ class WebRTCManager {
         // callbacks = {updateRemoteStreams, setInCall, setCalling, setConnectionState, acceptIncomingCall, setIsSharingScreen}
 
         this.controller = controller // Le controller est un objet qui permet de gérer les messages reçus et émis
-        this.controller.subscribe(this, this.listeMessagesRecus, this.listeMessagesEmis) // On s'abonne à ces messages
+        this.controller.subscribe(this, this.listeMessagesEmis, this.listeMessagesRecus) // On s'abonne à ces messages
 
         if (this.verbose) console.log("WebRTCManager initialized: ")
     }
@@ -43,16 +44,17 @@ class WebRTCManager {
          * @param message - Le message reçu par le controller
          * @returns void
          */
+        if (this.verbose) console.log("Message reçu par le WebRTCManager: ", message)
 
-        if (message.type === "offer") {                         // {sender: "", offer: {}, type: "", discussion: ""}
-            await this.handleOffer(message)
-        } else if (message.type === "answer") {                 // {sender: "", answer: {}, discussion: ""}
-            await this.handleAnswer(message)
-        } else if (message.type === "ice-candidate") {          // {sender: "", candidate: {}, discussion: ""}
-            await this.handleIceCandidate(message)
-        } else if (message.type === "hang-up") {                // {sender: "", discussion: ""}
-            await this.handleHangUp(message)
-        } else if (message.type === "call_connected_users") {   // {connected_users: [], discussion: ""}
+        if (typeof message.receive_offer !== "undefined") {                         // {sender: "", offer: {}, type: "", discussion: ""}
+            await this.handleOffer(message.receive_offer)
+        } else if (typeof message.receive_answer !== "undefined") {                 // {sender: "", answer: {}, discussion: ""}
+            await this.handleAnswer(message.receive_answer)
+        } else if (typeof message.receive_ice_candidate !== "undefined") {          // {sender: "", candidate: {}, discussion: ""}
+            await this.handleIceCandidate(message.receive_ice_candidate)
+        } else if (typeof message.hang_up !== "undefined") {                // {sender: "", discussion: ""}
+            await this.handleHangUp(message.hang_up)
+        } else if (typeof message.call_connected_users !== "undefined") {   // {connected_users: [], discussion: ""}
             this.connectedMembers = message.connected_users
             this.discussion = message.discussion
         }

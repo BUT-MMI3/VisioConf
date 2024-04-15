@@ -301,16 +301,23 @@ export function DiscussionContextProvider() {
 
         setCalling(true);
         const members = discussion?.discussion_members || [];
+        console.log(discussion)
         const ids = []
         if (members) {
             for (const member of members) {
-                if (member.user_socket_id && member.user_is_online) ids.push(member.user_socket_id);
+                if (member.user_socket_id && member.user_is_online && member.user_uuid !== session.user_uuid) ids.push(member.user_socket_id);
             }
+        } else {
+            console.log("No members in discussion");
+            alert("No members in discussion");
         }
 
         console.log("Calling members: " + JSON.stringify(ids));
-        webRTCManager ? await webRTCManager.createOffer(ids, discussionId, type, self.id) : null;
-    }, [discussion?.discussion_members, discussionId]);
+        console.log("Calling type: " + type);
+        console.log("Calling discussionId: " + discussionId);
+        console.log("Calling self: " + session);
+        webRTCManager ? await webRTCManager.createOffer(ids, discussionId, type, session.user_socket_id) : null;
+    }, [discussion, discussionId, session, webRTCManager]);
 
     // La valeur fournie au contexte
     const contextValue = {

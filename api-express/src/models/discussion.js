@@ -93,6 +93,22 @@ async function findManyByUser(user) {
         select: 'user_firstname user_lastname user_picture user_socket_id user_uuid'
     });
 }
+
+async function findPopulateMembersByDiscussionId(discussion_uuid) {
+    return await this.model("Discussion").findOne({
+        discussion_uuid: discussion_uuid,
+    }).populate({
+        path: 'discussion_members',
+        model: 'User',
+        select: 'user_firstname user_lastname user_picture user_socket_id user_uuid user_is_online'
+    }).populate({
+        path: 'discussion_messages.message_sender',
+        model: 'User',
+        select: 'user_firstname user_lastname user_picture user_socket_id user_uuid user_is_online'
+    });
+}
+
 // Export model
 module.exports = mongoose.model("Discussion", discussionSchema);
 module.exports.findManyByUser = findManyByUser;
+module.exports.findPopulateMembersByDiscussionId = findPopulateMembersByDiscussionId;

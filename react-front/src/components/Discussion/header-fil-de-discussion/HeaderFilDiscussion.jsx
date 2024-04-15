@@ -1,9 +1,11 @@
 import './HeaderFilDiscussion.scss'
 import {Phone, UserPlus, Video, Users} from "react-feather";
 import {useSelector} from "react-redux";
+import {useDiscussion} from "../context/DiscussionContext.jsx";
 
 const HeaderFilDiscussion = ({discussion}) => {
     const session = useSelector(state => state.session)
+    const {call} = useDiscussion()
 
     return (
         <div className="header-fil-discussion">
@@ -18,8 +20,8 @@ const HeaderFilDiscussion = ({discussion}) => {
             </h1>
 
             <div className="actions">
-                <button className="btn btn-primary" title={'Appel Vidéo'}><Video/></button>
-                <button className="btn btn-primary" title={'Appel Audio'}><Phone/></button>
+                <button className="btn btn-primary" title={'Appel Vidéo'} onClick={() => call("video")}><Video/></button>
+                <button className="btn btn-primary" title={'Appel Audio'} onClick={() => call("audio")}><Phone/></button>
                 <button className="btn btn-primary" title={'Ajouter un participant'}><UserPlus/></button>
                 <button className="btn btn-secondary" title={'Infos du groupe'}><Users/></button>
             </div>

@@ -19,6 +19,7 @@ export const sessionSlice = createSlice({
         user_direct_manager: "",
         user_roles: [],
         user_session_token: "",
+        user_socket_id: "",
         isSignedIn: false,
     },
     reducers: {
@@ -38,6 +39,7 @@ export const sessionSlice = createSlice({
             state.user_direct_manager = action.payload.user_info.user_direct_manager;
             state.user_roles = action.payload.user_info.user_roles;
             state.user_session_token = action.payload.session_token;
+            state.user_socket_id = action.payload.user_info.user_socket_id;
             state.isSignedIn = true;
         },
         signOut: (state) => {
@@ -56,6 +58,7 @@ export const sessionSlice = createSlice({
             state.user_direct_manager = "";
             state.user_roles = [];
             state.user_session_token = "";
+            state.user_socket_id = "";
             state.isSignedIn = false;
         },
     },

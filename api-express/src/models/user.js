@@ -85,6 +85,7 @@ UserSchema.virtual("info").get(function () {
         user_date_create: this.user_date_create,
         user_picture: this.user_picture,
         user_is_online: this.user_is_online,
+        user_socket_id: this.user_socket_id,
         user_disturb_status: this.user_disturb_status,
         user_last_connection: this.user_last_connection,
         user_direct_manager: this.user_direct_manager,
@@ -92,9 +93,9 @@ UserSchema.virtual("info").get(function () {
     };
 });
 
-function findBySocketId (socketId) {
-    return this.model("User").findOne({ user_socket_id: socketId });
-};
+async function findBySocketId (socketId) {
+    return await this.model("User").findOne({ user_socket_id: socketId });
+}
 
 // Export the model
 module.exports = mongoose.model("User", UserSchema);

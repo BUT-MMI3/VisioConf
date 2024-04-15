@@ -31,12 +31,7 @@ class Discussions {
             this.controller.send(this, {liste_discussions: user_discussions, id: msg.id});
 
         } else if (typeof msg.demande_historique_discussion !== 'undefined') {
-
-            const discussion = await Discussion.findOne({discussion_uuid: msg.demande_historique_discussion.discussionId}).populate({
-                path: 'discussion_messages.message_sender',
-                model: 'User',
-                select: 'user_firstname user_lastname user_picture user_socket_id user_uuid'
-            });
+            const discussion = await Discussion.findPopulateMembersByDiscussionId(msg.demande_historique_discussion.discussionId);
             if (!discussion) {
                 this.controller.send(this, {historique_discussion: [], id: msg.id});
                 return;
@@ -63,15 +58,7 @@ class Discussions {
             await discussion.save();
             this.controller.send(this, {discussion_creee: discussion, id: msg.id});
 
-            const populatedDiscussion = await Discussion.findOne({discussion_uuid: discussion.discussion_uuid}).populate({
-                path: 'discussion_members',
-                model: 'User',
-                select: 'user_firstname user_lastname user_picture user_socket_id user_uuid'
-            }).populate({
-                path: 'discussion_messages.message_sender',
-                model: 'User',
-                select: 'user_firstname user_lastname user_picture user_socket_id user_uuid'
-            });
+            const populatedDiscussion = await Discussion.findPopulateMembersByDiscussionId(discussion.discussion_uuid);
 
             // Envoi de la nouvelle discussion à tous les membres
             populatedDiscussion.discussion_members.forEach(member => {
@@ -82,15 +69,7 @@ class Discussions {
         } else if (typeof msg.demande_discussion_info !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Demande d'infos sur une discussion reçue`);
 
-            const discussion = await Discussion.findOne({discussion_uuid: msg.demande_discussion_info.discussionId}).populate({
-                path: 'discussion_members',
-                model: 'User',
-                select: 'user_firstname user_lastname user_picture user_socket_id user_uuid'
-            }).populate({
-                path: 'discussion_messages.message_sender',
-                model: 'User',
-                select: 'user_firstname user_lastname user_picture user_socket_id user_uuid'
-            });
+            const discussion = await Discussion.findPopulateMembersByDiscussionId(msg.demande_discussion_info.discussionId);
             if (!discussion) {
                 this.controller.send(this, {discussion_info: null, id: msg.id});
                 return;
