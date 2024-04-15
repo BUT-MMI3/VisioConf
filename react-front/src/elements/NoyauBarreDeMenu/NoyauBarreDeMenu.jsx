@@ -12,6 +12,7 @@ const NoyauBarreDeMenu = () => {
     const session = useSelector((state) => state.session);
 
     const checkRole = () => {
+        console.log(`INFO: (NoyauBarreDeMenu) - checkRole - session.user_roles[0]`, session.user_roles[0]);
         return session.user_roles[0];
     };
 
@@ -80,7 +81,7 @@ const NoyauBarreDeMenu = () => {
                             className="onglet"
                         />
                     </LinkTo>
-                    {checkRole() === "Administrateur" && (
+                    {checkRole() === "admin" && (
                         <LinkTo to="/admin">
                             <FeatherIcon
                                 icon="settings"
