@@ -50,7 +50,7 @@ const usersToInsert = [
 ];
 const initializeUsers = async () => {
     try {
-        if (!process.env.ADMIN_USER || !process.env.ADMIN_PASSWORD) {
+        if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
             console.log("Les identifiants de l'administrateur ne sont pas définis dans le .env");
         } else {
             const adminPasswordHash = await sha256(process.env.ADMIN_PASSWORD)
@@ -60,7 +60,7 @@ const initializeUsers = async () => {
                 user_firstname: 'Admin',
                 user_lastname: 'Admin',
                 user_job_desc: 'Administrateur',
-                user_email: process.env.ADMIN_USER,
+                user_email: process.env.ADMIN_EMAIL,
                 user_phone: "00.00.00.00.00",
                 user_job: "Admin",
                 user_password: adminPasswordHash,
