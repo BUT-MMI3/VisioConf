@@ -1,6 +1,8 @@
+require('dotenv').config();
 const {v4: uuidv4} = require('uuid');
 const User = require('../models/user');
 const Discussion = require('../models/discussion');
+const {sha256} = require("../utils/utils");
 
 const usersToInsert = [
     {
@@ -52,6 +54,24 @@ const usersToInsert = [
 ];
 const initializeUsers = async () => {
     try {
+        if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
+            console.log("Les identifiants de l'administrateur ne sont pas définis dans le .env");
+        } else {
+            const adminPasswordHash = await sha256(process.env.ADMIN_PASSWORD)
+
+            usersToInsert.push({
+                user_uuid: uuidv4(),
+                user_firstname: 'Admin',
+                user_lastname: 'Admin',
+                user_job_desc: 'Administrateur',
+                user_email: process.env.ADMIN_EMAIL,
+                user_phone: "00.00.00.00.00",
+                user_job: "Admin",
+                user_password: adminPasswordHash,
+                user_is_admin: true,
+                user_roles: ['admin', 'user'],
+            });
+        }
         await User.deleteMany({});
         for (const userData of usersToInsert) {
             // flush existing users

@@ -10,6 +10,7 @@ import Layout from "./elements/Layout/Layout.jsx";
 import NoyauProfil from "./elements/NoyauProfil/NoyauProfil.jsx";
 import NoyauInscription from "./components/NoyauInscription/NoyauInscription.jsx";
 import NoyauConnexion from "./components/NoyauConnexion/NoyauConnexion.jsx";
+import AdminAccueil from "./elements/AdminAccueil/AdminAccueil.jsx";
 import AdminListeUtilisateurs from "./elements/AdminListeUtilisateurs/AdminListeUtilisateurs.jsx";
 import AdminListeRoles from "./elements/AdminListeRoles/AdminListeRoles.jsx";
 import AdminListePermissions from "./elements/AdminListePermissions/AdminListePermissions.jsx";
@@ -161,7 +162,7 @@ const App = () => {
                             path="admin"
                             element={
                                 <>
-                                    <AdminListeUtilisateurs/>
+                                    <AdminAccueil/>
                                 </>
                             }
                         />

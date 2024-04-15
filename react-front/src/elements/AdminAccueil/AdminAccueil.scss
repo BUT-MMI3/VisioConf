@@ -1,0 +1,181 @@
+.admin-accueil {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 0.5rem;
+
+
+  &--links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    &--card{
+      display: flex;
+      flex-direction: column;
+      min-width: 300px;
+      gap: 1rem;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      background-color: white;
+      box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+      margin-bottom: 1rem;
+      align-items: flex-start;
+
+
+      &--title {
+        font-size: 1.5rem;
+        color: #fff;
+      }
+
+      &--links {
+        display: flex;
+        gap: 0.5rem;
+      }
+    }
+
+  }
+
+  &--links--card--users {
+    border-left: 6px solid #0472DA;
+  }
+
+  &--links--card--groups {
+    border-left: 6px solid #444447;
+  }
+
+  &--links--card--roles {
+    border-left: 6px solid #62B367;
+  }
+
+  &--links--card--permissions {
+    border-left: 6px solid #DA2063;
+  }
+
+  &--links--link {
+    background-color: lightgray;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    gap: 1rem;
+
+    &--icon {
+      font-size: 1.5rem;
+      color: black;
+    }
+  }
+
+  &--cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+
+    &--card {
+      padding: 1rem;
+      border-radius: 0.75rem;
+      background-color: #234457;
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+
+      &--connected-users {
+        background-color: rgb(226, 251, 232);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        border: 1.5px solid rgb(116, 215, 111);
+
+        &--icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 2rem;
+          color: #fff;
+          width: 3rem;
+          height: 3rem;
+          border-radius: 50%;
+          background-color: rgb(116, 215, 111);
+          padding: 0.5rem;
+        }
+      }
+
+      &--calls {
+        background-color: rgb(242, 232, 252);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        border: 1.5px solid rgb(182, 133, 247);
+
+        &--icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 2rem;
+          color: #fff;
+          width: 3rem;
+          height: 3rem;
+          border-radius: 50%;
+          background-color: rgb(182, 133, 247);
+          padding: 0.5rem;
+        }
+      }
+
+    }
+  }
+
+
+  &--table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+
+    th,
+    td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: left;
+      color: #fff;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #234457;
+      color: #fff;
+    }
+
+    tr:nth-child(even) {
+      background-color: #333;
+    }
+
+    td:last-child {
+      vertical-align: middle;
+    }
+
+    th:first-child {
+      border-top-left-radius: 10px;
+    }
+
+    th:last-child {
+      border-top-right-radius: 10px;
+    }
+  }
+
+  &--modif,
+  &--supp {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    color: #fff;
+    margin-right: 0.5rem;
+  }
+
+  &--modif {
+    background-color: #00f;
+  }
+
+  &--supp {
+    background-color: #f00;
+  }
+}
