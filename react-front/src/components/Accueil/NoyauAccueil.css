@@ -2,12 +2,12 @@
     height: auto;
 }
 
-.section-profil, .section-notification, .section-notification-hidden, .section-historique {
+.section-profil, .section-notification, .section-notification-hidden, .section-historique, .section-historique-hidden {
     background-color: #ffffff;
     border-radius: 10px;
     color: black;
     box-shadow: rgba(0, 0, 0, 0.31) 0px 1px 4px;
-    height: 125px;
+    min-height: 125px;
 }
 
 .section {
@@ -20,7 +20,7 @@
     margin: 10px;
 }
 
-.section-notification {
+.section-notification, .section-historique {
     margin-bottom: 2rem;
 }
 
@@ -33,8 +33,12 @@ ul {
     border-radius: 50%;
 }
 
-.profil-info, .notification-affiche, .notification-info {
+.profil-info, .notification-affiche, .notification-info, .historique-info, .historique-affiche {
     height: 100%;
+}
+
+.notification-info, .notification-affiche{
+    margin: auto;
 }
 
 .icon-button {
@@ -56,4 +60,35 @@ ul {
 .feather-edit-2, .feather-bell {
     fill: white;
     stroke: white;
+}
+.feather-clock {
+    stroke: white;
+}
+.notifications, .historiques {
+    padding: 1em;
+}
+ul{
+    width: 100%;
+}
+ul li{
+    padding: 0.5em;
+}
+@media screen and (max-width: 768px) {
+    .noyau-accueil > .container, .noyau-accueil .container div.section div.section-profil div.profil-info.fr {
+        flex-direction: column !important;
+    }
+
+    .section-header h2 {
+        text-align: center;
+    }
+    .section-notification-hidden, .section-historique-hidden {
+        min-height: 200px;
+    }
+    .section-profil, .section-notification, .section-historique {
+        height: 200px !important;
+    }
+
+    .ai-fs {
+        align-items: center !important;
+    }
 }
