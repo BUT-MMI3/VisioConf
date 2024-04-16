@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import FeatherIcon from 'feather-icons-react';
-import { appInstance } from "../../controller/index.js";
+import {appInstance} from "../../controller/index.js";
 import LinkTo from "../../elements/LinkTo/LinkTo.jsx";
 import "./NoyauAccueil.css";
 
@@ -17,6 +17,7 @@ const NoyauAccueil = () => {
     const [notifications, setNotifications] = useState([]);
     const [historiqueAppels, setHistoriqueAppels] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
+    const [showHistorique, setShowHistorique] = useState(false);
     const [utilisateur, setUtilisateur] = useState(null);
 
     const {current} = useRef({
@@ -82,6 +83,9 @@ const NoyauAccueil = () => {
     const toggleNotifications = () => {
         setShowNotifications(!showNotifications);
     };
+    const toggleHistorique = () => {
+        setShowHistorique(!showHistorique);
+    };
 
     return (
         <div className="noyau-accueil layout-content--full">
@@ -94,7 +98,7 @@ const NoyauAccueil = () => {
                         <h2>Mon Profil</h2>
                     </div>
 
-                    <div className="section-profil">
+                    <div className="section-profil fc jc-c">
                         <div className="profil-info fr jc-sa ai-c">
 
                             {utilisateur && (
@@ -127,7 +131,7 @@ const NoyauAccueil = () => {
                         <h2>Boite de réception</h2>
                     </div>
 
-                    <div className="section-notification">
+                    <div className="section-notification fc jc-c">
 
                         <div className="notification-info w-100 fr jc-sa">
 
@@ -138,7 +142,7 @@ const NoyauAccueil = () => {
                             </div>
 
                             <div className="notifications w-100 fr jc-c ai-c">
-                                <h2 style={{fontSize: '15px', whiteSpace: 'nowrap'}}>Nouvelles notifications non
+                                <h2 style={{fontSize: '15px'}}>Nouvelles notifications non
                                     lues.</h2>
                             </div>
 
@@ -152,17 +156,18 @@ const NoyauAccueil = () => {
                     {showNotifications && (
                         <div className="section-notification-hidden">
                             <div className="notification-info fr jc-sa">
-                                <div className="notifications w-100 fr jc-c ai-c">
+                                <div className="notifications w-100 fr ai-c">
                                     <ul>
                                         {notifications.map((notification) => (
-                                            <li key={notification.id}>{notification.message}</li>
+                                            <>
+                                                <li key={notification.id}>{notification.message}</li>
+                                                <hr/>
+                                            </>
                                         ))}
                                     </ul>
                                 </div>
 
-                                <div className="notification-affiche w-100 fr jc-c ai-c" onClick={toggleNotifications}>
-                                    <FeatherIcon icon="chevron-right" size="20" strokeWidth="1" className="icon"/>
-                                </div>
+
                             </div>
                         </div>
                     )}
@@ -174,21 +179,43 @@ const NoyauAccueil = () => {
                         <h2>Historique des appels</h2>
                     </div>
 
-                    <div className="section-historique" style={{height: 'auto'}}>
-                        <div className="historique-appels">
-                            <ul>
-                                {historiqueAppels.map((appel) => (
-                                    <li key={appel.id}>
-                                        <p>Date: {appel.date}</p>
-                                        <p>Durée: {appel.duree}</p>
-                                        <p>Participants: {appel.participants.join(', ')}</p>
-                                        <hr/>
-                                    </li>
+                    <div className="section-historique fc jc-c" style={{height: 'auto'}}>
+                        <div className="historique-appels fr jc-c">
+                            <div className="historique-info w-100 fr jc-sa">
+                                <div className="icon-button2 fr jc-c ai-c" onClick={toggleHistorique}>
+                                    <FeatherIcon icon="clock" size="20" strokeWidth="2"
+                                                 className="icon fr feather-clock"/>
+                                </div>
+                            </div>
 
-                                ))}
-                            </ul>
+                            <div className="historique w-100 fr jc-c ai-c">
+                                <h2 style={{fontSize: '15px'}}>votre historique d'appels</h2>
+                            </div>
+                            <div className="historique-affiche w-100 fr jc-c ai-c" onClick={toggleHistorique}>
+                                <FeatherIcon icon={showHistorique ? 'chevron-down' : 'chevron-right'} size="20"
+                                             strokeWidth="1" fill="white" className="icon"/>
+                            </div>
                         </div>
                     </div>
+                    {showHistorique && (
+                        <div className="section-historique-hidden">
+                            <div className="historique-info fr jc-sa">
+                                <div className="historiques w-100 fr ai-c">
+                                    <ul>
+                                        {historiqueAppels.map((appel) => (
+                                            <li key={appel.id}>
+                                                <p>Date: {appel.date}</p>
+                                                <p>Durée: {appel.duree}</p>
+                                                <p>Participants: {appel.participants.join(', ')}</p>
+                                                <hr/>
+                                            </li>
+
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
