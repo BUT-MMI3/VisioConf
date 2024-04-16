@@ -34,17 +34,27 @@ class Utilisateurs {
                 user_is_online: false
             }).select('user_uuid user_firstname user_lastname user_job');
 
-            utilisateursConnectes.forEach(utilisateur => {
-                if (utilisateur.user_socket_id) {
-                    this.controller.send(this, {
-                        liste_utilisateurs: {
-                            utilisateurs_connectes: utilisateursConnectes,
-                            utilisateurs_deconnectes: utilisateursDeconnectes
-                        },
-                        id: utilisateur.user_socket_id
-                    });
-                }
-            });
+            if (msg.id) {
+                this.controller.send(this, {
+                    liste_utilisateurs: {
+                        utilisateurs_connectes: utilisateursConnectes,
+                        utilisateurs_deconnectes: utilisateursDeconnectes
+                    },
+                    id: msg.id
+                });
+            } else {
+                utilisateursConnectes.forEach(utilisateur => {
+                    if (utilisateur.user_socket_id) {
+                        this.controller.send(this, {
+                            liste_utilisateurs: {
+                                utilisateurs_connectes: utilisateursConnectes,
+                                utilisateurs_deconnectes: utilisateursDeconnectes
+                            },
+                            id: utilisateur.user_socket_id
+                        });
+                    }
+                });
+            }
         }
     }
 }
