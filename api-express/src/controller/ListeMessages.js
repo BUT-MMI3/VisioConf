@@ -25,7 +25,8 @@ const ListeMessagesEmis = [
     "send_offer",
     "send_answer",
     "send_ice_candidate",
-    "reject_offer"
+    "reject_offer",
+    "hang_up"
 ]
 
 /**
@@ -50,7 +51,10 @@ const ListeMessagesRecus = [
     "receive_offer",
     "receive_answer",
     "receive_ice_candidate",
-    "offer_rejected"
+    "offer_rejected",
+    "call_created",
+    "call_ended",
+    "hung_up"
 ]
 
 module.exports = {

@@ -1,11 +1,29 @@
 import './HeaderFilDiscussion.scss'
-import {Phone, UserPlus, Video, Users} from "react-feather";
+import {Phone, UserPlus, Users, Video} from "react-feather";
 import {useSelector} from "react-redux";
 import {useDiscussion} from "../context/DiscussionContext.jsx";
+import {appInstance} from "../../../controller/index.js";
+import {useEffect, useState} from "react";
 
 const HeaderFilDiscussion = ({discussion}) => {
     const session = useSelector(state => state.session)
     const {call} = useDiscussion()
+    const [webRTCManager] = useState(appInstance.getWebRTCManager())
+    const [inCall, setInCall] = useState(false)
+
+    useEffect(() => {
+        webRTCManager.setCallback("setInCall", setInCall)
+
+        return () => {
+            webRTCManager.setCallback("setInCall", null)
+        }
+    }, [webRTCManager]);
+
+    const hangUp = async () => {
+        if (webRTCManager && inCall) {
+            await webRTCManager.endCall()
+        }
+    }
 
     return (
         <div className="header-fil-discussion">
@@ -20,8 +38,18 @@ const HeaderFilDiscussion = ({discussion}) => {
             </h1>
 
             <div className="actions">
-                <button className="btn btn-primary" title={'Appel Vidéo'} onClick={() => call("video")}><Video/></button>
-                <button className="btn btn-primary" title={'Appel Audio'} onClick={() => call("audio")}><Phone/></button>
+                {inCall && (
+                    <button className="btn btn-danger" title={'Raccrocher'} onClick={() => hangUp()}><Phone/>
+                    </button>
+                ) || (
+                    <>
+                        <button className="btn btn-primary" title={'Appel Vidéo'} onClick={() => call("video")}><Video/>
+                        </button>
+                        <button className="btn btn-primary" title={'Appel Audio'} onClick={() => call("audio")}><Phone/>
+                        </button>
+                    </>
+                )}
+
                 <button className="btn btn-primary" title={'Ajouter un participant'}><UserPlus/></button>
                 <button className="btn btn-secondary" title={'Infos du groupe'}><Users/></button>
             </div>

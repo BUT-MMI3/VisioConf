@@ -39,9 +39,13 @@ const callSchema = new Schema({
 });
 
 callSchema.methods.addMemberToCall = async function (socketId) {
-    const user = await User.findBySocketId(socketId);
-    this.in_call_members.push(user);
-    return this.save();
+    try {
+        const user = await User.findBySocketId(socketId);
+        this.in_call_members.push(user);
+        return this.save();
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 callSchema.methods.removeMemberFromCall = async function (socketId) {

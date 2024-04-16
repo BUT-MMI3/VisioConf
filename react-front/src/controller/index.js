@@ -1,10 +1,11 @@
 import CanalSocketIO from "./CanalSocketIO.js";
 import {socket} from "./socket.js";
-
+import WebRTCManager from "../scripts/WebRTCManager.js";
 
 class AppInstance {
     controller = null;
     canal = null;
+    webRTCManager = null;
     loading = true;
 
     constructor() {
@@ -31,8 +32,12 @@ class AppInstance {
         this.onCanalChange = callback;
     }
 
+    setWebRTCManagerCallback = (callback) => {
+        this.onWebRTCManagerChange = callback;
+    }
+
     setLoading(value) {
-        this._loading = value;
+        this.loading = value;
         if (this.onLoadingChange) {
             this.onLoadingChange(value);
         }
@@ -50,6 +55,9 @@ class AppInstance {
         if (this.onControllerChange) {
             this.onControllerChange(this.controller);
         }
+
+        // Init WebRTCManager
+        this.setWebRTCManager();
     }
 
     setCanal() {
@@ -64,8 +72,21 @@ class AppInstance {
         this.setLoading(false);
     }
 
+    setWebRTCManager() {
+        console.log("Setting WebRTCManager");
+        this.webRTCManager = new WebRTCManager(this.controller);
+
+        if (this.onWebRTCManagerChange) {
+            this.onWebRTCManagerChange(this.webRTCManager);
+        }
+    }
+
     getController = () => {
         return this.controller;
+    }
+
+    getWebRTCManager = () => {
+        return this.webRTCManager;
     }
 
     getCanal = () => {

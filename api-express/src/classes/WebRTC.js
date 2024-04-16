@@ -8,8 +8,8 @@ class WebRTC {
     instanceName = 'WebRTC';
     controller = null;
 
-    listeMessagesEmis = ["receive_offer", "receive_answer", "receive_ice_candidate", "offer_rejected"]
-    listeMessagesRecus = ["send_offer", "send_answer", "send_ice_candidate", "reject_offer"]
+    listeMessagesEmis = ["receive_offer", "receive_answer", "receive_ice_candidate", "offer_rejected", "call_created", "hung_up"]
+    listeMessagesRecus = ["send_offer", "send_answer", "send_ice_candidate", "reject_offer", "hang_up"]
 
     verbose = true;
 
@@ -28,7 +28,10 @@ class WebRTC {
 
         if (typeof msg.send_offer !== 'undefined') {
             try {
-                let call = await Call.findOne({discussion_uuid: msg.send_offer.discussion}).populate('in_call_members').populate('call_creator');
+                let call = await Call.findOne({
+                    discussion_uuid: msg.send_offer.discussion,
+                    is_ended: false
+                }).populate('in_call_members').populate('call_creator');
                 const userFrom = await User.findBySocketId(msg.id);
                 const userTo = await User.findBySocketId(msg.send_offer.target);
                 const pseudo_caller = userFrom.user_firstname + " " + userFrom.user_lastname;
@@ -48,10 +51,10 @@ class WebRTC {
                     await newCall.save();
                 } else {
                     console.log("Adding user to call for discussion: " + msg.send_offer.discussion);
-                    call.addMemberToCall(userFrom);
+                    await call.addMemberToCall(userFrom.user_socket_id);
                 }
 
-                call = await Call.findOne({discussion_uuid: msg.send_offer.discussion});
+                call = await Call.findOne({discussion_uuid: msg.send_offer.discussion}).populate('in_call_members').populate('call_creator');
 
                 if (call && userTo && userTo.user_socket_id && userTo.user_is_online && userTo.user_socket_id !== msg.id) {
                     console.log(msg.id + " is sending offer to: " + msg.send_offer.target);
@@ -65,12 +68,20 @@ class WebRTC {
                             initiator: call.call_creator.user_socket_id,
                             sender: msg.id,
                             offer: msg.send_offer.offer,
+                            call_creator: call.call_creator.user_socket_id,
                             pseudo_caller: pseudo_caller,
                             type: msg.send_offer.type,
                             connected_users: call.in_call_members || [],
                         },
                         id: userTo.user_socket_id
                     });
+
+                    this.controller.send(this, {
+                        call_created: {
+                            call: call,
+                        },
+                        id: msg.id
+                    })
                 }
 
             } catch (e) {
@@ -80,10 +91,12 @@ class WebRTC {
         } else if (typeof msg.send_answer !== 'undefined') {
             try {
                 const call = await Call.findOne({discussion_uuid: msg.send_answer.discussion});
+                const userFrom = await User.findBySocketId(msg.id);
                 const userTo = await User.findBySocketId(msg.send_answer.target);
 
                 if (call && userTo && userTo.user_socket_id && userTo.user_is_online && userTo.user_socket_id !== msg.id) {
                     console.log(msg.id + " is sending answer to: " + msg.send_answer.target);
+                    await call.addMemberToCall(userFrom.user_socket_id);
                     this.controller.send(this, {
                         receive_answer: {
                             sender: msg.id,
@@ -118,11 +131,9 @@ class WebRTC {
         } else if (typeof msg.reject_offer !== 'undefined') {
             try {
                 const call = await Call.findOne({discussion_uuid: msg.reject_offer.discussion});
-                const userFrom = await User.findBySocketId(msg.id);
                 const userTo = await User.findBySocketId(msg.reject_offer.target);
-                const pseudo_caller = userFrom.user_firstname + " " + userFrom.user_lastname;
 
-                if (userTo && userTo.user_socket_id && userTo.user_is_online && userTo.user_socket_id !== msg.id) {
+                if (call && userTo && userTo.user_socket_id && userTo.user_is_online && userTo.user_socket_id !== msg.id) {
                     console.log(msg.id + " is rejecting offer from: " + msg.reject_offer.target);
                     this.controller.send(this, {
                         offer_rejected: {
@@ -134,7 +145,37 @@ class WebRTC {
                 }
 
             } catch (e) {
-                console.log("Utilisateur introuvable")
+                console.log("Une erreur est survenue")
+                console.log(e)
+            }
+        } else if (typeof msg.hang_up !== 'undefined') {
+            try {
+                const call = await Call.findOne({
+                    discussion_uuid: msg.hang_up.discussion,
+                    is_ended: false
+                }).populate('in_call_members').populate('call_creator');
+                if (call) {
+                    for (const member of call.in_call_members) {
+                        if (member.user_socket_id !== msg.id) {
+                            this.controller.send(this, {
+                                hung_up: {
+                                    sender: msg.id,
+                                },
+                                id: member.user_socket_id
+                            });
+                        }
+                    }
+
+                    call.in_call_members = call.in_call_members.filter(member => member.user_socket_id !== msg.id);
+                    if (call.in_call_members.length === 0) {
+                        call.is_ended = true;
+                        call.date_ended = Date.now();
+                    }
+                    await call.save();
+                }
+            } catch (e) {
+                console.log("Une erreur est survenue")
+                console.log(e)
             }
         }
     }

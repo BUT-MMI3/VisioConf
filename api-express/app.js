@@ -9,6 +9,7 @@ const path = require("path");
 const {
   initializeUsers,
   initializeDiscussions,
+    resetCalls
 } = require("./src/scripts/initializeDb");
 
 const dotenv = require("dotenv");
@@ -49,6 +50,7 @@ db.once("open", async () => {
     console.log("We're connected to the mongo.");
     await initializeUsers();
     await initializeDiscussions();
+    await resetCalls();
 });
 
 // use sessions for tracking logins

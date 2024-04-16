@@ -13,7 +13,6 @@ import CreateDiscussion from "../create-discussion/CreateDiscussion.jsx";
 import {useSelector} from "react-redux";
 import HeaderFilDiscussion from "../header-fil-de-discussion/HeaderFilDiscussion.jsx";
 import {useToasts} from "../../../elements/Toasts/ToastContext.jsx";
-import WebRTCManager from "../../../scripts/WebRTCManager.js";
 
 // Initialisation du contexte avec une valeur par défaut
 const DiscussionContext = createContext({
@@ -72,7 +71,7 @@ export function DiscussionContextProvider() {
     const [messages, setMessages] = useState([]);
 
     // WEBRTC STATES
-    const [webRTCManager, setWebRTCManager] = useState(null);
+    const [webRTCManager] = useState(appInstance.getWebRTCManager());
     const [connectedUsers, setConnectedUsers] = useState([]);
     const [peersStreams, setPeersStreams] = useState({});
     const [inCall, setInCall] = useState(false);
@@ -183,24 +182,6 @@ export function DiscussionContextProvider() {
             },
         });
     }, [controller, discussionId]);
-
-    useEffect(() => {
-        const webRTCManager = new WebRTCManager(controller, discussionInstanceRef.current, connectedUsers, {
-            updateRemoteStreams: updateRemoteStreams,
-            setRemoteStreams: setPeersStreams,
-            acceptIncomingCall: (offer) => {
-                setModalIncomingCallData(offer);
-                setModalIncomingCall(true);
-            },
-            setInCall: setInCall,
-            setIsSharingScreen: setIsScreenSharing,
-            setCalling: setCalling,
-            setCallInitiator: setCallInitiator,
-            setIsCallInitiator: setIsCallInitiator
-        })
-
-        setWebRTCManager(webRTCManager);
-    }, []);
 
     const updateRemoteStreams = (socketId, stream) => {
         setPeersStreams((prevStreams) => {
@@ -315,7 +296,7 @@ export function DiscussionContextProvider() {
         console.log("Calling members: " + JSON.stringify(ids));
         console.log("Calling type: " + type);
         console.log("Calling discussionId: " + discussionId);
-        console.log("Calling self: " + session);
+        console.log("Calling session: " + session);
         webRTCManager ? await webRTCManager.createOffer(ids, discussionId, type, session.user_socket_id) : null;
     }, [discussion, discussionId, session, webRTCManager]);
 

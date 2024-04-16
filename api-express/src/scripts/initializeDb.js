@@ -2,6 +2,7 @@ require('dotenv').config();
 const {v4: uuidv4} = require('uuid');
 const User = require('../models/user');
 const Discussion = require('../models/discussion');
+const Call = require('../models/call');
 const {sha256} = require("../utils/utils");
 
 const usersToInsert = [
@@ -132,7 +133,23 @@ const initializeDiscussions = async () => {
     }
 };
 
+const resetCalls = async () => {
+    try {
+        const callsNotEnded = await Call.find({is_ended: false});
+        for (const call of callsNotEnded) {
+            call.is_ended = true;
+            if (!call.date_ended) {
+                call.date_ended = Date.now();
+            }
+            await call.save();
+        }
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 module.exports = {
     initializeUsers,
-    initializeDiscussions
+    initializeDiscussions,
+    resetCalls,
 };

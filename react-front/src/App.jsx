@@ -37,6 +37,8 @@ const App = () => {
     const [loading, setLoading] = useState(appInstance.loading);
     const [controller, setController] = useState(appInstance.controller);
     const [canal, setCanal] = useState(appInstance.canal);
+    const [webRTCManager, setWebRTCManager] = useState(appInstance.webRTCManager);
+
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -73,11 +75,13 @@ const App = () => {
         appInstance.setLoadingCallback(setLoading);
         appInstance.setControllerCallback(setController);
         appInstance.setCanalCallback(setCanal);
+        appInstance.setWebRTCManagerCallback(setWebRTCManager);
 
         return () => {
             appInstance.setLoadingCallback(null);
             appInstance.setControllerCallback(null);
             appInstance.setCanalCallback(null);
+            appInstance.setWebRTCManagerCallback(null);
         }
     }, []);
 
@@ -105,14 +109,10 @@ const App = () => {
     useEffect(() => {
         if (session.user_session_token) {
             canal.setSessionToken(session.user_session_token);
-        }
-    }, [canal, session.user_session_token]);
 
-    useEffect(() => {
-        if (session) {
-            if (verbose) console.log("session", session);
+            if (webRTCManager) webRTCManager.setSession(session)
         }
-    }, [verbose, session]);
+    }, [canal, session, session.user_session_token, webRTCManager]);
 
     return (
         <Routes>

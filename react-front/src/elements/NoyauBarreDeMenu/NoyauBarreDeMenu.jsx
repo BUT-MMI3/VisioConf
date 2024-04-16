@@ -33,7 +33,7 @@ const NoyauBarreDeMenu = () => {
         return () => {
             document.removeEventListener("mousedown", handleContainerClick);
         };
-    }, [overlayVisible]);
+    }, [handleContainerClick, overlayVisible]);
 
     const handleOverlayToggle = () => {
         setOverlayVisible(!overlayVisible);
@@ -104,10 +104,10 @@ const NoyauBarreDeMenu = () => {
                     />
                     <img
                         src={session.user_picture}
-                        onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "./user-icons/user-base-icon.svg";
-                        }}
+                        // onError={(e) => {
+                        //     e.target.onerror = null;
+                        //     e.target.src = "./user-icons/user-base-icon.svg";
+                        // }}
                         alt="Logo de l'session"
                         className="logo-session"
                     />
@@ -117,10 +117,10 @@ const NoyauBarreDeMenu = () => {
                                 <div className="info-container">
                                     <img
                                         src={session.user_picture}
-                                        onError={(e) => {
-                                            e.target.onerror = null;
-                                            e.target.src = "./user-icons/user-base-icon.svg";
-                                        }}
+                                        // onError={(e) => {
+                                        //     e.target.onerror = null;
+                                        //     e.target.src = "./user-icons/user-base-icon.svg";
+                                        // }}
                                         alt="Logo de l'session"
                                         className="overlay-logo"
                                     />

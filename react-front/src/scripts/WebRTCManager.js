@@ -6,6 +6,32 @@
 class WebRTCManager {
     instanceName = "WebRTCManager"
     config = {iceServers: [{urls: "stun:stun.l.google.com:19302"}]}
+    session = null
+    connectedUsers = []
+    callbacks = {
+        updateRemoteStreams: (socket_id, stream) => {
+            console.log("Remote streams updated: ", socket_id, stream)
+        },
+         setRemoteStreams: (streams) => {
+            console.log("Remote streams set: ", streams)
+        },
+        setInCall: (bool) => {
+            console.log("In call: ", bool)
+        },
+        setCalling: (bool) => {
+            console.log("Calling: ", bool)
+        },
+        incomingCall: (offer) => {
+            console.log("Accepting incoming call: ", offer)
+        },
+        setIsSharingScreen: (bool) => {
+            console.log("Sharing screen: ", bool)
+        },
+        setCallCreator: (socket_id) => {
+            console.log("Call creator: ", socket_id)
+        },
+    }
+    // callbacks = {updateRemoteStreams, setInCall, setCalling, acceptIncomingCall, setIsSharingScreen, setCallCreator}
     peers = {} // The peer connections for each user
     remoteStreams = {} // The remote streams for each peer {socketId: {user, stream}}
     type = "video" // The type of call (video or audio)
@@ -16,25 +42,38 @@ class WebRTCManager {
     discussion = "" // The discussion id
     localStream = new MediaStream() // The local stream for the call
     localScreen = new MediaStream() // The local screen share stream
+    callCreator = "" // The user who created the call
 
     controller = null
-    listeMessagesRecus = ["receive_offer", "receive_answer", "receive_ice_candidate", "hang-up", "call_connected_users"]
-    listeMessagesEmis = ["send_offer", "send_answer", "send_ice_candidate", "hang_up"]
+    listeMessagesRecus = ["receive_offer", "receive_answer", "receive_ice_candidate", "hung_up", "call_connected_users", "call_created"]
+    listeMessagesEmis = ["send_offer", "send_answer", "send_ice_candidate", "hang_up", "reject_offer"]
 
     verbose = true
 
-    constructor(controller, self, connectedUsers, callbacks) {
-        if (!self) throw new Error("Self is not defined")
-
-        this.self = self
-        this.connectedUsers = connectedUsers
-        this.callbacks = callbacks
-        // callbacks = {updateRemoteStreams, setInCall, setCalling, setConnectionState, acceptIncomingCall, setIsSharingScreen}
-
+    constructor(controller) {
         this.controller = controller // Le controller est un objet qui permet de gérer les messages reçus et émis
         this.controller.subscribe(this, this.listeMessagesEmis, this.listeMessagesRecus) // On s'abonne à ces messages
 
-        if (this.verbose) console.log("WebRTCManager initialized: ")
+        if (this.verbose) console.log("WebRTCManager initialized")
+    }
+
+    setSession = session => {
+        if (this.verbose) console.log("Session set: ", session)
+        this.session = session
+    }
+
+    setCallback = (callback, value) => {
+        if (this.verbose) console.log("Callback set: ", callback, value)
+        this.callbacks[callback] = value
+    }
+
+    setConnectedUsers = connectedUsers => {
+        if (this.verbose) console.log("Connected users set: ", connectedUsers)
+        this.connectedUsers = connectedUsers
+    }
+
+    setDiscussion = discussion => {
+        this.discussion = discussion
     }
 
     traitementMessage = async (message) => {
@@ -52,11 +91,13 @@ class WebRTCManager {
             await this.handleAnswer(message.receive_answer)
         } else if (typeof message.receive_ice_candidate !== "undefined") {          // {sender: "", candidate: {}, discussion: ""}
             await this.handleIceCandidate(message.receive_ice_candidate)
-        } else if (typeof message.hang_up !== "undefined") {                // {sender: "", discussion: ""}
-            await this.handleHangUp(message.hang_up)
+        } else if (typeof message.hung_up !== "undefined") {                // {sender: "", discussion: ""}
+            await this.handleHangUp(message.hung_up)
         } else if (typeof message.call_connected_users !== "undefined") {   // {connected_users: [], discussion: ""}
             this.connectedMembers = message.connected_users
             this.discussion = message.discussion
+        } else if (typeof message.call_created !== "undefined") {           // {members: [], discussion: "", type: "", initiator: ""}
+            console.log("CALL CREATED", message.call_created)
         }
     }
 
@@ -116,8 +157,6 @@ class WebRTCManager {
             console.log(
                 `Connection state change: ${this.peers[socketId].iceConnectionState}`
             )
-
-            this.callbacks.setConnectionState(this.peers[socketId].iceConnectionState)
 
             if (this.peers[socketId].iceConnectionState === "connected") {
                 this.callbacks.setCalling(false)
@@ -187,7 +226,11 @@ class WebRTCManager {
         this.setDiscussion(discussion)
         this.type = type
         for (const member of members) {
-            if (member === this.self.id) continue
+            if (!this.session) {
+                console.warn("No session user to create offer")
+                return
+            }
+            if (member === this.session.user_socket_id) continue
             if (this.peers[member]) continue
 
             await this.newPeerConnection(member)
@@ -296,15 +339,18 @@ class WebRTCManager {
 
         this.connectedMembers = offer.connected_users
 
-        if (offer.initiator === offer.sender && !this.callAccepted) {
+        if (offer.call_creator === offer.sender && !this.callAccepted) {
             if (this.verbose)
                 console.log("Offer initiator is the sender: ", offer.sender)
 
+            this.callCreator = offer.call_creator
             await this.newPeerConnection(offer.sender)
             this.setDiscussion(offer.discussion)
+            this.callbacks.setCallCreator(offer.initiator);
+
             this.type = offer.type
             this.callMembers = offer.members
-            this.callbacks.acceptIncomingCall(offer)
+            this.callbacks.incomingCall(offer)
         } else if (this.callAccepted) {
             if (this.verbose)
                 console.log(
@@ -355,7 +401,11 @@ class WebRTCManager {
         this.controller.send(this, {"send_answer": {target: offer.sender, answer: answer, discussion: this.discussion}})
 
         for (const member of this.connectedMembers) {
-            if (member === this.self.id) continue
+            if (!this.session) {
+                console.warn("No session user to create offer")
+                return
+            }
+            if (member === this.session.user_socket_id) continue
             if (member === offer.sender) continue
             if (this.peers[member]) continue
             console.log("Creating offer for connected member: ", member)
@@ -363,7 +413,7 @@ class WebRTCManager {
                 this.callMembers,
                 this.discussion,
                 this.type,
-                this.self.id
+                this.session.user_socket_id
             )
         }
     }
@@ -446,11 +496,28 @@ class WebRTCManager {
 
     handleHangUp = async data => {
         console.log("Received hang up: ", data)
-        if (data.sender === this.self.id) {
+        if (!this.session) {
+            console.warn("No session user to create offer")
+            return
+        }
+
+        if (data.sender === this.session.user_socket_id || data.sender === this.callInitiator) {
             await this.endCall()
         } else {
             if (this.peers[data.sender]) {
                 this.peers[data.sender].close()
+            }
+
+            delete this.peers[data.sender]
+
+            if (this.remoteStreams[data.sender]) {
+                delete this.remoteStreams[data.sender]
+                this.callbacks.setRemoteStreams(this.remoteStreams)
+            }
+
+            if (Object.keys(this.peers).length === 0) {
+                this.callbacks.setInCall(false)
+                await this.endCall()
             }
         }
     }
@@ -490,18 +557,12 @@ class WebRTCManager {
         this.pendingIceCandidates = {}
         this.callMembers = []
         this.connectedMembers = []
+        this.callCreator = ""
         this.callAccepted = false
         this.callbacks.setInCall(false)
         this.callbacks.setIsSharingScreen(false)
         this.callbacks.setRemoteStreams({})
-    }
-
-    setDiscussion = discussion => {
-        this.discussion = discussion
-    }
-
-    setConnectedUsers = connectedUsers => {
-        this.connectedUsers = connectedUsers
+        this.callbacks.setCallCreator("")
     }
 }
 
