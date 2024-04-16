@@ -192,6 +192,7 @@ export function DiscussionContextProvider() {
         return () => {
             webRTCManager.setCallback("setInCall", null)
             webRTCManager.setCallback("updateRemoteStreams", null)
+            webRTCManager.setCallback("setCallInfo", null)
         }
     }, [webRTCManager]);
 

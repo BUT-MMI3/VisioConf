@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Call = require("../models/call");
 const {sha256} = require("../utils/utils");
 const jwt = require("jsonwebtoken");
 
@@ -95,13 +96,51 @@ class LogIn {
         if (typeof msg.demande_de_connexion !== "undefined") {
             await this.handleLogin(msg);
         } else if (typeof msg.client_deconnexion !== "undefined") {
-            await User.updateOne({user_socket_id: msg.id}, {
-                user_socket_id: "none",
-                user_is_online: false,
-                user_last_connection: new Date(),
-                user_tokens: {}
-            });
-            if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
+            try {
+                const user = await User.findOne({user_socket_id: msg.id})
+                if (user) {
+                    await User.updateOne({user_socket_id: msg.id}, {
+                        user_socket_id: "none",
+                        user_is_online: false,
+                        user_last_connection: new Date(),
+                        user_tokens: {}
+                    });
+
+                    if (this.verbose || this.controller.verboseall)
+                        console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
+
+
+                    // check if the user was in a call
+                    const call = await Call.findOne({in_call_members: user._id, is_ended: false}).populate("in_call_members").populate("call_creator");
+                    console.log("USER")
+                    console.log(user)
+                    console.log("CALL")
+                    console.log(call)
+                    if (call) {
+                        if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, mise à jour de l'appel en cours");
+                        if (call.call_creator.user_uuid === user.user_uuid) {
+                            if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Créateur de l'appel déconnecté, choix d'un nouveau créateur");
+                            if (call.in_call_members.length <= 1) {
+                                if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Dernier utilisateur de l'appel déconnecté, suppression de l'appel");
+                                call.is_ended = true;
+                                call.date_ended = Date.now();
+                            } else {
+                                let randomIndex = Math.floor(Math.random() * call.in_call_members.length);
+                                let newCreator = call.in_call_members[randomIndex];
+                                if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Nouveau créateur de l'appel : " + newCreator);
+                                call.call_creator = newCreator;
+                            }
+                        }
+
+                        call.in_call_members = call.in_call_members.filter(member => member.user_uuid !== user.user_uuid);
+                        await call.save();
+                    }
+                } else {
+                    if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur non trouvé dans la base de données");
+                }
+            } catch (e) {
+                console.log("ERROR (LogIn) - " + e);
+            }
         } else if (typeof msg.demande_user_info !== "undefined") {
             if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Demande d'informations de l'utilisateur pour NoyauAccueil");
             let user = await User.findOne({user_socket_id: msg.id});
@@ -122,4 +161,5 @@ class LogIn {
     }
 }
 
-module.exports = LogIn;
+module
+    .exports = LogIn;

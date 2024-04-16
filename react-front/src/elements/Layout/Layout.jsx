@@ -20,6 +20,7 @@ export default function Layout() {
 
     useEffect(() => {
         webRTCManager.setCallback("incomingCall", (offer) => {
+            console.warn("INFO Incoming call");
             handleOffer(offer);
         });
 
@@ -29,6 +30,7 @@ export default function Layout() {
     }, [webRTCManager]);
 
     async function acceptCall(value, offer) {
+        console.warn("INFO Accepting call");
         await webRTCManager.acceptIncomingCall(value, offer);
         setIncomingCall(false);
     }
