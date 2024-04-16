@@ -39,7 +39,7 @@ const CreateDiscussion = () => {
                 setCreateDiscussion(false);
             } else if (typeof msg.liste_utilisateurs !== "undefined") {
                 console.log("INFO (" + instanceName + ") - traitementMessage : liste_utilisateurs : ", msg.liste_utilisateurs);
-                setListeUtilisateurs(msg.liste_utilisateurs);
+                setListeUtilisateurs([...msg.liste_utilisateurs.utilisateurs_deconnectes, ...msg.liste_utilisateurs.utilisateurs_connectes]);
             }
         }
     })
@@ -51,7 +51,7 @@ const CreateDiscussion = () => {
         return () => {
             controller.unsubscribe(current, listeMessagesEmis, listeMessagesRecus);
         }
-    }, [current]);
+    }, [controller, current]);
 
     useEffect(() => {
         if (search === "" || listeUtilisateurs.length === 0) {
@@ -64,7 +64,7 @@ const CreateDiscussion = () => {
         search.split(" ").forEach((word) => {
             listeUtilisateurs.forEach((user) => {
                 Object.keys(user).forEach((key) => {
-                    if (typeof user[key] === "string" && user[key].toLowerCase().includes(word) && !discussionMembers.includes(user._id) && !results.includes(user)) {
+                    if (typeof user[key] === "string" && user[key].toLowerCase().includes(word) && !discussionMembers.includes(user.user_uuid) && !results.includes(user)) {
                         results.push(user);
                     }
                 });
@@ -117,7 +117,7 @@ const CreateDiscussion = () => {
                     <label htmlFor={'discussionMembers'}>Membres</label>
                     <div className="membres">
                         {discussionMembers.map((member, index) => {
-                            const user = listeUtilisateurs.find((user) => user._id === member);
+                            const user = listeUtilisateurs.find((user) => user.user_uuid === member);
                             return (
                                 <div key={index}>
                                     <div className='membre'>
@@ -142,16 +142,16 @@ const CreateDiscussion = () => {
                     {searchResults.map((user, index) => {
                         return (
                             <li key={index} className='search-result'>
-                                <input type="checkbox" id={user._id} name={user._id} value={user._id}
-                                       checked={discussionMembers.includes(user._id)}
+                                <input type="checkbox" id={user.user_uuid} name={user.user_uuid} value={user.user_uuid}
+                                       checked={discussionMembers.includes(user.user_uuid)}
                                        onChange={(e) => {
                                            if (e.target.checked) {
                                                setDiscussionMembers([...discussionMembers, e.target.value]);
                                            }
                                        }}/>
                                 <label
-                                    htmlFor={user._id}
-                                    className={(discussionMembers.includes(user._id) ? 'selected' : '')}>{user.user_firstname} {user.user_lastname} ({user.user_job})</label>
+                                    htmlFor={user.user_uuid}
+                                    className={(discussionMembers.includes(user.user_uuid) ? 'selected' : '')}>{user.user_firstname} {user.user_lastname} ({user.user_job}) - {user.user_is_online ? 'En ligne' : 'Hors ligne'}</label>
                             </li>
                         )
                     })}
