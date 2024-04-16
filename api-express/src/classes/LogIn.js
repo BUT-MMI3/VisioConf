@@ -6,7 +6,7 @@ class LogIn {
     controller = null;
     instanceName = "";
 
-    listeMessagesEmis = ["connexion_acceptee", "connexion_refusee", "information_user"];
+    listeMessagesEmis = ["connexion_acceptee", "connexion_refusee", "information_user", "demande_liste_utilisateurs"];
     listeMessagesRecus = ["demande_de_connexion", "client_deconnexion", "demande_user_info"];
 
     email = "";
@@ -57,6 +57,10 @@ class LogIn {
                             id: msg.id
                         });
 
+                        this.controller.send(this, {
+                            demande_liste_utilisateurs: {},
+                        })
+
                         if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur connecté et token envoyé");
                     } else {
                         if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Mot de passe invalide");
@@ -98,7 +102,7 @@ class LogIn {
                 user_tokens: {}
             });
             if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
-        }else if (typeof msg.demande_user_info !== "undefined") {
+        } else if (typeof msg.demande_user_info !== "undefined") {
             if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Demande d'informations de l'utilisateur pour NoyauAccueil");
             let user = await User.findOne({user_socket_id: msg.id});
             if (user) {

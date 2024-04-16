@@ -13,6 +13,7 @@ import CreateDiscussion from "../create-discussion/CreateDiscussion.jsx";
 import {useSelector} from "react-redux";
 import HeaderFilDiscussion from "../header-fil-de-discussion/HeaderFilDiscussion.jsx";
 import {useToasts} from "../../../elements/Toasts/ToastContext.jsx";
+import Call from "../call/Call.jsx";
 
 // Initialisation du contexte avec une valeur par défaut
 const DiscussionContext = createContext({
@@ -72,15 +73,10 @@ export function DiscussionContextProvider() {
 
     // WEBRTC STATES
     const [webRTCManager] = useState(appInstance.getWebRTCManager());
-    const [connectedUsers, setConnectedUsers] = useState([]);
     const [peersStreams, setPeersStreams] = useState({});
     const [inCall, setInCall] = useState(false);
-    const [isScreenSharing, setIsScreenSharing] = useState(false);
+    const [callInfo, setCallInfo] = useState({});
     const [calling, setCalling] = useState(false);
-    const [isCallInitiator, setIsCallInitiator] = useState(false);
-    const [modalIncomingCall, setModalIncomingCall] = useState(false);
-    const [modalIncomingCallData, setModalIncomingCallData] = useState(null);
-    const [callInitiator, setCallInitiator] = useState(null);
 
     // DISCUSSION REF
     const discussionInstanceRef = useRef(null)
@@ -135,8 +131,6 @@ export function DiscussionContextProvider() {
                         newMessages[newMessages.length - 1].message_status = "error";
                         return newMessages;
                     });
-                } else if (typeof msg.connected_users !== "undefined") {
-                    setConnectedUsers(msg.connected_users);
                 }
             }
         };
@@ -166,6 +160,12 @@ export function DiscussionContextProvider() {
     }, [discussionId, location, location.pathname]);
 
     useEffect(() => {
+        /*
+        * Si l'id de la discussion est défini, on demande l'historique de la discussion
+        * et les informations de la discussion
+        *
+        * Effectué à chaque changement de discussionId
+         */
         if (discussionId === undefined) return;
 
         controller.send(discussionInstanceRef.current, {
@@ -183,69 +183,57 @@ export function DiscussionContextProvider() {
         });
     }, [controller, discussionId]);
 
+    useEffect(() => {
+        webRTCManager.setCallback("setInCall", setInCall)
+        webRTCManager.setCallback("updateRemoteStreams", updateRemoteStreams)
+        webRTCManager.setCallback("setCallInfo", setCallInfo)
+
+
+        return () => {
+            webRTCManager.setCallback("setInCall", null)
+            webRTCManager.setCallback("updateRemoteStreams", null)
+        }
+    }, [webRTCManager]);
+
+    useEffect(() => {
+        if (calling) {
+           pushToast({
+               title: "Appel en cours",
+               message: "Appel en cours",
+               type: "info",
+           })
+        }
+    }, [calling]);
+
     const updateRemoteStreams = (socketId, stream) => {
         setPeersStreams((prevStreams) => {
             return {...prevStreams, [socketId]: stream};
         });
     }
 
-    async function handleIncomingCall(accepted) {
-        console.log("Incoming call");
-        if (modalIncomingCallData) {
-            if (accepted) {
-                console.log("Call accepted");
-                navigate(`/discussion/${modalIncomingCallData.discussion}`)
-                webRTCManager ? await webRTCManager.acceptIncomingCall(accepted, modalIncomingCallData) : null;
-            } else {
-                console.log("Call rejected");
-                webRTCManager ? await webRTCManager.acceptIncomingCall(accepted, modalIncomingCallData) : null;
-            }
-            setModalIncomingCall(false);
-            setModalIncomingCallData(null);
-        }
-    }
+    // async function StartScreenSharing() {
+    //
+    //     if (inCall && webRTCManager ? webRTCManager.isCallInitiator : false) {
+    //         console.log("Start Screen Sharing " + self.username);
+    //         webRTCManager ? await webRTCManager.shareScreen() : null;
+    //         setIsScreenSharing(true);
+    //     }
+    // }
+    //
+    // function stopScreenSharing() {
+    //     if (inCall && isScreenSharing) {
+    //         console.log("Stopping Screen Sharing " + self.username);
+    //         if (webRTCManager) {
+    //             webRTCManager ? webRTCManager.stopSharingScreen() : null;
+    //         }
+    //     }
+    // }
 
-    async function StopCall() {
-        if (inCall) {
-            console.log("Stopping call");
-            webRTCManager ? await webRTCManager.endCall() : null;
-            setInCall(false);
-            setCalling(false);
-            setIsScreenSharing(false);
-            setModalIncomingCall(false);
-            setModalIncomingCallData(null);
-            setPeersStreams({});
-        }
-    }
-
-    async function StartScreenSharing() {
-
-        if (inCall && webRTCManager ? webRTCManager.isCallInitiator : false) {
-            console.log("Start Screen Sharing " + self.username);
-            webRTCManager ? await webRTCManager.shareScreen() : null;
-            setIsScreenSharing(true);
-        }
-    }
-
-    function stopScreenSharing() {
-        if (inCall && isScreenSharing) {
-            console.log("Stopping Screen Sharing " + self.username);
-            if (webRTCManager) {
-                webRTCManager ? webRTCManager.stopSharingScreen() : null;
-            }
-        }
-    }
-
-    async function createOfferForNewUser(target) {
-        if (webRTCManager && inCall && isCallInitiator) {
-            await webRTCManager.createOffer([target], webRTCManager.discussion, 'video', self.id);
-        }
-    }
-
-    // handle the disconnect event
-    async function handleDisconnect() {
-        if (inCall) await StopCall();
-    }
+    // async function createOfferForNewUser(target) {
+    //     if (webRTCManager && inCall && isCallInitiator) {
+    //         await webRTCManager.createOffer([target], webRTCManager.discussion, 'video', self.id);
+    //     }
+    // }
 
     // Fonction pour ajouter un message au fil de discussion, gestion de l'ajout de message
     const addMessage = useCallback((message) => {
@@ -325,9 +313,19 @@ export function DiscussionContextProvider() {
                     </div>
                 )) || (discussionId && !createDiscussion && discussion && (
                     <div className="discussion-content">
-                        <HeaderFilDiscussion discussion={discussion}/>
-                        <FilDiscussion/>
-                        <ChatInput/>
+                        <HeaderFilDiscussion discussion={discussion} inCall={inCall} />
+
+                        {inCall && (
+                            <>
+                                <Call streams={peersStreams} callInfo={callInfo} />
+                            </>
+                        ) || (
+                            <>
+                                <FilDiscussion/>
+                                <ChatInput/>
+                            </>
+                        )}
+
                     </div>
                 ))}
 
@@ -337,7 +335,6 @@ export function DiscussionContextProvider() {
 }
 
 // Hook personnalisé pour utiliser le contexte du Discussion dans d'autres composants
-// eslint-disable-next-line react-refresh/only-export-components
 export function useDiscussion() {
     const context = useContext(DiscussionContext);
     if (!context) {

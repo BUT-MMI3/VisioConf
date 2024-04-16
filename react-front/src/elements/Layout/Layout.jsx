@@ -10,29 +10,26 @@ export default function Layout() {
     const location = useLocation();
 
     const [webRTCManager] = useState(appInstance.getWebRTCManager());
-    const [calling, setCalling] = useState(false);
     const [offer, setOffer] = useState(null);
     const [incomingCall, setIncomingCall] = useState(false);
 
+    function handleOffer(offer) {
+        setOffer(offer);
+        setIncomingCall(true);
+    }
+
     useEffect(() => {
         webRTCManager.setCallback("incomingCall", (offer) => {
-            setOffer(offer);
-            setIncomingCall(true);
-        });
-
-        webRTCManager.setCallback("setCalling", (value) => {
-            setCalling(value);
-            console.log("Setting calling to " + value)
+            handleOffer(offer);
         });
 
         return () => {
             webRTCManager.setCallback("incomingCall", null);
-            webRTCManager.setCallback("setCalling", null);
         };
     }, [webRTCManager]);
 
-    function acceptCall(value, offer) {
-        webRTCManager.acceptIncomingCall(value, offer);
+    async function acceptCall(value, offer) {
+        await webRTCManager.acceptIncomingCall(value, offer);
         setIncomingCall(false);
     }
 

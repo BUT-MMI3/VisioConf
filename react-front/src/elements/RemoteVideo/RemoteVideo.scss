@@ -1,0 +1,134 @@
+.remote-video-container {
+  //flex: 1 1 350px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  position: relative;
+  max-width: 600px;
+  min-width: 300px;
+  border-radius: 10px;
+  overflow: hidden;
+
+
+  & video {
+    min-width: 100%;
+    min-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 16/10;
+  }
+
+  & .remote-video-info {
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+    padding: 0.25rem 0.5rem;
+    border-radius: 5px 5px 0 0;
+    background-color: #3C3C3C99;
+    color: #f1f1f1;
+    font-size: 0.8rem;
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+
+    & .stream-name {
+      font-weight: bold;
+    }
+
+    & .stream-status {
+      width: 10px;
+      height: 10px;
+      line-height: 0;
+      display: block;
+      border-radius: 50%;
+      background-color: #BB2222;
+
+      &.connected {
+        background-color: #22BB22;
+      }
+
+      &.connecting {
+        background-color: #CCAA22;
+      }
+
+      &.reconnecting {
+        background-color: #CCAA22;
+      }
+
+      &.disconnected {
+        background-color: #BB2222;
+      }
+
+      &.checking {
+        background-color: #CCAA22;
+      }
+    }
+  }
+
+
+  & .remote-video-options {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 0.5rem;
+
+    & button {
+      border-radius: 5px;
+      background-color: #3C3C3C99;
+      color: #f1f1f1;
+      cursor: pointer;
+      transition: background-color 0.3s ease-in-out;
+      //line-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.25rem;
+
+      svg {
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+
+    & button:hover {
+      background-color: #2D2D2D;
+    }
+  }
+
+  .remote-video-options-modal {
+    position: absolute;
+    top: 3rem;
+    right: 0.5rem;
+    background-color: #00000090;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    border-radius: calc(0.5rem + 5px);
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+
+    &.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    & button {
+      font-size: 0.8rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease-in-out;
+      padding: 0.5rem;
+      text-align: left;
+    }
+  }
+
+}

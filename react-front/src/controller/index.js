@@ -1,6 +1,6 @@
 import CanalSocketIO from "./CanalSocketIO.js";
 import {socket} from "./socket.js";
-import WebRTCManager from "../scripts/WebRTCManager.js";
+import WebRTCManager from "../classes/WebRTCManager.js";
 
 class AppInstance {
     controller = null;

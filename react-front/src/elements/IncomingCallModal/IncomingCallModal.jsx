@@ -14,15 +14,15 @@ const IncomingCallModal = ({offer, calling, acceptCall}) => {
         }
     }, [offer]);
 
-    const handleAccept = () => {
+    const handleAccept = async () => {
         setAccept(true);
         navigate('/discussion/' + offer.discussion);
-        acceptCall(true, offer);
+        await acceptCall(true, offer);
     }
 
-    const handleReject = () => {
+    const handleReject = async () => {
         setReject(true);
-        acceptCall(false, offer);
+        await acceptCall(false, offer);
     }
 
     return (
@@ -32,11 +32,11 @@ const IncomingCallModal = ({offer, calling, acceptCall}) => {
                     <h2>Appel entrant de {name}</h2>
                     <div className={"modal-buttons"}>
                         <button className={'btn btn-secondary'} onClick={handleAccept}
-                                disabled={accept || reject}>
+                                >
                             Accepter
                         </button>
                         <button className={'btn btn-tertiary'} onClick={handleReject}
-                                disabled={accept || reject}>
+                                >
                             Rejeter
                         </button>
                     </div>

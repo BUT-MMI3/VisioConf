@@ -27,7 +27,8 @@ const listeMessageEmis = []
 const listeMessageRecus = [
     "connexion_acceptee",
     "inscription_acceptee",
-    "client_deconnexion"
+    "client_deconnexion",
+    "liste_utilisateurs",
 ]
 
 const App = () => {
@@ -37,6 +38,7 @@ const App = () => {
     const [loading, setLoading] = useState(appInstance.loading);
     const [controller, setController] = useState(appInstance.controller);
     const [canal, setCanal] = useState(appInstance.canal);
+    const [listeUtilisateurs, setListeUtilisateurs] = useState([]); // liste des utilisateurs connectés [ {id: 1, nom: "Mathis", prenom: "Lambert"}, ...
     const [webRTCManager, setWebRTCManager] = useState(appInstance.webRTCManager);
 
 
@@ -66,6 +68,8 @@ const App = () => {
                     session_token: msg.inscription_acceptee.session_token,
                     user_info: msg.inscription_acceptee.user_info
                 }));
+            } else if (typeof msg.liste_utilisateurs !== "undefined") {
+                setListeUtilisateurs(msg.liste_utilisateurs)
             }
         }
     });
@@ -110,9 +114,12 @@ const App = () => {
         if (session.user_session_token) {
             canal.setSessionToken(session.user_session_token);
 
-            if (webRTCManager) webRTCManager.setSession(session)
+            if (webRTCManager) {
+                webRTCManager.setSession(session)
+                webRTCManager.setConnectedUsers(listeUtilisateurs.utilisateurs_connectes)
+            }
         }
-    }, [canal, session, session.user_session_token, webRTCManager]);
+    }, [canal, listeUtilisateurs.utilisateurs_connectes, session, session.user_session_token, webRTCManager]);
 
     return (
         <Routes>

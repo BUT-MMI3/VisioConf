@@ -12,7 +12,7 @@ class WebRTCManager {
         updateRemoteStreams: (socket_id, stream) => {
             console.log("Remote streams updated: ", socket_id, stream)
         },
-         setRemoteStreams: (streams) => {
+        setRemoteStreams: (streams) => {
             console.log("Remote streams set: ", streams)
         },
         setInCall: (bool) => {
@@ -30,6 +30,9 @@ class WebRTCManager {
         setCallCreator: (socket_id) => {
             console.log("Call creator: ", socket_id)
         },
+        setCallInfo: (callInfo) => {
+            console.log("Call Info: ", callInfo)
+        }
     }
     // callbacks = {updateRemoteStreams, setInCall, setCalling, acceptIncomingCall, setIsSharingScreen, setCallCreator}
     peers = {} // The peer connections for each user
@@ -39,6 +42,7 @@ class WebRTCManager {
     callMembers = [] // The members selected for the call
     connectedMembers = [] // The members connected to the call
     callAccepted = false // Whether the call has been accepted
+    isScreenSharing = false
     discussion = "" // The discussion id
     localStream = new MediaStream() // The local stream for the call
     localScreen = new MediaStream() // The local screen share stream
@@ -132,12 +136,16 @@ class WebRTCManager {
                 return
             }
 
-            const user = this.connectedUsers.find(user => user.id === socketId)
+            const user = this.connectedUsers.find(user => user.user_socket_id === socketId)
+            if (!user) {
+                console.error("Impossible de trouver l'utilisateur parmi les utilisateurs connectés")
+            }
             this.remoteStreams[socketId] = {user: user, stream: event.streams[0]}
             this.callbacks.updateRemoteStreams(socketId, {
                 user: user,
                 stream: event.streams[0]
             })
+            this.callbacks.setCallInfo(this.getCallInfo())
         }
 
         this.peers[socketId].onicecandidate = event => {
@@ -151,12 +159,18 @@ class WebRTCManager {
                     }
                 })
             }
+            this.callbacks.setCallInfo(this.getCallInfo())
         }
 
         this.peers[socketId].oniceconnectionstatechange = () => {
             console.log(
                 `Connection state change: ${this.peers[socketId].iceConnectionState}`
             )
+
+            if (this.remoteStreams[socketId]) {
+                this.remoteStreams[socketId].status = this.peers[socketId].iceConnectionState;
+                this.callbacks.updateRemoteStreams(socketId, this.remoteStreams[socketId]);
+            }
 
             if (this.peers[socketId].iceConnectionState === "connected") {
                 this.callbacks.setCalling(false)
@@ -181,6 +195,8 @@ class WebRTCManager {
                     this.endCall()
                 }
             }
+
+            this.callbacks.setCallInfo(this.getCallInfo())
         }
     }
 
@@ -211,6 +227,9 @@ class WebRTCManager {
                 }
             }
         })
+
+
+        this.callbacks.setCallInfo(this.getCallInfo())
     }
 
     createOffer = async (members, discussion, type, initiator) => {
@@ -249,6 +268,7 @@ class WebRTCManager {
                 }
             })
         }
+        this.callbacks.setCallInfo(this.getCallInfo())
     }
 
     getLocalStream = async type => {
@@ -302,6 +322,7 @@ class WebRTCManager {
         }
 
         this.callbacks.setIsSharingScreen(true)
+        this.isScreenSharing = true
     }
 
     stopSharingScreen = async () => {
@@ -321,6 +342,7 @@ class WebRTCManager {
         this.localScreen.getTracks().forEach(track => track.stop())
         this.localScreen = new MediaStream()
         this.callbacks.setIsSharingScreen(false)
+        this.isScreenSharing = false
     }
 
     handleOffer = async offer => {
@@ -416,6 +438,8 @@ class WebRTCManager {
                 this.session.user_socket_id
             )
         }
+
+        this.callbacks.setCallInfo(this.getCallInfo())
     }
 
     handleAnswer = async answer => {
@@ -433,6 +457,7 @@ class WebRTCManager {
         }
         this.callbacks.setInCall(true)
         await this.peers[answer.sender].setRemoteDescription(answer.answer)
+        this.callbacks.setCallInfo(this.getCallInfo())
     }
 
     handleIceCandidate = async data => {
@@ -455,6 +480,8 @@ class WebRTCManager {
             ) {
                 await this.handlePendingIceCandidates(data.sender)
             }
+            this.callbacks.setCallInfo(this.getCallInfo())
+
         } catch (e) {
             console.error("Error adding ice candidate: ", e)
         }
@@ -488,6 +515,7 @@ class WebRTCManager {
                 }
             }
             delete this.pendingIceCandidates[socketId]
+            this.callbacks.setCallInfo(this.getCallInfo())
         } else {
             if (this.verbose)
                 console.warn("No pending ice candidates for: ", socketId)
@@ -520,6 +548,7 @@ class WebRTCManager {
                 await this.endCall()
             }
         }
+        this.callbacks.setCallInfo(this.getCallInfo())
     }
 
     endCall = async () => {
@@ -546,6 +575,19 @@ class WebRTCManager {
 
         this.controller.send(this, {"hang_up": {discussion: this.discussion}})
         this.reset()
+        this.callbacks.setCallInfo(this.getCallInfo())
+    }
+
+    getCallInfo = () => {
+        return {
+            localStream: this.localStream,
+            localScreen: this.localScreen,
+            isScreenSharing: this.isScreenSharing,
+            remoteStreams: this.remoteStreams,
+            callCreator: this.callCreator,
+            isCallCreator: this.callCreator === this.session.user_socket_id,
+            discussion: this.discussion
+        }
     }
 
     reset = () => {
@@ -559,6 +601,7 @@ class WebRTCManager {
         this.connectedMembers = []
         this.callCreator = ""
         this.callAccepted = false
+        this.isScreenSharing = false
         this.callbacks.setInCall(false)
         this.callbacks.setIsSharingScreen(false)
         this.callbacks.setRemoteStreams({})

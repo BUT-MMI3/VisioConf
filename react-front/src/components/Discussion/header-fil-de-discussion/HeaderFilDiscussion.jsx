@@ -1,23 +1,14 @@
 import './HeaderFilDiscussion.scss'
-import {Phone, UserPlus, Users, Video} from "react-feather";
+import {Phone, UserPlus, Users, Video, PhoneOff} from "react-feather";
 import {useSelector} from "react-redux";
 import {useDiscussion} from "../context/DiscussionContext.jsx";
 import {appInstance} from "../../../controller/index.js";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
-const HeaderFilDiscussion = ({discussion}) => {
+const HeaderFilDiscussion = ({discussion, inCall}) => {
     const session = useSelector(state => state.session)
     const {call} = useDiscussion()
     const [webRTCManager] = useState(appInstance.getWebRTCManager())
-    const [inCall, setInCall] = useState(false)
-
-    useEffect(() => {
-        webRTCManager.setCallback("setInCall", setInCall)
-
-        return () => {
-            webRTCManager.setCallback("setInCall", null)
-        }
-    }, [webRTCManager]);
 
     const hangUp = async () => {
         if (webRTCManager && inCall) {
@@ -39,7 +30,7 @@ const HeaderFilDiscussion = ({discussion}) => {
 
             <div className="actions">
                 {inCall && (
-                    <button className="btn btn-danger" title={'Raccrocher'} onClick={() => hangUp()}><Phone/>
+                    <button className="btn btn-danger" title={'Raccrocher'} onClick={hangUp}><PhoneOff/>
                     </button>
                 ) || (
                     <>
@@ -50,8 +41,8 @@ const HeaderFilDiscussion = ({discussion}) => {
                     </>
                 )}
 
-                <button className="btn btn-primary" title={'Ajouter un participant'}><UserPlus/></button>
-                <button className="btn btn-secondary" title={'Infos du groupe'}><Users/></button>
+                <button className="btn btn-primary" title={'Ajouter un participant -> non implémenté'} disabled={true}><UserPlus/></button>
+                <button className="btn btn-secondary" title={'Infos du groupe -> non implémenté'} disabled={true}><Users/></button>
             </div>
         </div>
     )
