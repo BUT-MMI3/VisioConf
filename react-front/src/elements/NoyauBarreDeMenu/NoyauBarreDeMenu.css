@@ -8,7 +8,7 @@
 }
 
 .barre-de-menu {
-    width: 70px;
+    width: var(--sidebar-width);
     height: 100vh;
     background-color: var(--color-primary);
     padding: 0.5rem;

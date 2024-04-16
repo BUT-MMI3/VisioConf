@@ -2,6 +2,7 @@ require('dotenv').config();
 const {v4: uuidv4} = require('uuid');
 const User = require('../models/user');
 const Discussion = require('../models/discussion');
+const Call = require('../models/call');
 const {sha256} = require("../utils/utils");
 
 const usersToInsert = [
@@ -14,6 +15,7 @@ const usersToInsert = [
         user_email: 'john.doe@example.com',
         user_phone: "00.00.00.00.00",
         user_job: "Responsable RH",
+        user_status: 'active',
         user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17',
     },
     {
@@ -24,6 +26,7 @@ const usersToInsert = [
         user_email: 'janny.doey@example.com',
         user_phone: "00.00.00.00.00",
         user_job: "Responsable RH",
+        user_status: 'active',
         user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17', // hash = mdp
     },
     {
@@ -34,6 +37,7 @@ const usersToInsert = [
         user_email: 'jean.deau@example.com',
         user_phone: "00.00.00.00.00",
         user_job: "Responsable RH",
+        user_status: 'active',
         user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17', // hash = mdp
     },
     {
@@ -45,6 +49,7 @@ const usersToInsert = [
         user_phone: "00.00.00.00.00",
         user_job: "Student",
         user_password: ' ',
+        user_status: 'waiting',
         user_tokens: {inscription: 'azerty1234'},
     },
 ];
@@ -128,7 +133,23 @@ const initializeDiscussions = async () => {
     }
 };
 
+const resetCalls = async () => {
+    try {
+        const callsNotEnded = await Call.find({is_ended: false});
+        for (const call of callsNotEnded) {
+            call.is_ended = true;
+            if (!call.date_ended) {
+                call.date_ended = Date.now();
+            }
+            await call.save();
+        }
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 module.exports = {
     initializeUsers,
-    initializeDiscussions
+    initializeDiscussions,
+    resetCalls,
 };

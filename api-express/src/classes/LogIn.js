@@ -6,16 +6,16 @@ class LogIn {
     controller = null;
     instanceName = "";
 
-    listeMessagesEmis = ["connexion_acceptee", "connexion_refusee", "information_user"];
+    listeMessagesEmis = ["connexion_acceptee", "connexion_refusee", "information_user", "demande_liste_utilisateurs"];
     listeMessagesRecus = ["demande_de_connexion", "client_deconnexion", "demande_user_info"];
 
     email = "";
 
     verbose = true;
 
-    constructor(controller, name) {
+    constructor(controller, instanceName) {
         this.controller = controller;
-        this.instanceName = name;
+        this.instanceName = instanceName;
 
         if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Création de l'instance LogIn : " + this.instanceName);
 
@@ -35,32 +35,44 @@ class LogIn {
             if (user) {
                 if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur trouvé dans la base de données");
 
-                if (client_challenge === await sha256(user.user_email + user.user_password)) {
-                    user.set({
-                        'user_socket_id': msg.id,
-                        'user_last_connection': new Date(),
-                        'user_is_online': true,
-                        'user_tokens.session': jwt.sign({user: user.user_email + user.user_password}, process.env.JWT_SECRET, {expiresIn: "1h"})
-                    });
-                    try {
-                        await user.save();
-                    } catch (e) {
-                        console.log("ERROR (LogIn) - " + e);
+                if (user.user_status === "active") {
+                    if (client_challenge === await sha256(user.user_email + user.user_password)) {
+                        user.set({
+                            'user_socket_id': msg.id,
+                            'user_last_connection': new Date(),
+                            'user_is_online': true,
+                            'user_tokens.session': jwt.sign({user: user.user_email + user.user_password}, process.env.JWT_SECRET, {expiresIn: "1h"})
+                        });
+                        try {
+                            await user.save();
+                        } catch (e) {
+                            console.log("ERROR (LogIn) - " + e);
+                        }
+
+                        this.controller.send(this, {
+                            "connexion_acceptee": {
+                                session_token: user.user_tokens["session"],
+                                user_info: user.info
+                            },
+                            id: msg.id
+                        });
+
+                        this.controller.send(this, {
+                            demande_liste_utilisateurs: {},
+                        })
+
+                        if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur connecté et token envoyé");
+                    } else {
+                        if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Mot de passe invalide");
+                        this.controller.send(this, {
+                            connexion_refusee: "Mot de passe invalide",
+                            id: msg.id
+                        }, this.instanceName);
                     }
-
-                    this.controller.send(this, {
-                        "connexion_acceptee": {
-                            session_token: user.user_tokens["session"],
-                            user_info: user.info
-                        },
-                        id: msg.id
-                    });
-
-                    if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur connecté et token envoyé");
                 } else {
-                    if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Mot de passe invalide");
+                    if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur inactif");
                     this.controller.send(this, {
-                        connexion_refusee: "Mot de passe invalide",
+                        connexion_refusee: "Status de l'utilisateur : " + user.user_status,
                         id: msg.id
                     }, this.instanceName);
                 }
@@ -90,7 +102,7 @@ class LogIn {
                 user_tokens: {}
             });
             if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
-        }else if (typeof msg.demande_user_info !== "undefined") {
+        } else if (typeof msg.demande_user_info !== "undefined") {
             if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Demande d'informations de l'utilisateur pour NoyauAccueil");
             let user = await User.findOne({user_socket_id: msg.id});
             if (user) {

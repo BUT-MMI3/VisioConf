@@ -4,7 +4,37 @@
 */
 
 class WebRTCManager {
+    instanceName = "WebRTCManager"
     config = {iceServers: [{urls: "stun:stun.l.google.com:19302"}]}
+    session = null
+    connectedUsers = []
+    callbacks = {
+        updateRemoteStreams: (socket_id, stream) => {
+            console.log("Remote streams updated: ", socket_id, stream)
+        },
+        setRemoteStreams: (streams) => {
+            console.log("Remote streams set: ", streams)
+        },
+        setInCall: (bool) => {
+            console.log("In call: ", bool)
+        },
+        setCalling: (bool) => {
+            console.log("Calling: ", bool)
+        },
+        incomingCall: (offer) => {
+            console.log("Accepting incoming call: ", offer)
+        },
+        setIsSharingScreen: (bool) => {
+            console.log("Sharing screen: ", bool)
+        },
+        setCallCreator: (socket_id) => {
+            console.log("Call creator: ", socket_id)
+        },
+        setCallInfo: (callInfo) => {
+            console.log("Call Info: ", callInfo)
+        }
+    }
+    // callbacks = {updateRemoteStreams, setInCall, setCalling, acceptIncomingCall, setIsSharingScreen, setCallCreator}
     peers = {} // The peer connections for each user
     remoteStreams = {} // The remote streams for each peer {socketId: {user, stream}}
     type = "video" // The type of call (video or audio)
@@ -12,28 +42,42 @@ class WebRTCManager {
     callMembers = [] // The members selected for the call
     connectedMembers = [] // The members connected to the call
     callAccepted = false // Whether the call has been accepted
+    isScreenSharing = false
     discussion = "" // The discussion id
     localStream = new MediaStream() // The local stream for the call
     localScreen = new MediaStream() // The local screen share stream
+    callCreator = "" // The user who created the call
 
     controller = null
-    listeMessagesRecus = ["receive_offer", "receive_answer", "receive_ice_candidate", "hang-up", "call_connected_users"]
-    listeMessagesEmis = ["send_offer", "send_answer", "send_ice_candidate", "hang_up"]
+    listeMessagesRecus = ["receive_offer", "receive_answer", "receive_ice_candidate", "hung_up", "call_connected_users", "call_created"]
+    listeMessagesEmis = ["send_offer", "send_answer", "send_ice_candidate", "hang_up", "reject_offer"]
 
     verbose = true
 
-    constructor(controller, self, connectedUsers, callbacks) {
-        if (!self) throw new Error("Self is not defined")
-
-        this.self = self
-        this.connectedUsers = connectedUsers
-        this.callbacks = callbacks
-        // callbacks = {updateRemoteStreams, setInCall, setCalling, setConnectionState, acceptIncomingCall, setIsSharingScreen}
-
+    constructor(controller) {
         this.controller = controller // Le controller est un objet qui permet de gérer les messages reçus et émis
-        this.controller.subscribe(this, this.listeMessagesRecus, this.listeMessagesEmis) // On s'abonne à ces messages
+        this.controller.subscribe(this, this.listeMessagesEmis, this.listeMessagesRecus) // On s'abonne à ces messages
 
-        if (this.verbose) console.log("WebRTCManager initialized: ")
+        if (this.verbose) console.log("WebRTCManager initialized")
+    }
+
+    setSession = session => {
+        if (this.verbose) console.log("Session set: ", session)
+        this.session = session
+    }
+
+    setCallback = (callback, value) => {
+        if (this.verbose) console.log("Callback set: ", callback, value)
+        this.callbacks[callback] = value
+    }
+
+    setConnectedUsers = connectedUsers => {
+        if (this.verbose) console.log("Connected users set: ", connectedUsers)
+        this.connectedUsers = connectedUsers
+    }
+
+    setDiscussion = discussion => {
+        this.discussion = discussion
     }
 
     traitementMessage = async (message) => {
@@ -43,18 +87,21 @@ class WebRTCManager {
          * @param message - Le message reçu par le controller
          * @returns void
          */
+        if (this.verbose) console.log("Message reçu par le WebRTCManager: ", message)
 
-        if (message.type === "offer") {                         // {sender: "", offer: {}, type: "", discussion: ""}
-            await this.handleOffer(message)
-        } else if (message.type === "answer") {                 // {sender: "", answer: {}, discussion: ""}
-            await this.handleAnswer(message)
-        } else if (message.type === "ice-candidate") {          // {sender: "", candidate: {}, discussion: ""}
-            await this.handleIceCandidate(message)
-        } else if (message.type === "hang-up") {                // {sender: "", discussion: ""}
-            await this.handleHangUp(message)
-        } else if (message.type === "call_connected_users") {   // {connected_users: [], discussion: ""}
+        if (typeof message.receive_offer !== "undefined") {                         // {sender: "", offer: {}, type: "", discussion: ""}
+            await this.handleOffer(message.receive_offer)
+        } else if (typeof message.receive_answer !== "undefined") {                 // {sender: "", answer: {}, discussion: ""}
+            await this.handleAnswer(message.receive_answer)
+        } else if (typeof message.receive_ice_candidate !== "undefined") {          // {sender: "", candidate: {}, discussion: ""}
+            await this.handleIceCandidate(message.receive_ice_candidate)
+        } else if (typeof message.hung_up !== "undefined") {                // {sender: "", discussion: ""}
+            await this.handleHangUp(message.hung_up)
+        } else if (typeof message.call_connected_users !== "undefined") {   // {connected_users: [], discussion: ""}
             this.connectedMembers = message.connected_users
             this.discussion = message.discussion
+        } else if (typeof message.call_created !== "undefined") {           // {members: [], discussion: "", type: "", initiator: ""}
+            console.log("CALL CREATED", message.call_created)
         }
     }
 
@@ -89,12 +136,16 @@ class WebRTCManager {
                 return
             }
 
-            const user = this.connectedUsers.find(user => user.id === socketId)
+            const user = this.connectedUsers.find(user => user.user_socket_id === socketId)
+            if (!user) {
+                console.error("Impossible de trouver l'utilisateur parmi les utilisateurs connectés")
+            }
             this.remoteStreams[socketId] = {user: user, stream: event.streams[0]}
             this.callbacks.updateRemoteStreams(socketId, {
                 user: user,
                 stream: event.streams[0]
             })
+            this.callbacks.setCallInfo(this.getCallInfo())
         }
 
         this.peers[socketId].onicecandidate = event => {
@@ -108,6 +159,7 @@ class WebRTCManager {
                     }
                 })
             }
+            this.callbacks.setCallInfo(this.getCallInfo())
         }
 
         this.peers[socketId].oniceconnectionstatechange = () => {
@@ -115,7 +167,10 @@ class WebRTCManager {
                 `Connection state change: ${this.peers[socketId].iceConnectionState}`
             )
 
-            this.callbacks.setConnectionState(this.peers[socketId].iceConnectionState)
+            if (this.remoteStreams[socketId]) {
+                this.remoteStreams[socketId].status = this.peers[socketId].iceConnectionState;
+                this.callbacks.updateRemoteStreams(socketId, this.remoteStreams[socketId]);
+            }
 
             if (this.peers[socketId].iceConnectionState === "connected") {
                 this.callbacks.setCalling(false)
@@ -140,6 +195,8 @@ class WebRTCManager {
                     this.endCall()
                 }
             }
+
+            this.callbacks.setCallInfo(this.getCallInfo())
         }
     }
 
@@ -170,6 +227,9 @@ class WebRTCManager {
                 }
             }
         })
+
+
+        this.callbacks.setCallInfo(this.getCallInfo())
     }
 
     createOffer = async (members, discussion, type, initiator) => {
@@ -185,7 +245,11 @@ class WebRTCManager {
         this.setDiscussion(discussion)
         this.type = type
         for (const member of members) {
-            if (member === this.self.id) continue
+            if (!this.session) {
+                console.warn("No session user to create offer")
+                return
+            }
+            if (member === this.session.user_socket_id) continue
             if (this.peers[member]) continue
 
             await this.newPeerConnection(member)
@@ -204,6 +268,7 @@ class WebRTCManager {
                 }
             })
         }
+        this.callbacks.setCallInfo(this.getCallInfo())
     }
 
     getLocalStream = async type => {
@@ -257,6 +322,7 @@ class WebRTCManager {
         }
 
         this.callbacks.setIsSharingScreen(true)
+        this.isScreenSharing = true
     }
 
     stopSharingScreen = async () => {
@@ -276,6 +342,7 @@ class WebRTCManager {
         this.localScreen.getTracks().forEach(track => track.stop())
         this.localScreen = new MediaStream()
         this.callbacks.setIsSharingScreen(false)
+        this.isScreenSharing = false
     }
 
     handleOffer = async offer => {
@@ -294,15 +361,18 @@ class WebRTCManager {
 
         this.connectedMembers = offer.connected_users
 
-        if (offer.initiator === offer.sender && !this.callAccepted) {
+        if (offer.call_creator === offer.sender && !this.callAccepted) {
             if (this.verbose)
                 console.log("Offer initiator is the sender: ", offer.sender)
 
+            this.callCreator = offer.call_creator
             await this.newPeerConnection(offer.sender)
             this.setDiscussion(offer.discussion)
+            this.callbacks.setCallCreator(offer.initiator);
+
             this.type = offer.type
             this.callMembers = offer.members
-            this.callbacks.acceptIncomingCall(offer)
+            this.callbacks.incomingCall(offer)
         } else if (this.callAccepted) {
             if (this.verbose)
                 console.log(
@@ -353,7 +423,11 @@ class WebRTCManager {
         this.controller.send(this, {"send_answer": {target: offer.sender, answer: answer, discussion: this.discussion}})
 
         for (const member of this.connectedMembers) {
-            if (member === this.self.id) continue
+            if (!this.session) {
+                console.warn("No session user to create offer")
+                return
+            }
+            if (member === this.session.user_socket_id) continue
             if (member === offer.sender) continue
             if (this.peers[member]) continue
             console.log("Creating offer for connected member: ", member)
@@ -361,9 +435,11 @@ class WebRTCManager {
                 this.callMembers,
                 this.discussion,
                 this.type,
-                this.self.id
+                this.session.user_socket_id
             )
         }
+
+        this.callbacks.setCallInfo(this.getCallInfo())
     }
 
     handleAnswer = async answer => {
@@ -381,6 +457,7 @@ class WebRTCManager {
         }
         this.callbacks.setInCall(true)
         await this.peers[answer.sender].setRemoteDescription(answer.answer)
+        this.callbacks.setCallInfo(this.getCallInfo())
     }
 
     handleIceCandidate = async data => {
@@ -403,6 +480,8 @@ class WebRTCManager {
             ) {
                 await this.handlePendingIceCandidates(data.sender)
             }
+            this.callbacks.setCallInfo(this.getCallInfo())
+
         } catch (e) {
             console.error("Error adding ice candidate: ", e)
         }
@@ -436,6 +515,7 @@ class WebRTCManager {
                 }
             }
             delete this.pendingIceCandidates[socketId]
+            this.callbacks.setCallInfo(this.getCallInfo())
         } else {
             if (this.verbose)
                 console.warn("No pending ice candidates for: ", socketId)
@@ -444,13 +524,31 @@ class WebRTCManager {
 
     handleHangUp = async data => {
         console.log("Received hang up: ", data)
-        if (data.sender === this.self.id) {
+        if (!this.session) {
+            console.warn("No session user to create offer")
+            return
+        }
+
+        if (data.sender === this.session.user_socket_id || data.sender === this.callInitiator) {
             await this.endCall()
         } else {
             if (this.peers[data.sender]) {
                 this.peers[data.sender].close()
             }
+
+            delete this.peers[data.sender]
+
+            if (this.remoteStreams[data.sender]) {
+                delete this.remoteStreams[data.sender]
+                this.callbacks.setRemoteStreams(this.remoteStreams)
+            }
+
+            if (Object.keys(this.peers).length === 0) {
+                this.callbacks.setInCall(false)
+                await this.endCall()
+            }
         }
+        this.callbacks.setCallInfo(this.getCallInfo())
     }
 
     endCall = async () => {
@@ -477,6 +575,19 @@ class WebRTCManager {
 
         this.controller.send(this, {"hang_up": {discussion: this.discussion}})
         this.reset()
+        this.callbacks.setCallInfo(this.getCallInfo())
+    }
+
+    getCallInfo = () => {
+        return {
+            localStream: this.localStream,
+            localScreen: this.localScreen,
+            isScreenSharing: this.isScreenSharing,
+            remoteStreams: this.remoteStreams,
+            callCreator: this.callCreator,
+            isCallCreator: this.callCreator === this.session.user_socket_id,
+            discussion: this.discussion
+        }
     }
 
     reset = () => {
@@ -488,18 +599,13 @@ class WebRTCManager {
         this.pendingIceCandidates = {}
         this.callMembers = []
         this.connectedMembers = []
+        this.callCreator = ""
         this.callAccepted = false
+        this.isScreenSharing = false
         this.callbacks.setInCall(false)
         this.callbacks.setIsSharingScreen(false)
         this.callbacks.setRemoteStreams({})
-    }
-
-    setDiscussion = discussion => {
-        this.discussion = discussion
-    }
-
-    setConnectedUsers = connectedUsers => {
-        this.connectedUsers = connectedUsers
+        this.callbacks.setCallCreator("")
     }
 }
 

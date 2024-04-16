@@ -32,7 +32,8 @@ class UserInfo {
                     user_picture: user_picture,
                     user_firstname: user_firstname,
                     user_lastname: user_lastname,
-                    user_job: user_job
+                    user_job: user_job,
+
                 },
                 id: msg.id
             });

@@ -189,7 +189,7 @@ const NoyauAccueil = () => {
                             </div>
 
                             <div className="historique w-100 fr jc-c ai-c">
-                                <h2 style={{fontSize: '15px'}}>votre historique d'appels</h2>
+                                <h2 style={{fontSize: '15px'}}>votre historique d&apos;appels</h2>
                             </div>
                             <div className="historique-affiche w-100 fr jc-c ai-c" onClick={toggleHistorique}>
                                 <FeatherIcon icon={showHistorique ? 'chevron-down' : 'chevron-right'} size="20"

@@ -27,7 +27,8 @@ const listeMessageEmis = []
 const listeMessageRecus = [
     "connexion_acceptee",
     "inscription_acceptee",
-    "client_deconnexion"
+    "client_deconnexion",
+    "liste_utilisateurs",
 ]
 
 const App = () => {
@@ -37,6 +38,9 @@ const App = () => {
     const [loading, setLoading] = useState(appInstance.loading);
     const [controller, setController] = useState(appInstance.controller);
     const [canal, setCanal] = useState(appInstance.canal);
+    const [listeUtilisateurs, setListeUtilisateurs] = useState([]); // liste des utilisateurs connectés [ {id: 1, nom: "Mathis", prenom: "Lambert"}, ...
+    const [webRTCManager, setWebRTCManager] = useState(appInstance.webRTCManager);
+
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -64,6 +68,8 @@ const App = () => {
                     session_token: msg.inscription_acceptee.session_token,
                     user_info: msg.inscription_acceptee.user_info
                 }));
+            } else if (typeof msg.liste_utilisateurs !== "undefined") {
+                setListeUtilisateurs(msg.liste_utilisateurs)
             }
         }
     });
@@ -73,11 +79,13 @@ const App = () => {
         appInstance.setLoadingCallback(setLoading);
         appInstance.setControllerCallback(setController);
         appInstance.setCanalCallback(setCanal);
+        appInstance.setWebRTCManagerCallback(setWebRTCManager);
 
         return () => {
             appInstance.setLoadingCallback(null);
             appInstance.setControllerCallback(null);
             appInstance.setCanalCallback(null);
+            appInstance.setWebRTCManagerCallback(null);
         }
     }, []);
 
@@ -105,14 +113,13 @@ const App = () => {
     useEffect(() => {
         if (session.user_session_token) {
             canal.setSessionToken(session.user_session_token);
-        }
-    }, [canal, session.user_session_token]);
 
-    useEffect(() => {
-        if (session) {
-            if (verbose) console.log("session", session);
+            if (webRTCManager) {
+                webRTCManager.setSession(session)
+                webRTCManager.setConnectedUsers(listeUtilisateurs.utilisateurs_connectes)
+            }
         }
-    }, [verbose, session]);
+    }, [canal, listeUtilisateurs.utilisateurs_connectes, session, session.user_session_token, webRTCManager]);
 
     return (
         <Routes>
