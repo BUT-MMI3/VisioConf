@@ -4,14 +4,12 @@ import {appInstance} from "../../controller/index.js";
 import LinkTo from "../../elements/LinkTo/LinkTo.jsx";
 import "./NoyauAccueil.css";
 
-const listeMessageEmis = ["demande_user_info"];
-
-const listeMessageRecus = ["information_user"];
+const listeMessageEmis = ["demande_user_info", "demande_notifications", "update_notifications"];
+const listeMessageRecus = ["information_user", "notification_answer", "connexion_acceptee"];
 
 const NoyauAccueil = () => {
-
     const instanceName = "NoyauAccueil";
-    const verbose = true;
+    const verbose = false;
     const [controller] = useState(appInstance.getController());
 
     const [notifications, setNotifications] = useState([]);
@@ -28,8 +26,11 @@ const NoyauAccueil = () => {
             if (typeof msg.information_user !== "undefined") {
                 console.log("Informations utilisateur obtenues");
                 setUtilisateur(msg.information_user);
+            } else if (typeof msg.notification_answer !== "undefined") {
+                console.log("Notifications reçues :", msg.notification_answer);
+                setNotifications(msg.notification_answer.historique); // Modification ici
             } else {
-                console.log("Erreur lors du traitement de la demande d'information de l'utilisateur");
+                console.log("Erreur lors du traitement du message :", msg);
             }
         }
     });
@@ -39,16 +40,39 @@ const NoyauAccueil = () => {
 
         return new Promise((resolve, reject) => {
             try {
-                controller.send(current, {
-                    "demande_user_info": "information utilisateur"
-                });
+                controller.send(current, {"demande_user_info": "information utilisateur"});
                 resolve();
             } catch (error) {
                 reject(error);
             }
         });
     };
+    const notification = async () => {
+        if (verbose || controller.verboseall) console.log(`INFO: (${instanceName})`);
 
+        return new Promise((resolve, reject) => {
+            try {
+                controller.send(current, {"demande_notifications": "information utilisateur"});
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+    // setInterval(notification, 10000);
+    const markAllAsRead = async () => {
+        const updatedNotifications = notifications.map(notification => {
+            return {...notification, status: 'read'};
+        });
+
+        setNotifications(updatedNotifications);
+
+        try {
+            await controller.send(current, {update_notifications: updatedNotifications});
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour des notifications:', error);
+        }
+    }
     useEffect(() => {
         controller.subscribe(current, listeMessageEmis, listeMessageRecus);
 
@@ -56,28 +80,12 @@ const NoyauAccueil = () => {
             controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
         };
     }, [current, controller]);
-
     useEffect(() => {
         logIn();
     }, []);
-
-    // Simuler la récupération des notifications depuis une source de données
     useEffect(() => {
-        // Exemple de données simulées
-        const notificationsData = [
-            {id: 1, message: 'Nouveau message reçu'},
-            {id: 2, message: 'Vous avez un appel en absence'},
-        ];
-
-        setNotifications(notificationsData);
-
-        const historiqueAppelsData = [
-            {id: 1, date: '2024-02-01', duree: '10 min', participants: ['John', 'Alice']},
-            {id: 2, date: '2024-02-02', duree: '15 min', participants: ['Bob', 'Eva']},
-        ];
-
-        setHistoriqueAppels(historiqueAppelsData);
-    }, []);
+        notification();
+    }, [notifications]);
 
     // Fonction pour basculer l'affichage des notifications et changer l'icône
     const toggleNotifications = () => {
@@ -142,33 +150,49 @@ const NoyauAccueil = () => {
                             </div>
 
                             <div className="notifications w-100 fr jc-c ai-c">
-                                <h2 style={{fontSize: '15px'}}>Nouvelles notifications non
-                                    lues.</h2>
+                                {notifications.length === 0 ? (
+                                    <h2 style={{fontSize: '15px'}}>Aucune nouvelle notification</h2>
+                                ) : (
+                                    <h2 style={{fontSize: '15px'}}>{notifications.length} Nouvelle(s) notification(s)
+                                        non lue(s).</h2>
+                                )}
                             </div>
 
                             <div className="notification-affiche w-100 fr jc-c ai-c" onClick={toggleNotifications}>
-                                <FeatherIcon icon={showNotifications ? 'chevron-down' : 'chevron-right'} size="20"
-                                             strokeWidth="1" className="icon"/>
+                                <FeatherIcon
+                                    icon={showNotifications && notifications.length !== 0 ? 'chevron-down' : 'chevron-right'}
+                                    size="20"
+                                    strokeWidth="1" className="icon"/>
                             </div>
                         </div>
                     </div>
 
-                    {showNotifications && (
+                    {showNotifications && notifications.length !== 0 && (
                         <div className="section-notification-hidden">
                             <div className="notification-info fr jc-sa">
                                 <div className="notifications w-100 fr ai-c">
                                     <ul>
-                                        {notifications.map((notification) => (
-                                            <>
-                                                <li key={notification.id}>{notification.message}</li>
-                                                <hr/>
-                                            </>
+                                        {notifications.map((notification, index) => (
+                                            <li key={index}
+                                                className="notification-item if ai-c">
+                                                <img src={notification.message.message_sender.user_picture}
+                                                     className='logo-profil-reception' alt="Photo de profil"/>
+                                                <p>
+                                                        <span
+                                                            className="sender-name"> {notification.message.message_sender.user_firstname} {notification.message.message_sender.user_lastname},</span> vous
+                                                    a envoyé un nouveau message dans :
+                                                    "{notification.discussionName}"
+                                                </p>
+                                            </li>
                                         ))}
                                     </ul>
                                 </div>
-
-
                             </div>
+                            {notifications.length > 0 && (
+                                <div className="fr jc-fe" style={{padding: '1rem'}}>
+                                    <button onClick={markAllAsRead}>vider</button>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
@@ -202,14 +226,13 @@ const NoyauAccueil = () => {
                             <div className="historique-info fr jc-sa">
                                 <div className="historiques w-100 fr ai-c">
                                     <ul>
-                                        {historiqueAppels.map((appel) => (
-                                            <li key={appel.id}>
+                                        {historiqueAppels.map((appel, index) => (
+                                            <li key={index}>
                                                 <p>Date: {appel.date}</p>
                                                 <p>Durée: {appel.duree}</p>
                                                 <p>Participants: {appel.participants.join(', ')}</p>
                                                 <hr/>
                                             </li>
-
                                         ))}
                                     </ul>
                                 </div>
