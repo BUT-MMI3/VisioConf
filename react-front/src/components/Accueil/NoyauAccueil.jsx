@@ -9,7 +9,7 @@ const listeMessageRecus = ["information_user", "notification_answer", "connexion
 
 const NoyauAccueil = () => {
     const instanceName = "NoyauAccueil";
-    const verbose = false;
+    const verbose = true;
     const [controller] = useState(appInstance.getController());
 
     const [notifications, setNotifications] = useState([]);

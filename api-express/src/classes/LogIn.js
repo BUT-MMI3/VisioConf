@@ -141,15 +141,15 @@ class LogIn {
             } catch (e) {
                 console.log("ERROR (LogIn) - " + e);
             }
-        } else if (typeof msg.demande_user_info !== "undefined") {
-            if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Demande d'informations de l'utilisateur pour NoyauAccueil");
-            await User.updateOne({user_socket_id: msg.id}, {
-                user_socket_id: "none",
-                user_is_online: false,
-                user_last_connection: new Date(),
-                user_tokens: {}
-            });
-            if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
+        // } else if (typeof msg.demande_user_info !== "undefined") {
+        //     if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Demande d'informations de l'utilisateur pour NoyauAccueil");
+        //     await User.updateOne({user_socket_id: msg.id}, {
+        //         user_socket_id: "none",
+        //         user_is_online: false,
+        //         user_last_connection: new Date(),
+        //         user_tokens: {}
+        //     });
+        //     if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
         }else if (typeof msg.demande_user_info !== "undefined") {
             if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Demande d'informations de l'utilisateur");
             let user = await User.findOne({user_socket_id: msg.id});

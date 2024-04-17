@@ -9,6 +9,7 @@ const Register = require("../classes/Register.js");
 const Discussions = require("../classes/Discussions.js");
 const Utilisateurs = require("../classes/Utilisateurs.js");
 const Messages = require("../classes/Messages.js");
+const Notifications = require("../classes/Notifications.js");
 const WebRTC = require("../classes/WebRTC.js");
 
 const SocketApp = (io) => {
@@ -31,6 +32,7 @@ const SocketApp = (io) => {
     new Discussions(controller, "Discussions");
     new Utilisateurs(controller, "Utilisateurs");
     new Messages(controller, "Messages");
+    new Notifications(controller, "Notifications");
     new WebRTC(controller, "WebRTC");
 };
 
