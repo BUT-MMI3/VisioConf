@@ -63,6 +63,7 @@ const initializeUsers = async () => {
             usersToInsert.push({
                 user_uuid: uuidv4(),
                 user_firstname: 'Admin',
+                user_status: 'active',
                 user_lastname: 'Admin',
                 user_job_desc: 'Administrateur',
                 user_email: process.env.ADMIN_EMAIL,

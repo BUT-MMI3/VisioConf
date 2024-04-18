@@ -16,6 +16,7 @@ const ListeMessagesEmis = [
     "demande_de_connexion",
     "demande_inscription",
     "demande_liste_utilisateurs",
+    "admin_demande_liste_utilisateurs",
     "envoie_message",
     "demande_liste_discussions",
     "demande_historique_discussion",
@@ -36,6 +37,7 @@ const ListeMessagesEmis = [
 const ListeMessagesRecus = [
     "client_deconnexion",
     "liste_utilisateurs",
+    "admin_liste_utilisateurs",
     "connexion_acceptee",
     "connexion_refusee",
     "inscription_acceptee",

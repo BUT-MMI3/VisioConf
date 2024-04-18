@@ -4,10 +4,10 @@ class Utilisateurs {
     controller = null;
     instanceName = "Utilisateurs";
 
-    listeMessagesEmis = ["liste_utilisateurs"];
-    listeMessagesRecus = ["demande_liste_utilisateurs"];
+    listeMessagesEmis = ["liste_utilisateurs", "admin_liste_utilisateurs"];
+    listeMessagesRecus = ["demande_liste_utilisateurs", "admin_demande_liste_utilisateurs"];
 
-    verbose = false;
+    verbose = true;
 
     constructor(controller, instanceName) {
         this.controller = controller;
@@ -55,6 +55,17 @@ class Utilisateurs {
                     }
                 });
             }
+        } else if (typeof msg.admin_demande_liste_utilisateurs !== 'undefined') {
+            if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement d'une demande de liste d'utilisateurs par un administrateur`);
+
+            const allUsers = await User.find({}).select('user_uuid user_firstname user_lastname user_email user_job');
+
+            this.controller.send(this, {
+                admin_liste_utilisateurs : {
+                    liste_utilisateurs: allUsers,
+                },
+                id: msg.id
+            });
         }
     }
 }
