@@ -1,5 +1,5 @@
 /*
-Authors: Mathis Lambert, clementfavarel
+Authors: Mathis Lambert, clementfavarel, Kyllian Diochon, Arthur Mondon
 */
 
 const mongoose = require("mongoose");
@@ -31,6 +31,11 @@ const UserSchema = new Schema({
         type: String,
         required: true,
         description: "Job description",
+    },
+    user_desc: {
+        type: String,
+        required: true,
+        description: "User description",
     },
     user_date_create: { type: Date, required: true, default: Date.now },
     user_picture: {
@@ -82,6 +87,7 @@ UserSchema.virtual("info").get(function () {
         user_phone: this.user_phone,
         user_status: this.user_status,
         user_job: this.user_job,
+        user_desc: this.user_desc,
         user_date_create: this.user_date_create,
         user_picture: this.user_picture,
         user_is_online: this.user_is_online,

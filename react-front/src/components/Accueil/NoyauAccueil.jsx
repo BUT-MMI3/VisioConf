@@ -5,7 +5,7 @@ import LinkTo from "../../elements/LinkTo/LinkTo.jsx";
 import "./NoyauAccueil.css";
 
 const listeMessageEmis = ["demande_user_info", "demande_notifications", "update_notifications"];
-const listeMessageRecus = ["information_user", "notification_answer", "connexion_acceptee"];
+const listeMessageRecus = ["information_user", "notification_answer"];
 
 const NoyauAccueil = () => {
     const instanceName = "NoyauAccueil";

@@ -132,7 +132,7 @@ const NoyauBarreDeMenu = () => {
                                     </div>
                                 </div>
                                 <div className="onglets-overlay">
-                                    <LinkTo to="/changer-status" className={"fr g1 ai-c"}>
+                                    <div className={"fr g1 ai-c"}>
                                         <div
                                             className={`statut-connexion ${
                                                 session.isSignedIn ? "connecte" : "deconnecte"
@@ -141,7 +141,7 @@ const NoyauBarreDeMenu = () => {
                                         <p>
                                             {session.isSignedIn ? "En ligne" : "déconnecté"}
                                         </p>
-                                    </LinkTo>
+                                    </div>
 
                                     <LinkTo to="parametres" className={"fr g1 ai-c"}>
                                         <FeatherIcon

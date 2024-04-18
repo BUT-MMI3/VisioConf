@@ -157,9 +157,13 @@ class LogIn {
                 this.controller.send(this, {
                     "information_user": {
                         user_picture: user.user_picture,
+                        user_email: user.user_email,
                         user_firstname: user.user_firstname,
                         user_lastname: user.user_lastname,
-                        user_job: user.user_job
+                        user_job: user.user_job,
+                        user_desc: user.user_desc,
+                        user_date_create: user.user_date_create,
+                        user_roles: user.user_roles,
                     },
                     id: msg.id
                 });
