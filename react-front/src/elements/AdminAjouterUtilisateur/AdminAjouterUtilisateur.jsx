@@ -74,27 +74,41 @@ const AdminAjouterUtilisateur = () => {
                 </LinkTo>
             </div>
 
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Prénom :
-                    <input type="text" value={userFirstname} onChange={(e) => setUserFirstname(e.target.value)}
-                           required/>
+            <form onSubmit={handleSubmit} className={"ajouter-utilisateur-form"}>
+                <label className={"ajouter-utilisateur-label"} style={{width:'100%'}}>
+                    <span>Les champs marqués d'une (<p>*</p>) sont obligatoires.</span>
                 </label>
-                <label>
-                    Nom :
-                    <input type="text" value={userLastname} onChange={(e) => setUserLastname(e.target.value)} required/>
+                <label className={"ajouter-utilisateur-label"}>
+                    <h4>Prénom : <p>*</p></h4>
+                    <input type="text" placeholder={"John"} value={userFirstname}
+                           onChange={(e) => setUserFirstname(e.target.value)} required/>
                 </label>
-                <label>
-                    Email :
-                    <input type="email" value={userEmail} onChange={(e) => setUserEmail(e.target.value)} required/>
+                <label className={"ajouter-utilisateur-label"}>
+                    <h4>Nom : <p>*</p></h4>
+                    <input type="text" placeholder={"Doe"} value={userLastname}
+                           onChange={(e) => setUserLastname(e.target.value)} required/>
                 </label>
-                <label>
-                    Téléphone :
-                    <input type="tel" value={userPhone} onChange={(e) => setUserPhone(e.target.value)}/>
+                <label className={"ajouter-utilisateur-label"}>
+                    <h4>Email : <p>*</p></h4>
+                    <input type="email" placeholder={"john@doe.com"} value={userEmail}
+                           onChange={(e) => setUserEmail(e.target.value)} required/>
                 </label>
-                <label>
-                    Job :
-                    <input type="text" value={userJob} onChange={(e) => setUserJob(e.target.value)}/>
+                <label className={"ajouter-utilisateur-label"}>
+                    <h4>Téléphone : <p>*</p></h4>
+                    <input type="tel" placeholder={"0607080910"} value={userPhone}
+                           onChange={(e) => setUserPhone(e.target.value)} required/>
+                </label>
+                <label className={"ajouter-utilisateur-label"} style={{width: '100%'}}>
+                    <h4>Job : <p>*</p></h4>
+                    <textarea type="text" placeholder={"Agent"} value={userJob}
+                              onChange={(e) => setUserJob(e.target.value)} required/>
+                </label>
+                <label style={{flexDirection: "column"}}>
+                    <h4>Permissions additionnelles</h4>
+                    <span>
+                        L'utilisateur héritera des permissions selon les groupes et rôles associés.
+                        Vous pourrez associer des permissions additionnelles plus tard via le module "Attribuer une permission".
+                    </span>
                 </label>
                 <button type="submit">Créer l'utilisateur</button>
                 {message && <p>{message}</p>}
