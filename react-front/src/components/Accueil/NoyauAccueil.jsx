@@ -69,7 +69,7 @@ const NoyauAccueil = () => {
 
     useEffect(() => {
         notification();
-    }, []);
+    }, [notifications]);
 
     // Fonction pour basculer l'affichage des notifications et changer l'icône
     const toggleNotifications = () => {
