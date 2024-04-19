@@ -5,12 +5,14 @@ import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
 import {redirect} from "react-router-dom";
+import {useToasts} from "../Toasts/ToastContext.jsx";
 
 const listeMessagesEmis = ["admin_ajouter_utilisateur"];
 const listeMessagesRecus = ["admin_utilisateur_cree"];
 
 const AdminAjouterUtilisateur = () => {
     const navigate = useNavigate();
+    const {pushToast} = useToasts();
 
     const [userFirstname, setUserFirstname] = useState("");
     const [userLastname, setUserLastname] = useState("");
@@ -44,6 +46,11 @@ const AdminAjouterUtilisateur = () => {
         traitementMessage: (msg) => {
             console.log("Received data:", msg);
             if (msg && msg.admin_utilisateur_cree) {
+                pushToast({
+                    title: "Succès",
+                    message: "Compte créé avec succès !",
+                    type: "success",
+                })
                 setMessage("Utilisateur créé avec succès ! ouais");
                 navigate(`/admin/users/${msg.admin_utilisateur_cree.newUser._id}/view`);
                 console.log("Utilisateur créé avec succès !", msg.admin_utilisateur_cree.newUser);
