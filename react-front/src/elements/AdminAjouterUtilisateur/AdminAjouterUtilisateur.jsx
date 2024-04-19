@@ -19,7 +19,6 @@ const AdminAjouterUtilisateur = () => {
     const [userEmail, setUserEmail] = useState("");
     const [userPhone, setUserPhone] = useState("");
     const [userJob, setUserJob] = useState("");
-    const [message, setMessage] = useState("");
 
     const controller = useRef(appInstance.getController()).current;
 
@@ -46,14 +45,22 @@ const AdminAjouterUtilisateur = () => {
         traitementMessage: (msg) => {
             console.log("Received data:", msg);
             if (msg && msg.admin_utilisateur_cree) {
-                pushToast({
-                    title: "Succès",
-                    message: "Compte créé avec succès !",
-                    type: "success",
-                })
-                setMessage("Utilisateur créé avec succès ! ouais");
-                navigate(`/admin/users/${msg.admin_utilisateur_cree.newUser._id}/view`);
-                console.log("Utilisateur créé avec succès !", msg.admin_utilisateur_cree.newUser);
+                if(msg.admin_utilisateur_cree.success) {
+                    pushToast({
+                        title: "Succès",
+                        message: "Compte créé avec succès !",
+                        type: "success",
+                    })
+                    navigate(`/admin/users/${msg.admin_utilisateur_cree.newUser._id}/view`);
+                    console.log("Utilisateur créé avec succès !", msg.admin_utilisateur_cree.newUser);
+                } else {
+                    pushToast({
+                        title: "Erreur",
+                        message: "Erreur lors de la création de l'utilisateur",
+                        type: "error",
+                    });
+
+                }
             }
         },
     });
@@ -118,7 +125,6 @@ const AdminAjouterUtilisateur = () => {
                     </span>
                 </label>
                 <button type="submit">Créer l'utilisateur</button>
-                {message && <p>{message}</p>}
             </form>
         </div>
     );

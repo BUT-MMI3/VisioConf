@@ -23,7 +23,15 @@ const AdminListeUtilisateurs = () => {
         traitementMessage: (msg) => {
             console.log("Received data:", msg);
             if (msg && msg.admin_liste_utilisateurs ) {
-                setUtilisateurs(msg.admin_liste_utilisateurs.liste_utilisateurs || []);
+                if(msg.admin_liste_utilisateurs.success){
+                    setUtilisateurs(msg.admin_liste_utilisateurs.liste_utilisateurs || []);
+                }else{
+                    pushToast({
+                        title: "Erreur",
+                        message: "Erreur lors de la récupération de la liste des utilisateurs",
+                        type: "error",
+                    });
+                }
             } else if (msg && msg.admin_utilisateur_supprime) {
                 if(msg.admin_utilisateur_supprime.success){
                     pushToast({
