@@ -1,0 +1,5 @@
+@media screen and (max-width: 768px) {
+    .content-profil{
+        flex-direction: column;
+    }
+}

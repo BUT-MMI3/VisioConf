@@ -15,7 +15,9 @@ const usersToInsert = [
         user_email: 'john.doe@example.com',
         user_phone: "00.00.00.00.00",
         user_job: "Responsable RH",
+        user_desc: "Chef de département MMI à l’universite de Toulon. Également professeur de développement web.",
         user_status: 'active',
+        user_roles: ["MMI3 Alternant", "Etudiant"],
         user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17',
     },
     {
@@ -26,6 +28,7 @@ const usersToInsert = [
         user_email: 'janny.doey@example.com',
         user_phone: "00.00.00.00.00",
         user_job: "Responsable RH",
+        user_desc: "Chef de département MMI à l’universite de Toulon. Également professeur de développement web.",
         user_status: 'active',
         user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17', // hash = mdp
     },
@@ -37,6 +40,7 @@ const usersToInsert = [
         user_email: 'jean.deau@example.com',
         user_phone: "00.00.00.00.00",
         user_job: "Responsable RH",
+        user_desc: "Chef de département MMI à l’universite de Toulon. Également professeur de développement web.",
         user_status: 'active',
         user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17', // hash = mdp
     },
@@ -48,6 +52,7 @@ const usersToInsert = [
         user_email: 'utilisateur@example.com',
         user_phone: "00.00.00.00.00",
         user_job: "Student",
+        user_desc: "Chef de département MMI à l’universite de Toulon. Également professeur de développement web.",
         user_password: ' ',
         user_status: 'waiting',
         user_tokens: {inscription: 'azerty1234'},
@@ -68,6 +73,7 @@ const initializeUsers = async () => {
                 user_email: process.env.ADMIN_EMAIL,
                 user_phone: "00.00.00.00.00",
                 user_job: "Admin",
+                user_desc: "Chef de département MMI à l’universite de Toulon. Également professeur de développement web.",
                 user_password: adminPasswordHash,
                 user_is_admin: true,
                 user_roles: ['admin', 'user'],
