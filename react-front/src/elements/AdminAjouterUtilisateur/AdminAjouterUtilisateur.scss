@@ -4,6 +4,24 @@
   height: 100vh;
   padding: 0.5rem;
 
+  &--tools{
+    display: flex;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    width: 100%;
+  }
+  &--back{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    text-wrap: nowrap;
+    padding: 0.6rem 1rem;
+    border-radius: 5rem;
+    background-color: var(--color-primary);
+    font-size: 0.8rem;
+  }
+
   &--card {
     padding: 1rem;
     border-radius: 0.75rem;

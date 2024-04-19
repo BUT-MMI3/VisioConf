@@ -66,26 +66,35 @@ const AdminAjouterUtilisateur = () => {
             <div className="ajouter-utilisateur--card">
                 <h2>Ajouter un utilisateur</h2>
             </div>
+
+            <div className={"ajouter-utilisateur--tools"}>
+                <LinkTo to="/admin/users" className="ajouter-utilisateur--back">
+                    <FeatherIcon icon="arrow-left" size={20}/>
+                    <span>Retour</span>
+                </LinkTo>
+            </div>
+
             <form onSubmit={handleSubmit}>
                 <label>
                     Prénom :
-                    <input type="text" value={userFirstname} onChange={(e) => setUserFirstname(e.target.value)} required />
+                    <input type="text" value={userFirstname} onChange={(e) => setUserFirstname(e.target.value)}
+                           required/>
                 </label>
                 <label>
                     Nom :
-                    <input type="text" value={userLastname} onChange={(e) => setUserLastname(e.target.value)} required />
+                    <input type="text" value={userLastname} onChange={(e) => setUserLastname(e.target.value)} required/>
                 </label>
                 <label>
                     Email :
-                    <input type="email" value={userEmail} onChange={(e) => setUserEmail(e.target.value)} required />
+                    <input type="email" value={userEmail} onChange={(e) => setUserEmail(e.target.value)} required/>
                 </label>
                 <label>
                     Téléphone :
-                    <input type="tel" value={userPhone} onChange={(e) => setUserPhone(e.target.value)} />
+                    <input type="tel" value={userPhone} onChange={(e) => setUserPhone(e.target.value)}/>
                 </label>
                 <label>
                     Job :
-                    <input type="text" value={userJob} onChange={(e) => setUserJob(e.target.value)} />
+                    <input type="text" value={userJob} onChange={(e) => setUserJob(e.target.value)}/>
                 </label>
                 <button type="submit">Créer l'utilisateur</button>
                 {message && <p>{message}</p>}
