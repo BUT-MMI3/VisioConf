@@ -5,8 +5,8 @@ class Utilisateurs {
     controller = null;
     instanceName = "Utilisateurs";
 
-    listeMessagesEmis = ["liste_utilisateurs", "admin_liste_utilisateurs", "admin_utilisateur_cree", "admin_utilisateur_details"];
-    listeMessagesRecus = ["demande_liste_utilisateurs", "admin_demande_liste_utilisateurs", "admin_ajouter_utilisateur", "admin_demande_utilisateur_details"];
+    listeMessagesEmis = ["liste_utilisateurs", "admin_liste_utilisateurs", "admin_utilisateur_cree", "admin_utilisateur_details", "admin_utilisateur_supprime"];
+    listeMessagesRecus = ["demande_liste_utilisateurs", "admin_demande_liste_utilisateurs", "admin_ajouter_utilisateur", "admin_demande_utilisateur_details", "admin_supprimer_utilisateur"];
 
     verbose = true;
 
@@ -93,7 +93,6 @@ class Utilisateurs {
             });
         } else if (typeof msg.admin_demande_utilisateur_details !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la demande de détails d'un utilisateur par un administrateur`);
-            console.log(msg.admin_demande_utilisateur_details.userId);
             const user = await User.findOne({_id: msg.admin_demande_utilisateur_details.userId}).select('user_uuid user_firstname user_lastname user_email user_phone user_job user_date_create user_picture user_is_online user_disturb_status user_last_connection user_direct_manager user_tokens user_roles');
             this.controller.send(this, {
                 admin_utilisateur_details: {
@@ -101,6 +100,42 @@ class Utilisateurs {
                 },
                 id: msg.id
             });
+        } else if(typeof msg.admin_supprimer_utilisateur !== 'undefined') {
+            if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la suppression d'un utilisateur par un administrateur`);
+
+            try {
+                const user = await User.findBySocketId(msg.id);
+                if (!user.user_roles.includes('admin')) {
+                    this.controller.send(this, {
+                        admin_utilisateur_supprime: {
+                            success: false,
+                            message: "Vous n'avez pas les droits pour supprimer cet utilisateur"
+                        },
+                        id: msg.id
+                    });
+                    return;
+                }
+
+                await User.deleteOne({_id: msg.admin_supprimer_utilisateur});
+                this.controller.send(this, {
+                    admin_utilisateur_supprime: {
+                        success: true,
+                        message: "Utilisateur supprimé avec succès"
+                    },
+                    id: msg.id
+                });
+
+                const allUsers = await User.find({}).select('user_uuid user_firstname user_lastname user_email user_job');
+
+                this.controller.send(this, {
+                    admin_liste_utilisateurs : {
+                        liste_utilisateurs: allUsers,
+                    },
+                    id: msg.id
+                });
+            } catch (error) {
+                console.log(error);
+            }
         }
     }
 }

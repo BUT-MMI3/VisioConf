@@ -4,12 +4,14 @@ import {appInstance} from "../../controller/index.js";
 import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
 import {useModal} from "../Modale/ModaleContext.jsx";
+import {useToasts} from "../Toasts/ToastContext.jsx";
 
-const listeMessagesEmis = ["admin_demande_liste_utilisateurs"];
-const listeMessagesRecus = ["admin_liste_utilisateurs"];
+const listeMessagesEmis = ["admin_demande_liste_utilisateurs", "admin_supprimer_utilisateur"];
+const listeMessagesRecus = ["admin_liste_utilisateurs", "admin_utilisateur_supprime"];
 
 const AdminListeUtilisateurs = () => {
     const {newModal} = useModal();
+    const {pushToast} = useToasts();
 
     const [utilisateurs, setUtilisateurs] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -22,9 +24,20 @@ const AdminListeUtilisateurs = () => {
             console.log("Received data:", msg);
             if (msg && msg.admin_liste_utilisateurs ) {
                 setUtilisateurs(msg.admin_liste_utilisateurs.liste_utilisateurs || []);
-            } else {
-                console.error("Unexpected data format received:", msg);
-                setUtilisateurs([]);
+            } else if (msg && msg.admin_utilisateur_supprime) {
+                if(msg.admin_utilisateur_supprime.success){
+                    pushToast({
+                        title: "Succès",
+                        message: "Utilisateur supprimé avec succès",
+                        type: "success",
+                    });
+                }else{
+                    pushToast({
+                        title: "Erreur",
+                        message: "Erreur lors de la suppression de l'utilisateur",
+                        type: "error",
+                    });
+                }
             }
         },
     });
@@ -102,7 +115,7 @@ const AdminListeUtilisateurs = () => {
                                         titre: 'Vous allez supprimer un utilisateur.',
                                         texte: "Toutes les données personnelles de l'utilisateur serront supprimées, mais l'ensemble des contenus associés au compte resteront visibles (messages, posts, etc...). Le profil de l'utilisateur apparaîtra comme \"Utilisateur supprimé\". Êtes-vous sûr de vouloir continuer ?",
                                         texteBoutonAction: "Supprimer l'utilisateur",
-                                        onValidate: () => {console.log("Suppression de l'utilisateur", user._id)},
+                                        onValidate: () => {controller.send(instanceRef.current, {admin_supprimer_utilisateur: user._id})},
                                     })}
                                             className="liste-utilisateurs--actions--supp">
                                         <FeatherIcon icon="trash" size={20}/>
