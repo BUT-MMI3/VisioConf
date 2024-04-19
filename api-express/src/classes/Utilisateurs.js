@@ -5,8 +5,8 @@ class Utilisateurs {
     controller = null;
     instanceName = "Utilisateurs";
 
-    listeMessagesEmis = ["liste_utilisateurs", "admin_liste_utilisateurs", "admin_utilisateur_cree", "admin_utilisateur_details", "admin_utilisateur_supprime"];
-    listeMessagesRecus = ["demande_liste_utilisateurs", "admin_demande_liste_utilisateurs", "admin_ajouter_utilisateur", "admin_demande_utilisateur_details", "admin_supprimer_utilisateur"];
+    listeMessagesEmis = ["liste_utilisateurs", "admin_liste_utilisateurs", "admin_utilisateur_cree", "admin_utilisateur_details", "admin_utilisateur_supprime", "admin_utilisateur_modifie"];
+    listeMessagesRecus = ["demande_liste_utilisateurs", "admin_demande_liste_utilisateurs", "admin_ajouter_utilisateur", "admin_demande_utilisateur_details", "admin_supprimer_utilisateur", "admin_modifier_utilisateur"];
 
     verbose = true;
 
@@ -188,6 +188,44 @@ class Utilisateurs {
             } catch (error) {
                 console.log(error);
             }
+        } else if (typeof msg.admin_modifier_utilisateur !== 'undefined') {
+            if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la modification d'un utilisateur par un administrateur`);
+
+            try {
+                const user = await User.findBySocketId(msg.id);
+                if (!user.user_roles.includes('admin')) {
+                    this.controller.send(this, {
+                        admin_utilisateur_modifie: {
+                            success: false,
+                            message: "Vous n'avez pas les droits pour modifier cet utilisateur"
+                        },
+                        id: msg.id
+                    });
+                    return;
+                }
+            } catch (error) {
+                console.log(error);
+            }
+
+            const { user_firstname, user_lastname, user_email, user_phone, user_job } = msg.admin_modifier_utilisateur.userData;
+
+            const user = await User.findOne({user_email: msg.admin_modifier_utilisateur.userData.user_email});
+            user.user_firstname = user_firstname;
+            user.user_lastname = user_lastname;
+            user.user_email = user_email;
+            user.user_phone = user_phone;
+            user.user_job = user_job;
+
+            await user.save();
+
+            this.controller.send(this, {
+                admin_utilisateur_modifie: {
+                    success: true,
+                    message: "Utilisateur modifié avec succès",
+                    editedUser: user
+                },
+                id: msg.id
+            });
         }
     }
 }
