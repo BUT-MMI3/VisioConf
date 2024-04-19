@@ -1,11 +1,12 @@
 const User = require('../models/user');
+const {v4: uuidv4} = require("uuid");
 
 class Utilisateurs {
     controller = null;
     instanceName = "Utilisateurs";
 
-    listeMessagesEmis = ["liste_utilisateurs", "admin_liste_utilisateurs"];
-    listeMessagesRecus = ["demande_liste_utilisateurs", "admin_demande_liste_utilisateurs"];
+    listeMessagesEmis = ["liste_utilisateurs", "admin_liste_utilisateurs", "admin_utilisateur_cree"];
+    listeMessagesRecus = ["demande_liste_utilisateurs", "admin_demande_liste_utilisateurs", "admin_ajouter_utilisateur"];
 
     verbose = true;
 
@@ -63,6 +64,30 @@ class Utilisateurs {
             this.controller.send(this, {
                 admin_liste_utilisateurs : {
                     liste_utilisateurs: allUsers,
+                },
+                id: msg.id
+            });
+        } else if (typeof msg.admin_ajouter_utilisateur !== 'undefined') {
+            if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la création d'un utilisateur par un administrateur`);
+
+            const { user_firstname, user_lastname, user_email, user_phone, user_job } = msg.admin_ajouter_utilisateur.userData;
+
+            const newUser = new User({
+                user_uuid: uuidv4(),
+                user_password: 'default_password',
+                user_firstname,
+                user_lastname,
+                user_email,
+                user_phone,
+                user_job
+            });
+
+            await newUser.save();
+
+            this.controller.send(this, {
+                admin_utilisateur_cree: {
+                    message: "Utilisateur créé avec succès",
+                    newUser
                 },
                 id: msg.id
             });
