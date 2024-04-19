@@ -1,13 +1,14 @@
 const User = require('../models/user');
+const {v4: uuidv4} = require("uuid");
 
 class Utilisateurs {
     controller = null;
     instanceName = "Utilisateurs";
 
-    listeMessagesEmis = ["liste_utilisateurs"];
-    listeMessagesRecus = ["demande_liste_utilisateurs"];
+    listeMessagesEmis = ["liste_utilisateurs", "admin_liste_utilisateurs", "admin_utilisateur_cree", "admin_utilisateur_details", "admin_utilisateur_supprime", "admin_utilisateur_modifie"];
+    listeMessagesRecus = ["demande_liste_utilisateurs", "admin_demande_liste_utilisateurs", "admin_ajouter_utilisateur", "admin_demande_utilisateur_details", "admin_supprimer_utilisateur", "admin_modifier_utilisateur"];
 
-    verbose = false;
+    verbose = true;
 
     constructor(controller, instanceName) {
         this.controller = controller;
@@ -55,6 +56,176 @@ class Utilisateurs {
                     }
                 });
             }
+        } else if (typeof msg.admin_demande_liste_utilisateurs !== 'undefined') {
+            if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement d'une demande de liste d'utilisateurs par un administrateur`);
+
+            try {
+                const user = await User.findBySocketId(msg.id);
+                if (!user.user_roles.includes('admin')) {
+                    this.controller.send(this, {
+                        admin_liste_utilisateurs: {
+                            success: false,
+                            message: "Vous n'avez pas les droits pour récupérer la liste des utilisateurs"
+                        },
+                        id: msg.id
+                    });
+                    return;
+                }
+            } catch (error) {
+                console.log(error);
+            }
+
+            const allUsers = await User.find({}).select('user_uuid user_firstname user_lastname user_email user_job');
+
+            this.controller.send(this, {
+                admin_liste_utilisateurs : {
+                    success: true,
+                    liste_utilisateurs: allUsers,
+                },
+                id: msg.id
+            });
+        } else if (typeof msg.admin_ajouter_utilisateur !== 'undefined') {
+            if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la création d'un utilisateur par un administrateur`);
+
+            try{
+                const user = await User.findBySocketId(msg.id);
+                if (!user.user_roles.includes('admin')) {
+                    this.controller.send(this, {
+                        admin_utilisateur_cree: {
+                            success: false,
+                            message: "Vous n'avez pas les droits pour créer un utilisateur"
+                        },
+                        id: msg.id
+                    });
+                    return;
+                }
+            } catch (error) {
+                console.log(error);
+            }
+            const { user_firstname, user_lastname, user_email, user_phone, user_job } = msg.admin_ajouter_utilisateur.userData;
+
+            const newUser = new User({
+                user_uuid: uuidv4(),
+                user_password: 'default_password',
+                user_firstname,
+                user_lastname,
+                user_email,
+                user_phone,
+                user_job
+            });
+
+            await newUser.save();
+
+            this.controller.send(this, {
+                admin_utilisateur_cree: {
+                    success: true,
+                    message: "Utilisateur créé avec succès",
+                    newUser: newUser
+                },
+                id: msg.id
+            });
+        } else if (typeof msg.admin_demande_utilisateur_details !== 'undefined') {
+            if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la demande de détails d'un utilisateur par un administrateur`);
+
+            try {
+                const user = await User.findBySocketId(msg.id);
+                if (!user.user_roles.includes('admin')) {
+                    this.controller.send(this, {
+                        admin_utilisateur_details: {
+                            success: false,
+                            message: "Vous n'avez pas les droits pour récupérer les détails de cet utilisateur"
+                        },
+                        id: msg.id
+                    });
+                    return;
+                }
+            } catch (error) {
+                console.log(error);
+            }
+
+            const user = await User.findOne({_id: msg.admin_demande_utilisateur_details.userId}).select('user_uuid user_firstname user_lastname user_email user_phone user_job user_date_create user_picture user_is_online user_disturb_status user_last_connection user_direct_manager user_tokens user_roles');
+            this.controller.send(this, {
+                admin_utilisateur_details: {
+                    success: true,
+                    user: user
+                },
+                id: msg.id
+            });
+        } else if(typeof msg.admin_supprimer_utilisateur !== 'undefined') {
+            if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la suppression d'un utilisateur par un administrateur`);
+
+            try {
+                const user = await User.findBySocketId(msg.id);
+                if (!user.user_roles.includes('admin')) {
+                    this.controller.send(this, {
+                        admin_utilisateur_supprime: {
+                            success: false,
+                            message: "Vous n'avez pas les droits pour supprimer cet utilisateur"
+                        },
+                        id: msg.id
+                    });
+                    return;
+                }
+
+                await User.deleteOne({_id: msg.admin_supprimer_utilisateur});
+                this.controller.send(this, {
+                    admin_utilisateur_supprime: {
+                        success: true,
+                        message: "Utilisateur supprimé avec succès"
+                    },
+                    id: msg.id
+                });
+
+                const allUsers = await User.find({}).select('user_uuid user_firstname user_lastname user_email user_job');
+
+                this.controller.send(this, {
+                    admin_liste_utilisateurs : {
+                        success: true,
+                        liste_utilisateurs: allUsers,
+                    },
+                    id: msg.id
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        } else if (typeof msg.admin_modifier_utilisateur !== 'undefined') {
+            if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la modification d'un utilisateur par un administrateur`);
+
+            try {
+                const user = await User.findBySocketId(msg.id);
+                if (!user.user_roles.includes('admin')) {
+                    this.controller.send(this, {
+                        admin_utilisateur_modifie: {
+                            success: false,
+                            message: "Vous n'avez pas les droits pour modifier cet utilisateur"
+                        },
+                        id: msg.id
+                    });
+                    return;
+                }
+            } catch (error) {
+                console.log(error);
+            }
+
+            const { user_firstname, user_lastname, user_email, user_phone, user_job } = msg.admin_modifier_utilisateur.userData;
+
+            const user = await User.findOne({user_email: msg.admin_modifier_utilisateur.userData.user_email});
+            user.user_firstname = user_firstname;
+            user.user_lastname = user_lastname;
+            user.user_email = user_email;
+            user.user_phone = user_phone;
+            user.user_job = user_job;
+
+            await user.save();
+
+            this.controller.send(this, {
+                admin_utilisateur_modifie: {
+                    success: true,
+                    message: "Utilisateur modifié avec succès",
+                    editedUser: user
+                },
+                id: msg.id
+            });
         }
     }
 }

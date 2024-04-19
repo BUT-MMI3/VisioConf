@@ -21,6 +21,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {signIn, signOut} from './features/session/sessionSlice';
 import DiscussionComponent from "./components/Discussion/DiscussionComponent.jsx";
 import Loader from "./elements/Loader/Loader.jsx";
+import AdminAjouterUtilisateur from "./elements/AdminAjouterUtilisateur/AdminAjouterUtilisateur.jsx";
+import AdminVoirUtilisateur from "./elements/AdminVoirUtilisateur/AdminVoirUtilisateur.jsx";
+import AdminModifierUtilisateur from "./elements/AdminModifierUtilisateur/AdminModifierUtilisateur.jsx";
 
 const listeMessageEmis = []
 
@@ -178,6 +181,30 @@ const App = () => {
                             element={
                                 <>
                                     <AdminListeUtilisateurs/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="admin/users/new"
+                            element={
+                                <>
+                                    <AdminAjouterUtilisateur/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="admin/users/:id/view"
+                            element={
+                                <>
+                                    <AdminVoirUtilisateur/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="admin/users/:id/edit"
+                            element={
+                                <>
+                                    <AdminModifierUtilisateur/>
                                 </>
                             }
                         />
