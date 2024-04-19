@@ -22,6 +22,7 @@ import {signIn, signOut} from './features/session/sessionSlice';
 import DiscussionComponent from "./components/Discussion/DiscussionComponent.jsx";
 import Loader from "./elements/Loader/Loader.jsx";
 import AdminAjouterUtilisateur from "./elements/AdminAjouterUtilisateur/AdminAjouterUtilisateur.jsx";
+import AdminVoirUtilisateur from "./elements/AdminVoirUtilisateur/AdminVoirUtilisateur.jsx";
 
 const listeMessageEmis = []
 
@@ -187,6 +188,14 @@ const App = () => {
                             element={
                                 <>
                                     <AdminAjouterUtilisateur/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="admin/users/:id/view"
+                            element={
+                                <>
+                                    <AdminVoirUtilisateur/>
                                 </>
                             }
                         />
