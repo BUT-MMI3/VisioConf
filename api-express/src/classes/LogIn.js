@@ -8,7 +8,7 @@ class LogIn {
     instanceName = "";
 
     listeMessagesEmis = ["connexion_acceptee", "connexion_refusee", "information_user", "demande_liste_utilisateurs", "status_answer"];
-    listeMessagesRecus = ["demande_de_connexion", "client_deconnexion", "demande_user_info", "demande_changement_status"];
+    listeMessagesRecus = ["demande_de_connexion", "client_deconnexion", "demande_changement_status"];
 
     email = "";
 

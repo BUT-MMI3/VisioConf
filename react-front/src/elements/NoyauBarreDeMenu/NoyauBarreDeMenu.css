@@ -94,7 +94,9 @@ a {
     margin-left: 100%;
     margin-top: 6rem;
 }
-
+.section-status-hidden li:hover{
+    background-color: #f0f0f0;
+}
 .status-info {
     margin: auto;
     height: 100%;
