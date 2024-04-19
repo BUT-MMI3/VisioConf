@@ -85,11 +85,15 @@ const AdminListeUtilisateurs = () => {
                                 <td>{user.user_firstname}</td>
                                 <td>{user.user_email}</td>
                                 <td className="liste-utilisateurs--actions">
-                                    <LinkTo to={`/admin/users/edit/${user._id || user.id}`}
+                                    <LinkTo to={`/admin/users/${user._id || user.id}/view`}
+                                            className="liste-utilisateurs--actions--voir">
+                                        <FeatherIcon icon="eye" size={20}/>
+                                    </LinkTo>
+                                    <LinkTo to={`/admin/users/${user._id || user.id}/edit`}
                                             className="liste-utilisateurs--actions--modif">
                                         <FeatherIcon icon="edit-2" size={20}/>
                                     </LinkTo>
-                                    <LinkTo to={`/admin/users/delete/${user._id || user.id}`}
+                                    <LinkTo to={`/admin/users/${user._id || user.id}/delete`}
                                             className="liste-utilisateurs--actions--supp">
                                         <FeatherIcon icon="trash" size={20}/>
                                     </LinkTo>

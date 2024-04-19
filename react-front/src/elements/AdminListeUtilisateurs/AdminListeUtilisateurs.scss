@@ -100,7 +100,7 @@
     overflow: hidden;
 
     &--modif,
-    &--supp {
+    &--supp, &--voir {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -111,6 +111,9 @@
       margin-right: 0.5rem;
     }
 
+    &--voir {
+      background-color: var(--color-primary)
+    }
     &--modif {
       background-color: var(--color-primary)
     }
