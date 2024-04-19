@@ -3,11 +3,14 @@ import {useEffect, useRef, useState} from "react";
 import {appInstance} from "../../controller/index.js";
 import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
+import {useModal} from "../Modale/ModaleContext.jsx";
 
 const listeMessagesEmis = ["admin_demande_liste_utilisateurs"];
 const listeMessagesRecus = ["admin_liste_utilisateurs"];
 
 const AdminListeUtilisateurs = () => {
+    const {newModal} = useModal();
+
     const [utilisateurs, setUtilisateurs] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -93,10 +96,17 @@ const AdminListeUtilisateurs = () => {
                                             className="liste-utilisateurs--actions--modif">
                                         <FeatherIcon icon="edit-2" size={20}/>
                                     </LinkTo>
-                                    <LinkTo to={`/admin/users/${user._id || user.id}/delete`}
+                                    <button onClick={() => newModal({
+                                        type: 'error',
+                                        boutonClose: true,
+                                        titre: 'Vous allez supprimer un utilisateur.',
+                                        texte: "Toutes les données personnelles de l'utilisateur serront supprimées, mais l'ensemble des contenus associés au compte resteront visibles (messages, posts, etc...). Le profil de l'utilisateur apparaîtra comme \"Utilisateur supprimé\". Êtes-vous sûr de vouloir continuer ?",
+                                        texteBoutonAction: "Supprimer l'utilisateur",
+                                        onValidate: () => {console.log("Suppression de l'utilisateur", user._id)},
+                                    })}
                                             className="liste-utilisateurs--actions--supp">
                                         <FeatherIcon icon="trash" size={20}/>
-                                    </LinkTo>
+                                    </button>
                                 </td>
                             </tr>
                         ))}
