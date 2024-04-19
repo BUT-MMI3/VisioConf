@@ -7,8 +7,8 @@ class LogIn {
     controller = null;
     instanceName = "";
 
-    listeMessagesEmis = ["connexion_acceptee", "connexion_refusee", "information_user", "demande_liste_utilisateurs"];
-    listeMessagesRecus = ["demande_de_connexion", "client_deconnexion", "demande_user_info"];
+    listeMessagesEmis = ["connexion_acceptee", "connexion_refusee", "information_user", "demande_liste_utilisateurs", "status_answer"];
+    listeMessagesRecus = ["demande_de_connexion", "client_deconnexion", "demande_user_info", "demande_changement_status"];
 
     email = "";
 
@@ -150,25 +150,18 @@ class LogIn {
         //         user_tokens: {}
         //     });
         //     if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
-        }else if (typeof msg.demande_user_info !== "undefined") {
-            if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Demande d'informations de l'utilisateur");
-            let user = await User.findOne({user_socket_id: msg.id});
+        }else if (typeof msg.demande_changement_status !== "undefined") {
+            if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Demande de changement de statut");
+            let user = await User.findOne({ user_socket_id: msg.id });
             if (user) {
+                user.user_disturb_status = msg.demande_changement_status;
+                await user.save();
                 this.controller.send(this, {
-                    "information_user": {
-                        user_picture: user.user_picture,
-                        user_email: user.user_email,
-                        user_firstname: user.user_firstname,
-                        user_lastname: user.user_lastname,
-                        user_job: user.user_job,
-                        user_desc: user.user_desc,
-                        user_date_create: user.user_date_create,
-                        user_roles: user.user_roles,
-                    },
+                    status_answer: user.user_disturb_status,
                     id: msg.id
                 });
             } else {
-                if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur non trouvé dans la base de données");
+                if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur non trouvé dans la base de données pour changement de statut");
             }
         }
     }

@@ -12,7 +12,6 @@
  */
 const ListeMessagesEmis = [
     "client_deconnexion",
-    "demande_user_info",
     "demande_de_connexion",
     "demande_inscription",
     "demande_liste_utilisateurs",
@@ -20,6 +19,7 @@ const ListeMessagesEmis = [
     "demande_liste_discussions",
     "demande_historique_discussion",
     "demande_notifications",
+    "demande_changement_status",
     "update_notifications",
     "demande_creation_discussion",
     "demande_discussion_info",
@@ -42,7 +42,6 @@ const ListeMessagesRecus = [
     "connexion_refusee",
     "inscription_acceptee",
     "inscription_refusee",
-    "information_user",
     "nouveau_message",
     "erreur_envoi_message",
     "liste_discussions",
@@ -50,6 +49,7 @@ const ListeMessagesRecus = [
     "notification_answer",
     "discussion_creee",
     "discussion_non_creee",
+    "status_answer",
     "discussion_info",
     "receive_offer",
     "receive_answer",

@@ -3,30 +3,28 @@ import FeatherIcon from 'feather-icons-react';
 import {appInstance} from "../../controller/index.js";
 import LinkTo from "../../elements/LinkTo/LinkTo.jsx";
 import "./NoyauAccueil.css";
+import {useSelector} from "react-redux";
 
-const listeMessageEmis = ["demande_user_info", "demande_notifications", "update_notifications"];
-const listeMessageRecus = ["information_user", "notification_answer"];
+const listeMessageEmis = ["demande_notifications", "update_notifications"];
+const listeMessageRecus = ["notification_answer"];
 
 const NoyauAccueil = () => {
     const instanceName = "NoyauAccueil";
-    const verbose = true;
+    const verbose = false;
     const [controller] = useState(appInstance.getController());
 
+    const session = useSelector((state) => state.session);
     const [notifications, setNotifications] = useState([]);
     const [historiqueAppels, setHistoriqueAppels] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
     const [showHistorique, setShowHistorique] = useState(false);
-    const [utilisateur, setUtilisateur] = useState(null);
 
     const {current} = useRef({
         instanceName,
         traitementMessage: (msg) => {
             if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
-            if (typeof msg.information_user !== "undefined") {
-                console.log("Informations utilisateur obtenues");
-                setUtilisateur(msg.information_user);
-            } else if (typeof msg.notification_answer !== "undefined") {
+            if (typeof msg.notification_answer !== "undefined") {
                 console.log("Notifications reçues :", msg.notification_answer);
                 setNotifications(msg.notification_answer.historique); // Modification ici
             } else {
@@ -35,18 +33,6 @@ const NoyauAccueil = () => {
         }
     });
 
-    const logIn = async () => {
-        if (verbose || controller.verboseall) console.log(`INFO: (${instanceName})`);
-
-        return new Promise((resolve, reject) => {
-            try {
-                controller.send(current, {"demande_user_info": "information utilisateur"});
-                resolve();
-            } catch (error) {
-                reject(error);
-            }
-        });
-    };
     const notification = async () => {
         if (verbose || controller.verboseall) console.log(`INFO: (${instanceName})`);
 
@@ -80,9 +66,7 @@ const NoyauAccueil = () => {
             controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
         };
     }, [current, controller]);
-    useEffect(() => {
-        logIn();
-    }, []);
+
     useEffect(() => {
         notification();
     }, [notifications]);
@@ -109,15 +93,15 @@ const NoyauAccueil = () => {
                     <div className="section-profil fc jc-c">
                         <div className="profil-info fr jc-sa ai-c">
 
-                            {utilisateur && (
+                            {session && (
                                 <>
                                     <div className="profil-info-image w-100">
-                                        <img src={utilisateur.user_picture} className='logo-profil-info fr ma'
+                                        <img src={session.user_picture} className='logo-profil-info fr ma'
                                              alt="Photo de profil"/>
                                     </div>
                                     <div className="profil-details w-100 fc ai-fs">
-                                        <h2>{utilisateur.user_lastname} {utilisateur.user_firstname}</h2>
-                                        <p>{utilisateur.user_job}</p>
+                                        <h2>{session.user_lastname} {session.user_firstname}</h2>
+                                        <p>{session.user_job}</p>
                                     </div>
                                     <div className="profil-modification w-100">
                                         <div className="icon-button fr jc-c ai-c">
