@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const {v4: uuidv4} = require("uuid");
+const {sha256} = require("../utils/utils");
 
 class Utilisateurs {
     controller = null;
@@ -102,16 +103,17 @@ class Utilisateurs {
             } catch (error) {
                 console.log(error);
             }
-            const { user_firstname, user_lastname, user_email, user_phone, user_job } = msg.admin_ajouter_utilisateur.userData;
-
+            const { user_firstname, user_lastname, user_email, user_password, user_phone, user_job } = msg.admin_ajouter_utilisateur.userData;
+            const password = user_password ? await sha256(user_password) : "default_password";
             const newUser = new User({
                 user_uuid: uuidv4(),
-                user_password: 'default_password',
+                user_password: password,
                 user_firstname,
                 user_lastname,
                 user_email,
                 user_phone,
-                user_job
+                user_job,
+                user_desc: ' ',
             });
 
             await newUser.save();

@@ -19,14 +19,21 @@ const AdminAjouterUtilisateur = () => {
     const [userEmail, setUserEmail] = useState("");
     const [userPhone, setUserPhone] = useState("");
     const [userJob, setUserJob] = useState("");
+    const [definePassword, setDefinePassword] = useState(false);
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
     const controller = useRef(appInstance.getController()).current;
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!userEmail || !userFirstname || !userLastname) {
-            setMessage("Please fill in all required fields.");
+        if (!userEmail || !userFirstname || !userLastname || (definePassword && password !== confirmPassword)) {
+            pushToast({
+                title: "Erreur",
+                message: definePassword && password !== confirmPassword ? "Les mots de passe ne correspondent pas." : "Veuillez remplir tous les champs obligatoires.",
+                type: "error",
+            });
             return;
         }
 
@@ -36,6 +43,7 @@ const AdminAjouterUtilisateur = () => {
             user_email: userEmail,
             user_phone: userPhone,
             user_job: userJob,
+            user_password: definePassword ? password : undefined
         };
         controller.send(instanceRef.current, { "admin_ajouter_utilisateur": {userData: userData} });
     };
@@ -104,12 +112,12 @@ const AdminAjouterUtilisateur = () => {
                 </label>
                 <label className={"ajouter-utilisateur-label"}>
                     <h4>Email : <p>*</p></h4>
-                    <input type="email" placeholder={"john@doe.com"} value={userEmail}
+                    <input type="email" placeholder={"john@doe.com"} value={userEmail} autoComplete={"email"}
                            onChange={(e) => setUserEmail(e.target.value)} required/>
                 </label>
                 <label className={"ajouter-utilisateur-label"}>
                     <h4>Téléphone : <p>*</p></h4>
-                    <input type="tel" placeholder={"0607080910"} value={userPhone}
+                    <input type="tel" placeholder={"0607080910"} value={userPhone} autoComplete={"tel"}
                            onChange={(e) => setUserPhone(e.target.value)} required/>
                 </label>
                 <label className={"ajouter-utilisateur-label"} style={{width: '100%'}}>
@@ -117,6 +125,39 @@ const AdminAjouterUtilisateur = () => {
                     <textarea type="text" placeholder={"Agent"} value={userJob}
                               onChange={(e) => setUserJob(e.target.value)} required/>
                 </label>
+                <div className={"fc"}>
+                <label className={"ajouter-utilisateur-label"}>
+                    <h4>Mot de passe</h4>
+                    <div className={"fr ai-c g0-5 "}>
+                        <input
+                            type="checkbox"
+                            checked={definePassword}
+                            onChange={(e) => setDefinePassword(e.target.checked)}
+                            id={"define-password"}
+                        />
+                        <label htmlFor={"define-password"}>Définir le mot de passe maintenant</label>
+                    </div>
+
+                </label>
+                {definePassword && (
+                    <div className={"fr g1"}>
+                        <label className={"ajouter-utilisateur-label"}>
+                            <h4>Mot de passe : <p>*</p></h4>
+                            <input type="password" placeholder={"Mot de passe"}
+                                   value={password}
+                                   autoComplete={"new-password"}
+                                   onChange={(e) => setPassword(e.target.value)} required/>
+                        </label>
+                        <label className={"ajouter-utilisateur-label"}>
+                            <h4>Confirmer le mot de passe : <p>*</p></h4>
+                            <input type="password" placeholder={"Confirmer le mot de passe"}
+                                   value={confirmPassword}
+                                   autoComplete={"new-password"}
+                                   onChange={(e) => setConfirmPassword(e.target.value)} required/>
+                        </label>
+                    </div>
+                )}
+                </div>
                 <label style={{flexDirection: "column"}}>
                     <h4>Permissions additionnelles</h4>
                     <span>
