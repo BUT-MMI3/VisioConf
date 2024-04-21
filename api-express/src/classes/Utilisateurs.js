@@ -143,7 +143,7 @@ class Utilisateurs {
                 console.log(error);
             }
 
-            const user = await User.findOne({_id: msg.admin_demande_utilisateur_details.userId}).select('user_uuid user_firstname user_lastname user_email user_phone user_job user_date_create user_picture user_is_online user_disturb_status user_last_connection user_direct_manager user_tokens user_roles');
+            const user = await User.findOne({_id: msg.admin_demande_utilisateur_details.userId}).select('user_uuid user_firstname user_lastname user_email user_phone user_status user_job user_date_create user_picture user_is_online user_disturb_status user_last_connection user_direct_manager user_tokens user_roles');
             this.controller.send(this, {
                 admin_utilisateur_details: {
                     success: true,
@@ -207,7 +207,7 @@ class Utilisateurs {
                 console.log(error);
             }
 
-            const { user_firstname, user_lastname, user_email, user_phone, user_job } = msg.admin_modifier_utilisateur.userData;
+            const { user_firstname, user_lastname, user_email, user_phone, user_job, user_status } = msg.admin_modifier_utilisateur.userData;
 
             const user = await User.findOne({user_email: msg.admin_modifier_utilisateur.userData.user_email});
             user.user_firstname = user_firstname;
@@ -215,6 +215,7 @@ class Utilisateurs {
             user.user_email = user_email;
             user.user_phone = user_phone;
             user.user_job = user_job;
+            user.user_status = user_status;
 
             await user.save();
 
