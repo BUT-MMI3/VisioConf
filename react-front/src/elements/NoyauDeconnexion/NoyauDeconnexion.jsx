@@ -41,7 +41,7 @@ const NoyauDeconnexion = () => {
 
     return (
         <>
-            <button style={{background: 'none', border: 'none', color: '#CB0000', cursor: 'pointer', padding: 0}}
+            <button style={{background: 'none', border: 'none', color: 'red', cursor: 'pointer', padding: 0}}
                     className={"fr ai-c g1 jc-fs"}
                     onClick={() => newModal({
                         type: 'error',

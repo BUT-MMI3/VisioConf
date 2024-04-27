@@ -11,7 +11,6 @@ export const sessionSlice = createSlice({
         user_phone: "",
         user_status: "",
         user_job: "",
-        user_desc: "",
         user_date_create: "",
         user_picture: "./user-icons/user-base-icon.svg",
         user_is_online: false,
@@ -32,7 +31,6 @@ export const sessionSlice = createSlice({
             state.user_phone = action.payload.user_info.user_phone;
             state.user_status = action.payload.user_info.user_status;
             state.user_job = action.payload.user_info.user_job;
-            state.user_desc = action.payload.user_info.user_desc;
             state.user_date_create = action.payload.user_info.user_date_create;
             state.user_picture = action.payload.user_info.user_picture;
             state.user_is_online = true;
