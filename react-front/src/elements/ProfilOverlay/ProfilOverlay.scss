@@ -73,12 +73,8 @@
     background-color: green;
   }
 
-  &.dnd {
-    background-color: #CB0000;
-  }
-
-  &.offline {
-    background-color: gray;
+  &.deconnecte {
+    background-color: red;
   }
 }
 
@@ -92,10 +88,7 @@
     background-color: green;
   }
 
-  &.dnd {
-    background-color: #CB0000;
-  }
-  &.offline {
-    background-color: gray;
+  &.deconnecte {
+    background-color: red;
   }
 }
