@@ -5,8 +5,8 @@ import FeatherIcon from "feather-icons-react";
 import {useModal} from "../Modale/ModaleContext.jsx";
 import {useToasts} from "../Toasts/ToastContext.jsx";
 
-const listeMessagesEmis = ["demande_annuaire"];
-const listeMessagesRecus = ["annuaire"];
+const listeMessagesEmis = ["demande_annuaire", "demande_info_utilisateur"];
+const listeMessagesRecus = ["annuaire", "info_utilisateur"];
 
 const NoyauAnnuaire = () => {
     const {newModal} = useModal();
@@ -31,6 +31,90 @@ const NoyauAnnuaire = () => {
                         type: "error",
                     });
                 }
+            } else if (msg && msg.info_utilisateur) {
+                if (msg.info_utilisateur.success) {
+                    newModal({
+                        title: "Informations utilisateur",
+                        htmlContent: (
+                            <div className={"profile-modale"}>
+                                <div className={"profile-modale--bar"}>
+                                    <div className={"fr g0-5"}>
+                                        <img src={msg.info_utilisateur.user.user_picture} alt="profile"/>
+                                        <div>
+                                            <h3>{msg.info_utilisateur.user.user_firstname} {msg.info_utilisateur.user.user_lastname}</h3>
+                                            <p className={"o0-5"}>{msg.info_utilisateur.user.user_job}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className={"annuaire--actions"}>
+                                        <button>
+                                            <FeatherIcon icon={"message-circle"} size={20}/>
+                                        </button>
+                                        <button>
+                                            <FeatherIcon icon={"phone"} size={20}/>
+                                        </button>
+                                        <button>
+                                            <FeatherIcon icon={"video"} size={20}/>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div>
+                                        <h3>Informations</h3>
+                                        <p className={"o0-5"}>{msg.info_utilisateur.user.user_desc}</p>
+                                    </div>
+                                    <div className={"info"}>
+                                        <h3>Prénom</h3>
+                                        <p className={"o0-5"}>{msg.info_utilisateur.user.user_firstname}</p>
+                                    </div>
+                                    <div className={"info"}>
+                                        <h3>Nom</h3>
+                                        <p className={"o0-5"}>{msg.info_utilisateur.user.user_lastname}</p>
+                                    </div>
+                                    <div className={"info"}>
+                                        <h3>Email</h3>
+                                        <p className={"o0-5"}>{msg.info_utilisateur.user.user_email}</p>
+                                    </div>
+                                    <div className={"info"}>
+                                        <h3>Téléphone</h3>
+                                        <p className={"o0-5"}>{msg.info_utilisateur.user.user_phone}</p>
+                                    </div>
+                                    <div className={"info"}>
+                                        <h3>Compte créé le</h3>
+                                        <p className={"o0-5"}>{msg.info_utilisateur.user.user_date_create}</p>
+                                    </div>
+                                    <div className={"info"}>
+                                        <h3>Dernière connexion</h3>
+                                        <p className={"o0-5"}>{msg.info_utilisateur.user.user_last_connection}</p>
+                                    </div>
+                                    <div className={"info"}>
+                                        <h3>Rôles</h3>
+                                        <div className={"fr g0-5"}>
+                                            {msg.info_utilisateur.user.user_roles.map((role, index) => (
+                                                <p key={index} style={{
+                                                    backgroundColor: "#223A6A",
+                                                    color: "white",
+                                                    padding: '0.3rem 0.8rem',
+                                                    fontSize: '0.8rem',
+                                                    whiteSpace: "nowrap",
+                                                    borderRadius: '4rem'
+                                                }}>
+                                                    {role}
+                                                </p>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ),
+                    });
+                } else {
+                    pushToast({
+                        title: "Erreur",
+                        message: "Erreur lors de la récupération des informations de l'utilisateur",
+                        type: "error",
+                    });
+                }
             }
         },
     });
@@ -44,6 +128,11 @@ const NoyauAnnuaire = () => {
             controller.unsubscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
         };
     }, []);
+
+    const handleUserClick = (user) => {
+        console.log("User clicked", user);
+        controller.send(instanceRef.current, {"demande_info_utilisateur": {user_uuid: user.user_uuid}});
+    }
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value.toLowerCase());
@@ -77,6 +166,7 @@ const NoyauAnnuaire = () => {
                 {filteredUtilisateurs.map((user, index) => (
                     <div className={"annuaire--profile-card"} key={index}>
                         <img src={user.user_picture} alt="profile"/>
+                        <FeatherIcon icon={"info"} className={"info"} size={20} onClick={() => handleUserClick(user)}/>
                         <h3>{user.user_firstname} {user.user_lastname}</h3>
                         <p>{user.user_job}</p>
                         <div className="annuaire--actions">
