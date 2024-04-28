@@ -139,65 +139,65 @@ const AdminAjouterUtilisateur = () => {
                 </button>
 
                 <section {...getCollapseProps()}>
-
-                    <div className={"fc"}>
-                        <label className={"ajouter-utilisateur-label"}>
-                            <h4>Mot de passe</h4>
-                            <div className={"fr ai-c g0-5 "}>
-                                <input
-                                    type="checkbox"
-                                    checked={definePassword}
-                                    onChange={(e) => setDefinePassword(e.target.checked)}
-                                    id={"define-password"}
-                                />
-                                <label htmlFor={"define-password"}>Définir le mot de passe maintenant</label>
-                            </div>
-
-                        </label>
-                        {definePassword && (<div className={"fr g1"}>
+                    <div className={"collapse-content"}>
+                        <div className={"fc"}>
                             <label className={"ajouter-utilisateur-label"}>
-                                <h4>Mot de passe : <p>*</p></h4>
-                                <input type="password" placeholder={"Mot de passe"}
-                                       value={password}
-                                       autoComplete={"new-password"}
-                                       onChange={(e) => setPassword(e.target.value)} required/>
+                                <h4>Mot de passe</h4>
+                                <div className={"fr ai-c g0-5 "}>
+                                    <input
+                                        type="checkbox"
+                                        checked={definePassword}
+                                        onChange={(e) => setDefinePassword(e.target.checked)}
+                                        id={"define-password"}
+                                    />
+                                    <label htmlFor={"define-password"}>Définir le mot de passe maintenant</label>
+                                </div>
+
                             </label>
+                            {definePassword && (<div className={"fr g1"}>
+                                <label className={"ajouter-utilisateur-label"}>
+                                    <h4>Mot de passe : <p>*</p></h4>
+                                    <input type="password" placeholder={"Mot de passe"}
+                                           value={password}
+                                           autoComplete={"new-password"}
+                                           onChange={(e) => setPassword(e.target.value)} required/>
+                                </label>
+                                <label className={"ajouter-utilisateur-label"}>
+                                    <h4>Confirmer le mot de passe : <p>*</p></h4>
+                                    <input type="password" placeholder={"Confirmer le mot de passe"}
+                                           value={confirmPassword}
+                                           autoComplete={"new-password"}
+                                           onChange={(e) => setConfirmPassword(e.target.value)} required/>
+                                </label>
+                            </div>)}
+                        </div>
+                        <br/>
+                        <div>
                             <label className={"ajouter-utilisateur-label"}>
-                                <h4>Confirmer le mot de passe : <p>*</p></h4>
-                                <input type="password" placeholder={"Confirmer le mot de passe"}
-                                       value={confirmPassword}
-                                       autoComplete={"new-password"}
-                                       onChange={(e) => setConfirmPassword(e.target.value)} required/>
+                                <h4>Status</h4>
+                                <div className={"fr ai-c g0-5 "}>
+                                    <input
+                                        type="checkbox"
+                                        checked={defineStatus}
+                                        onChange={(e) => setDefineStatus(e.target.checked)}
+                                        id={"define-status"}
+                                    />
+                                    <label htmlFor={"define-status"}>Définir le status maintenant</label>
+                                </div>
                             </label>
-                        </div>)}
+                            {defineStatus && (<div className={"fr g1"}>
+                                <label className={"ajouter-utilisateur-label"}>
+                                    <h4>Status : <p>*</p></h4>
+                                    <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                                        <option value={"waiting"}>En attente</option>
+                                        <option value={"active"}>Actif</option>
+                                        <option value={"banned"}>Banni</option>
+                                        <option value={"deleted"}>Supprimé</option>
+                                    </select>
+                                </label>
+                            </div>)}
+                        </div>
                     </div>
-                    <br/>
-                    <div>
-                        <label className={"ajouter-utilisateur-label"}>
-                            <h4>Status</h4>
-                            <div className={"fr ai-c g0-5 "}>
-                                <input
-                                    type="checkbox"
-                                    checked={defineStatus}
-                                    onChange={(e) => setDefineStatus(e.target.checked)}
-                                    id={"define-status"}
-                                />
-                                <label htmlFor={"define-status"}>Définir le status maintenant</label>
-                            </div>
-                        </label>
-                        {defineStatus && (<div className={"fr g1"}>
-                            <label className={"ajouter-utilisateur-label"}>
-                                <h4>Status : <p>*</p></h4>
-                                <select value={status} onChange={(e) => setStatus(e.target.value)}>
-                                    <option value={"waiting"}>En attente</option>
-                                    <option value={"active"}>Actif</option>
-                                    <option value={"banned"}>Banni</option>
-                                    <option value={"deleted"}>Supprimé</option>
-                                </select>
-                            </label>
-                        </div>)}
-                    </div>
-
                 </section>
             </div>
 
