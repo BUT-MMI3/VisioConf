@@ -6,8 +6,8 @@ class Utilisateurs {
     controller = null;
     instanceName = "Utilisateurs";
 
-    listeMessagesEmis = ["liste_utilisateurs", "admin_liste_utilisateurs", "admin_utilisateur_cree", "admin_utilisateur_details", "admin_utilisateur_supprime", "admin_utilisateur_modifie"];
-    listeMessagesRecus = ["demande_liste_utilisateurs", "admin_demande_liste_utilisateurs", "admin_ajouter_utilisateur", "admin_demande_utilisateur_details", "admin_supprimer_utilisateur", "admin_modifier_utilisateur"];
+    listeMessagesEmis = ["liste_utilisateurs", "annuaire", "info_utilisateur", "admin_liste_utilisateurs", "admin_utilisateur_cree", "admin_utilisateur_details", "admin_utilisateur_supprime", "admin_utilisateur_modifie"];
+    listeMessagesRecus = ["demande_liste_utilisateurs", "demande_annuaire", "demande_info_utilisateur", "admin_demande_liste_utilisateurs", "admin_ajouter_utilisateur", "admin_demande_utilisateur_details", "admin_supprimer_utilisateur", "admin_modifier_utilisateur"];
 
     verbose = true;
 
@@ -57,7 +57,32 @@ class Utilisateurs {
                     }
                 });
             }
-        } else if (typeof msg.admin_demande_liste_utilisateurs !== 'undefined') {
+        } else if (typeof msg.demande_annuaire !== 'undefined') {
+            if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement d'une demande d'annuaire`);
+
+            const allUsers = await User.find({}).select('user_uuid user_firstname user_lastname user_job user_picture');
+
+            this.controller.send(this, {
+                annuaire: {
+                    success: true,
+                    annuaire: allUsers,
+                },
+                id: msg.id
+            });
+        } else if (typeof msg.demande_info_utilisateur !== 'undefined') {
+            if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la demande d'informations sur un utilisateur`);
+
+            const user = await User.findOne({user_uuid: msg.demande_info_utilisateur.user_uuid}).select('user_uuid user_firstname user_lastname user_email user_phone user_job user_desc user_date_create user_picture user_is_online user_disturb_status user_last_connection user_direct_manager user_tokens user_roles');
+
+            this.controller.send(this, {
+                info_utilisateur: {
+                    success: true,
+                    user: user
+                },
+                id: msg.id
+            });
+
+        }else if (typeof msg.admin_demande_liste_utilisateurs !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement d'une demande de liste d'utilisateurs par un administrateur`);
 
             try {

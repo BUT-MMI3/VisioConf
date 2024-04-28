@@ -34,18 +34,11 @@ const Modale = () => {
 
     const modalVariants = {
         hidden: {
-            scale: 0,
-            opacity: 0,
-        },
-        visible: {
-            scale: 1,
-            opacity: 1,
-            transition: {duration: 0.3}
-        },
-        exit: {
-            scale: 0.5,
-            opacity: 0,
-            transition: {duration: 0.2}
+            scale: 0, opacity: 0,
+        }, visible: {
+            scale: 1, opacity: 1, transition: {duration: 0.3}
+        }, exit: {
+            scale: 0.5, opacity: 0, transition: {duration: 0.2}
         }
     };
 
@@ -53,10 +46,8 @@ const Modale = () => {
         e.stopPropagation();
     };
 
-    return (
-        <AnimatePresence>
-            {modalProps.isOpen && (
-                <motion.div
+    return (<AnimatePresence>
+            {modalProps.isOpen && (<motion.div
                     className="modale-background"
                     initial="hidden"
                     animate="visible"
@@ -69,39 +60,37 @@ const Modale = () => {
                         onClick={handleContainerClick}
                     >
 
-                        {
-                            modalProps.boutonClose && (
-                                <button onClick={closeModal} className="modale-close-button">
-                                    <FeatherIcon icon="x"/>
-                                </button>
-                            )
-                        }
-                        <div className="modale-icon">
-                          <span>
-                            {getIcon()}
-                          </span>
-                        </div>
-                        <div className="modale-header">
-                            <h3>{modalProps.titre}</h3>
-                        </div>
-                        <div className="modale-body">
-                            <p>{modalProps.texte}</p>
-                        </div>
-                        <div className="modale-footer">
-                            <button onClick={closeModal} className="modale-cancel-button">
-                                Annuler
-                            </button>
-                            {modalProps.onValidate && (
-                                <button onClick={handleConfirm} className="modale-action-button">
-                                    {modalProps.texteBoutonAction}
-                                </button>
-                            )}
-                        </div>
+                        {modalProps.boutonClose && (<button onClick={closeModal} className="modale-close-button">
+                                <FeatherIcon icon="x"/>
+                            </button>)}
+                        {modalProps.htmlContent ? (<>
+                                {modalProps.htmlContent}
+                            </>) : (<>
+                                <div className="modale-icon">
+                                      <span>
+                                        {getIcon()}
+                                      </span>
+                                </div>
+                                <div className="modale-header">
+                                    <h3>{modalProps.titre}</h3>
+                                </div>
+                                <div className="modale-body">
+                                    <p>{modalProps.texte}</p>
+                                </div>
+                                <div className="modale-footer">
+                                    <button onClick={closeModal} className="modale-cancel-button">
+                                        Annuler
+                                    </button>
+                                    {modalProps.onValidate && (
+                                        <button onClick={handleConfirm} className="modale-action-button">
+                                            {modalProps.texteBoutonAction}
+                                        </button>)}
+                                </div>
+                            </>)}
+
                     </motion.div>
-                </motion.div>
-            )}
-        </AnimatePresence>
-    );
+                </motion.div>)}
+        </AnimatePresence>);
 };
 
 export default Modale;

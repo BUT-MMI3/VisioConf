@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-DEFAULT_TEAM_LOGO = "default.png";
+DEFAULT_TEAM_LOGO = "/others/default.png";
 DEFAULT_CHANNEL_TYPE = "public";
 
 const teamSchema = new Schema({

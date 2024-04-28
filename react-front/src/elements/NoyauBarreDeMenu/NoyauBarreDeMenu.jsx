@@ -121,7 +121,7 @@ const NoyauBarreDeMenu = () => {
                             className="onglet"
                         />
                     </LinkTo>
-                    <LinkTo to="/livres">
+                    <LinkTo to="/annuaire">
                         <FeatherIcon
                             icon="book"
                             size="40"
