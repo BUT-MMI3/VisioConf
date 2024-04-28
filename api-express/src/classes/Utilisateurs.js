@@ -6,8 +6,8 @@ class Utilisateurs {
     controller = null;
     instanceName = "Utilisateurs";
 
-    listeMessagesEmis = ["liste_utilisateurs", "admin_liste_utilisateurs", "admin_utilisateur_cree", "admin_utilisateur_details", "admin_utilisateur_supprime", "admin_utilisateur_modifie"];
-    listeMessagesRecus = ["demande_liste_utilisateurs", "admin_demande_liste_utilisateurs", "admin_ajouter_utilisateur", "admin_demande_utilisateur_details", "admin_supprimer_utilisateur", "admin_modifier_utilisateur"];
+    listeMessagesEmis = ["liste_utilisateurs", "annuaire", "admin_liste_utilisateurs", "admin_utilisateur_cree", "admin_utilisateur_details", "admin_utilisateur_supprime", "admin_utilisateur_modifie"];
+    listeMessagesRecus = ["demande_liste_utilisateurs", "demande_annuaire", "admin_demande_liste_utilisateurs", "admin_ajouter_utilisateur", "admin_demande_utilisateur_details", "admin_supprimer_utilisateur", "admin_modifier_utilisateur"];
 
     verbose = true;
 
@@ -57,7 +57,19 @@ class Utilisateurs {
                     }
                 });
             }
-        } else if (typeof msg.admin_demande_liste_utilisateurs !== 'undefined') {
+        } else if (typeof msg.demande_annuaire !== 'undefined') {
+            if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement d'une demande d'annuaire`);
+
+            const allUsers = await User.find({}).select('user_uuid user_firstname user_lastname user_job user_picture');
+
+            this.controller.send(this, {
+                annuaire: {
+                    success: true,
+                    annuaire: allUsers,
+                },
+                id: msg.id
+            });
+        }else if (typeof msg.admin_demande_liste_utilisateurs !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement d'une demande de liste d'utilisateurs par un administrateur`);
 
             try {

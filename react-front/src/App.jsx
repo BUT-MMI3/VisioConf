@@ -24,6 +24,7 @@ import Loader from "./elements/Loader/Loader.jsx";
 import AdminAjouterUtilisateur from "./elements/AdminAjouterUtilisateur/AdminAjouterUtilisateur.jsx";
 import AdminVoirUtilisateur from "./elements/AdminVoirUtilisateur/AdminVoirUtilisateur.jsx";
 import AdminModifierUtilisateur from "./elements/AdminModifierUtilisateur/AdminModifierUtilisateur.jsx";
+import NoyauAnnuaire from "./elements/NoyauAnnuaire/NoyauAnnuaire.jsx";
 
 const listeMessageEmis = []
 
@@ -168,6 +169,15 @@ const App = () => {
                                 </>
                             }
                         />
+                        <Route
+                            path="/annuaire"
+                            element={
+                                <>
+                                    <NoyauAnnuaire/>
+                                </>
+                            }
+                        />
+
                         <Route
                             path="admin"
                             element={
