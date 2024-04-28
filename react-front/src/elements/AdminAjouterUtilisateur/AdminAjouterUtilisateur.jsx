@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
 import {useToasts} from "../Toasts/ToastContext.jsx";
+import {useCollapse} from 'react-collapsed'
 
 const listeMessagesEmis = ["admin_ajouter_utilisateur"];
 const listeMessagesRecus = ["admin_utilisateur_cree"];
@@ -12,6 +13,7 @@ const listeMessagesRecus = ["admin_utilisateur_cree"];
 const AdminAjouterUtilisateur = () => {
     const navigate = useNavigate();
     const {pushToast} = useToasts();
+    const {getToggleProps, getCollapseProps, isExpanded} = useCollapse()
 
     const [userFirstname, setUserFirstname] = useState("");
     const [userLastname, setUserLastname] = useState("");
@@ -21,13 +23,15 @@ const AdminAjouterUtilisateur = () => {
     const [definePassword, setDefinePassword] = useState(false);
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [defineStatus, setDefineStatus] = useState(false);
+    const [status, setStatus] = useState("waiting");
 
     const controller = useRef(appInstance.getController()).current;
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!userEmail || !userFirstname || !userLastname || (definePassword && password !== confirmPassword)) {
+        if (!userEmail || !userFirstname || !userLastname || (definePassword && password !== confirmPassword) || (defineStatus && !status)) {
             pushToast({
                 title: "Erreur",
                 message: definePassword && password !== confirmPassword ? "Les mots de passe ne correspondent pas." : "Veuillez remplir tous les champs obligatoires.",
@@ -42,7 +46,8 @@ const AdminAjouterUtilisateur = () => {
             user_email: userEmail,
             user_phone: userPhone,
             user_job: userJob,
-            user_password: definePassword ? password : undefined
+            user_password: definePassword ? password : undefined,
+            user_status: defineStatus ? status : undefined,
         };
         controller.send(instanceRef.current, {"admin_ajouter_utilisateur": {userData: userData}});
     };
@@ -78,61 +83,78 @@ const AdminAjouterUtilisateur = () => {
 
 
     return (<div className="ajouter-utilisateur layout-content--full">
-            <div className="ajouter-utilisateur--card">
-                <h2>Ajouter un utilisateur</h2>
-            </div>
+        <div className="ajouter-utilisateur--card">
+            <h2>Ajouter un utilisateur</h2>
+        </div>
 
-            <div className={"ajouter-utilisateur--tools"}>
-                <LinkTo to="/admin/users" className="ajouter-utilisateur--back">
-                    <FeatherIcon icon="arrow-left" size={20}/>
-                    <span>Retour</span>
-                </LinkTo>
-            </div>
+        <div className={"ajouter-utilisateur--tools"}>
+            <LinkTo to="/admin/users" className="ajouter-utilisateur--back">
+                <FeatherIcon icon="arrow-left" size={20}/>
+                <span>Retour</span>
+            </LinkTo>
+        </div>
 
-            <form onSubmit={handleSubmit} className={"ajouter-utilisateur-form"}>
-                <label className={"ajouter-utilisateur-label"} style={{width: '100%'}}>
-                    <span>Les champs marqués d'une (<p>*</p>) sont obligatoires.</span>
-                </label>
-                <label className={"ajouter-utilisateur-label"}>
-                    <h4>Prénom : <p>*</p></h4>
-                    <input type="text" placeholder={"John"} value={userFirstname}
-                           onChange={(e) => setUserFirstname(e.target.value)} required/>
-                </label>
-                <label className={"ajouter-utilisateur-label"}>
-                    <h4>Nom : <p>*</p></h4>
-                    <input type="text" placeholder={"Doe"} value={userLastname}
-                           onChange={(e) => setUserLastname(e.target.value)} required/>
-                </label>
-                <label className={"ajouter-utilisateur-label"}>
-                    <h4>Email : <p>*</p></h4>
-                    <input type="email" placeholder={"john@doe.com"} value={userEmail} autoComplete={"email"}
-                           onChange={(e) => setUserEmail(e.target.value)} required/>
-                </label>
-                <label className={"ajouter-utilisateur-label"}>
-                    <h4>Téléphone : <p>*</p></h4>
-                    <input type="tel" placeholder={"0607080910"} value={userPhone} autoComplete={"tel"}
-                           onChange={(e) => setUserPhone(e.target.value)} required/>
-                </label>
-                <label className={"ajouter-utilisateur-label"} style={{width: '100%'}}>
-                    <h4>Job : <p>*</p></h4>
-                    <textarea type="text" placeholder={"Agent"} value={userJob}
-                              onChange={(e) => setUserJob(e.target.value)} required/>
-                </label>
-                <div className={"fc"}>
-                    <label className={"ajouter-utilisateur-label"}>
-                        <h4>Mot de passe</h4>
-                        <div className={"fr ai-c g0-5 "}>
-                            <input
-                                type="checkbox"
-                                checked={definePassword}
-                                onChange={(e) => setDefinePassword(e.target.checked)}
-                                id={"define-password"}
-                            />
-                            <label htmlFor={"define-password"}>Définir le mot de passe maintenant</label>
-                        </div>
+        <form onSubmit={handleSubmit} className={"ajouter-utilisateur-form"}>
+            <label className={"ajouter-utilisateur-label"} style={{width: '100%'}}>
+                <span>Les champs marqués d'une (<p>*</p>) sont obligatoires.</span>
+            </label>
+            <label className={"ajouter-utilisateur-label"}>
+                <h4>Prénom : <p>*</p></h4>
+                <input type="text" placeholder={"John"} value={userFirstname}
+                       onChange={(e) => setUserFirstname(e.target.value)} required/>
+            </label>
+            <label className={"ajouter-utilisateur-label"}>
+                <h4>Nom : <p>*</p></h4>
+                <input type="text" placeholder={"Doe"} value={userLastname}
+                       onChange={(e) => setUserLastname(e.target.value)} required/>
+            </label>
+            <label className={"ajouter-utilisateur-label"}>
+                <h4>Email : <p>*</p></h4>
+                <input type="email" placeholder={"john@doe.com"} value={userEmail} autoComplete={"email"}
+                       onChange={(e) => setUserEmail(e.target.value)} required/>
+            </label>
+            <label className={"ajouter-utilisateur-label"}>
+                <h4>Téléphone : <p>*</p></h4>
+                <input type="tel" placeholder={"0607080910"} value={userPhone} autoComplete={"tel"}
+                       onChange={(e) => setUserPhone(e.target.value)} required/>
+            </label>
+            <label className={"ajouter-utilisateur-label"} style={{width: '100%'}}>
+                <h4>Job : <p>*</p></h4>
+                <textarea type="text" placeholder={"Agent"} value={userJob}
+                          onChange={(e) => setUserJob(e.target.value)} required/>
+            </label>
+            <div className={"collapse fc w-100"}>
+                <button {...getToggleProps()} className={"expand-button"}>
+                    {isExpanded ?
+                        <>
+                            <span>Masquer les paramètres avancés</span>
+                            <FeatherIcon icon="chevron-up" size={20} className={"unexpand-icon"}/>
+                        </>
+                        :
+                        <>
+                            <span>Paramètres avancés</span>
+                            <FeatherIcon icon="chevron-down" size={20} className={"expand-icon"}/>
+                        </>
+                    }
+                </button>
 
-                    </label>
-                    {definePassword && (<div className={"fr g1"}>
+                <section {...getCollapseProps()}>
+
+                    <div className={"fc"}>
+                        <label className={"ajouter-utilisateur-label"}>
+                            <h4>Mot de passe</h4>
+                            <div className={"fr ai-c g0-5 "}>
+                                <input
+                                    type="checkbox"
+                                    checked={definePassword}
+                                    onChange={(e) => setDefinePassword(e.target.checked)}
+                                    id={"define-password"}
+                                />
+                                <label htmlFor={"define-password"}>Définir le mot de passe maintenant</label>
+                            </div>
+
+                        </label>
+                        {definePassword && (<div className={"fr g1"}>
                             <label className={"ajouter-utilisateur-label"}>
                                 <h4>Mot de passe : <p>*</p></h4>
                                 <input type="password" placeholder={"Mot de passe"}
@@ -148,17 +170,47 @@ const AdminAjouterUtilisateur = () => {
                                        onChange={(e) => setConfirmPassword(e.target.value)} required/>
                             </label>
                         </div>)}
-                </div>
-                <label style={{flexDirection: "column"}}>
-                    <h4>Permissions additionnelles</h4>
-                    <span>
+                    </div>
+                    <br/>
+                    <div>
+                        <label className={"ajouter-utilisateur-label"}>
+                            <h4>Status</h4>
+                            <div className={"fr ai-c g0-5 "}>
+                                <input
+                                    type="checkbox"
+                                    checked={defineStatus}
+                                    onChange={(e) => setDefineStatus(e.target.checked)}
+                                    id={"define-status"}
+                                />
+                                <label htmlFor={"define-status"}>Définir le status maintenant</label>
+                            </div>
+                        </label>
+                        {defineStatus && (<div className={"fr g1"}>
+                            <label className={"ajouter-utilisateur-label"}>
+                                <h4>Status : <p>*</p></h4>
+                                <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                                    <option value={"waiting"}>En attente</option>
+                                    <option value={"active"}>Actif</option>
+                                    <option value={"banned"}>Banni</option>
+                                    <option value={"deleted"}>Supprimé</option>
+                                </select>
+                            </label>
+                        </div>)}
+                    </div>
+
+                </section>
+            </div>
+
+            <label style={{flexDirection: "column"}}>
+                <h4>Permissions additionnelles</h4>
+                <span>
                         L'utilisateur héritera des permissions selon les groupes et rôles associés.
                         Vous pourrez associer des permissions additionnelles plus tard via le module "Attribuer une permission".
                     </span>
-                </label>
-                <button type="submit">Créer l'utilisateur</button>
-            </form>
-        </div>);
+            </label>
+            <button type="submit">Créer l'utilisateur</button>
+        </form>
+    </div>);
 };
 
 export default AdminAjouterUtilisateur;

@@ -79,7 +79,7 @@ class Utilisateurs {
             const allUsers = await User.find({}).select('user_uuid user_firstname user_lastname user_email user_job');
 
             this.controller.send(this, {
-                admin_liste_utilisateurs : {
+                admin_liste_utilisateurs: {
                     success: true,
                     liste_utilisateurs: allUsers,
                 },
@@ -88,7 +88,7 @@ class Utilisateurs {
         } else if (typeof msg.admin_ajouter_utilisateur !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la création d'un utilisateur par un administrateur`);
 
-            try{
+            try {
                 const user = await User.findBySocketId(msg.id);
                 if (!user.user_roles.includes('admin')) {
                     this.controller.send(this, {
@@ -103,7 +103,15 @@ class Utilisateurs {
             } catch (error) {
                 console.log(error);
             }
-            const { user_firstname, user_lastname, user_email, user_password, user_phone, user_job } = msg.admin_ajouter_utilisateur.userData;
+            const {
+                user_firstname,
+                user_lastname,
+                user_email,
+                user_password,
+                user_phone,
+                user_job,
+                user_status
+            } = msg.admin_ajouter_utilisateur.userData;
             const password = user_password ? await sha256(user_password) : "default_password";
             const newUser = new User({
                 user_uuid: uuidv4(),
@@ -114,6 +122,7 @@ class Utilisateurs {
                 user_phone,
                 user_job,
                 user_desc: ' ',
+                user_status: user_status || 'waiting',
             });
 
             await newUser.save();
@@ -153,7 +162,7 @@ class Utilisateurs {
                 },
                 id: msg.id
             });
-        } else if(typeof msg.admin_supprimer_utilisateur !== 'undefined') {
+        } else if (typeof msg.admin_supprimer_utilisateur !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la suppression d'un utilisateur par un administrateur`);
 
             try {
@@ -181,7 +190,7 @@ class Utilisateurs {
                 const allUsers = await User.find({}).select('user_uuid user_firstname user_lastname user_email user_job');
 
                 this.controller.send(this, {
-                    admin_liste_utilisateurs : {
+                    admin_liste_utilisateurs: {
                         success: true,
                         liste_utilisateurs: allUsers,
                     },
@@ -209,7 +218,14 @@ class Utilisateurs {
                 console.log(error);
             }
 
-            const { user_firstname, user_lastname, user_email, user_phone, user_job, user_status } = msg.admin_modifier_utilisateur.userData;
+            const {
+                user_firstname,
+                user_lastname,
+                user_email,
+                user_phone,
+                user_job,
+                user_status
+            } = msg.admin_modifier_utilisateur.userData;
 
             const user = await User.findOne({user_email: msg.admin_modifier_utilisateur.userData.user_email});
             user.user_firstname = user_firstname;

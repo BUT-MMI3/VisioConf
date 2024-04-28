@@ -243,3 +243,28 @@ img {
 .ma {
   margin: auto;
 }
+
+.collapse{
+  border: 1px solid lightgray;
+  border-radius: 0.5rem;
+}
+.collapse section{
+  padding: 1rem;
+}
+.expand-button{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-wrap: nowrap;
+  padding: 1rem 0.3rem;
+  width: 100%;
+  background-color: var(--background-color);
+  color: var(--color-primary);
+  font-size: 1rem;
+  margin-left:auto;
+  justify-content: space-between
+}
+.expand-button:hover{
+  background-color: #EAEAEA;
+
+}
