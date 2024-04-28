@@ -23,6 +23,7 @@ const AdminModifierUtilisateur = () => {
     const [userEmail, setUserEmail] = useState("");
     const [userPhone, setUserPhone] = useState("");
     const [userJob, setUserJob] = useState("");
+    const [userStatus, setUserStatus] = useState("waiting");
 
     const controller = useRef(appInstance.getController()).current;
 
@@ -45,6 +46,7 @@ const AdminModifierUtilisateur = () => {
             user_email: userEmail,
             user_phone: userPhone,
             user_job: userJob,
+            user_status: userStatus,
         };
         controller.send(instanceRef.current, { "admin_modifier_utilisateur": {userData: userData} });
     };
@@ -78,6 +80,7 @@ const AdminModifierUtilisateur = () => {
                     setUserEmail(msg.admin_utilisateur_details.user.user_email || "");
                     setUserPhone(msg.admin_utilisateur_details.user.user_phone || "");
                     setUserJob(msg.admin_utilisateur_details.user.user_job || "");
+                    setUserStatus(msg.admin_utilisateur_details.user.user_status || "");
                 }else {
                     pushToast({
                         title: "Erreur",
@@ -141,6 +144,14 @@ const AdminModifierUtilisateur = () => {
                     <h4>Job : <p>*</p></h4>
                     <textarea type="text" placeholder={"Agent"} value={userJob}
                               onChange={(e) => setUserJob(e.target.value)} required/>
+                </label>
+                <label className={"ajouter-utilisateur-label"}>
+                    <h4>Statut : <p>*</p></h4>
+                    <select value={userStatus} onChange={(e) => setUserStatus(e.target.value)}>
+                        <option value="waiting">En attente</option>
+                        <option value="active">Actif</option>
+                        <option value="banned">Banni</option>
+                    </select>
                 </label>
                 <label style={{flexDirection: "column"}}>
                     <h4>Permissions additionnelles</h4>
