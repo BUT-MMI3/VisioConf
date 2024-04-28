@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 // Default values
-const DEFAULT_USER_PICTURE = "default.png";
+const DEFAULT_USER_PICTURE = "/others/default.png";
 const DEFAULT_ROLE = ["user"];
 const DEFAULT_STATUS = "waiting";
 const DEFAULT_DISTURB_STATUS = "available";
