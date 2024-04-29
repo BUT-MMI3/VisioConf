@@ -66,7 +66,7 @@ const AdminListeRoles = () => {
         return (
             role.role_uuid.toLowerCase().includes(searchTerm) ||
             role.role_label.toLowerCase().includes(searchTerm) ||
-            role.role_permissions.join(", ").toLowerCase().includes(searchTerm) ||
+            role.role_permissions.map(p => p.permission_label).join(", ").toLowerCase().includes(searchTerm) ||
             (role._id ? role._id.toLowerCase().includes(searchTerm) : false)
         );
     });
