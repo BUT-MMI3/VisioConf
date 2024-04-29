@@ -6,8 +6,8 @@ import {useToasts} from "../Toasts/ToastContext.jsx";
 import FeatherIcon from "feather-icons-react";
 import {useModal} from "../Modale/ModaleContext.jsx";
 
-const listeMessagesEmis = ["admin_demande_liste_roles"];
-const listeMessagesRecus = ["admin_liste_roles"];
+const listeMessagesEmis = ["admin_demande_liste_roles", "admin_supprimer_role"];
+const listeMessagesRecus = ["admin_liste_roles", "admin_role_supprime"];
 
 const AdminListeRoles = () => {
     const {newModal} = useModal();
@@ -18,14 +18,29 @@ const AdminListeRoles = () => {
 
     const instanceRef = useRef({
         instanceName: "AdminListeRoles", traitementMessage: (msg) => {
+            console.log("Received data:", msg)
             if (msg.admin_liste_roles) {
-                console.log("Received data:", msg.admin_liste_roles)
+
                 if (msg.admin_liste_roles.success) {
-                    setRoles(msg.admin_liste_roles.roles);
+                    setRoles(msg.admin_liste_roles.roles || []);
                 } else {
                     pushToast({
                         title: "Erreur",
                         message: msg.admin_liste_roles.message || "Erreur lors de la récupération des rôles",
+                        type: "error",
+                    });
+                }
+            } else if (msg.admin_role_supprime) {
+                if (msg.admin_role_supprime.success) {
+                    pushToast({
+                        title: "Succès",
+                        message: "Rôle supprimé avec succès",
+                        type: "success",
+                    });
+                } else {
+                    pushToast({
+                        title: "Erreur",
+                        message: "Erreur lors de la suppression du rôle",
                         type: "error",
                     });
                 }

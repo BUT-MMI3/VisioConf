@@ -5,8 +5,8 @@ class Roles {
     controller = null;
     instanceName = "Roles";
 
-    listeMessagesEmis = ["admin_liste_roles", "admin_role_details", "admin_role_cree", "admin_role_modifie"];
-    listeMessagesRecus = ["admin_demande_liste_roles", "admin_demande_role_details", "admin_ajouter_role", "admin_modifier_role"];
+    listeMessagesEmis = ["admin_liste_roles", "admin_role_details", "admin_role_cree", "admin_role_modifie", "admin_role_supprime"];
+    listeMessagesRecus = ["admin_demande_liste_roles", "admin_demande_role_details", "admin_ajouter_role", "admin_modifier_role", "admin_supprimer_role"];
 
     verbose = true;
 
@@ -30,6 +30,9 @@ class Roles {
             this.handleAddRole(msg.admin_ajouter_role);
         } else if (typeof msg.admin_modifier_role !== 'undefined') {
             this.handleModifyRole(msg.admin_modifier_role);
+        } else if (typeof msg.admin_supprimer_role !== 'undefined') {
+            await this.handleDeleteRole(msg.admin_supprimer_role);
+            this.handleListRoles(msg);
         }
     }
 
@@ -128,6 +131,27 @@ class Roles {
                     message: "Failed to modify role"
                 },
                 id: roleData.id
+            });
+        }
+    }
+
+    handleDeleteRole = async (msg) => {
+        try {
+            await Role.deleteOne({ _id: msg });
+            this.controller.send(this, {
+                admin_role_supprime: {
+                    success: true
+                },
+                id: msg.id
+            });
+        } catch (error) {
+            console.error(`ERROR (${this.instanceName}) -`, error);
+            this.controller.send(this, {
+                admin_role_supprime: {
+                    success: false,
+                    message: "Failed to delete role"
+                },
+                id: msg.id
             });
         }
     }
