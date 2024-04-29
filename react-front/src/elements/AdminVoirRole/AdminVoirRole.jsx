@@ -51,12 +51,12 @@ const AdminVoirRole = () => {
 
 
     return (
-        <div className="voir-utilisateur layout-content--full">
-            <div className="voir-utilisateur--card">
+        <div className="voir-role layout-content--full">
+            <div className="voir-role--card">
                 <h2>Voir un rôle</h2>
             </div>
-            <div className={"voir-utilisateur--tools"}>
-                <LinkTo to="/admin/roles" className="voir-utilisateur--back">
+            <div className={"voir-role--tools"}>
+                <LinkTo to="/admin/roles" className="voir-role--back">
                     <FeatherIcon icon="arrow-left" size={20}/>
                     <span>Retour</span>
                 </LinkTo>
@@ -64,19 +64,19 @@ const AdminVoirRole = () => {
 
             {role && (
                 <>
-                    <div className="voir-utilisateur--content">
-                        <div className="voir-utilisateur--content--card">
+                    <div className="voir-role--content">
+                        <div className="voir-role--content--card">
                             <h3>Informations du rôle</h3>
-                            <div className="voir-utilisateur--content--card--content">
-                                <div className="voir-utilisateur--content--card--content--row">
+                            <div className="voir-role--content--card--content">
+                                <div className="voir-role--content--card--content--row">
                                     <span>Label : </span>
                                     <span>{role.role_label}</span>
                                 </div>
-                                <div className="voir-utilisateur--content--card--content--row">
+                                <div className="voir-role--content--card--content--row">
                                     <span>UUID : </span>
                                     <span>{role.role_uuid}</span>
                                 </div>
-                                <div className="voir-utilisateur--content--card--content--row">
+                                <div className="voir-role--content--card--content--row">
                                     <span>Permissions : </span>
                                     <span>{role.role_permissions.join(", ")}</span>
                                 </div>
