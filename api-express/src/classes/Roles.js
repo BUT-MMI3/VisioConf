@@ -5,8 +5,8 @@ class Roles {
     controller = null;
     instanceName = "Roles";
 
-    listeMessagesEmis = ["admin_liste_roles", "admin_role_cree", "admin_role_modifie"];
-    listeMessagesRecus = ["admin_demande_liste_roles", "admin_ajouter_role", "admin_modifier_role"];
+    listeMessagesEmis = ["admin_liste_roles", "admin_role_details", "admin_role_cree", "admin_role_modifie"];
+    listeMessagesRecus = ["admin_demande_liste_roles", "admin_demande_role_details", "admin_ajouter_role", "admin_modifier_role"];
 
     verbose = true;
 
@@ -24,6 +24,8 @@ class Roles {
 
         if (typeof msg.admin_demande_liste_roles !== 'undefined') {
             this.handleListRoles(msg);
+        } else if (typeof msg.admin_demande_role_details !== 'undefined') {
+            this.handleRoleDetails(msg);
         } else if (typeof msg.admin_ajouter_role !== 'undefined') {
             this.handleAddRole(msg.admin_ajouter_role);
         } else if (typeof msg.admin_modifier_role !== 'undefined') {
@@ -47,6 +49,28 @@ class Roles {
                 admin_liste_roles: {
                     success: false,
                     message: "Failed to retrieve roles"
+                },
+                id: msg.id
+            });
+        }
+    }
+
+    handleRoleDetails = async (msg) => {
+        try {
+            const role = await Role.findOne({ _id: msg.admin_demande_role_details.roleId });
+            this.controller.send(this, {
+                admin_role_details: {
+                    success: true,
+                    role: role
+                },
+                id: msg.id
+            });
+        } catch (error) {
+            console.error(`ERROR (${this.instanceName}) -`, error);
+            this.controller.send(this, {
+                admin_role_details: {
+                    success: false,
+                    message: "Failed to retrieve role"
                 },
                 id: msg.id
             });
