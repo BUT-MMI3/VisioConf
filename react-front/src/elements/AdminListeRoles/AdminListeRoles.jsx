@@ -110,28 +110,39 @@ const AdminListeRoles = () => {
                                         className="liste-roles--actions--voir">
                                     <FeatherIcon icon="eye" size={20}/>
                                 </LinkTo>
-                                <LinkTo to={`/admin/roles/${role._id || role.id}/edit`}
-                                        className="liste-roles--actions--modif">
-                                    <FeatherIcon icon="edit-2" size={20}/>
-                                </LinkTo>
+
                                 {role.role_default ? (
-                                    <button className="liste-roles--actions--supp" disabled>
-                                        <FeatherIcon icon="trash" size={20}/>
-                                    </button>
+                                    <>
+                                        <button disabled
+                                                className="liste-roles--actions--modif">
+                                            <FeatherIcon icon="edit-2" size={20}/>
+                                        </button>
+                                        <button className="liste-roles--actions--supp" disabled>
+                                            <FeatherIcon icon="trash" size={20}/>
+                                        </button>
+                                    </>
+
                                 ) : (
-                                    <button onClick={() => newModal({
-                                        type: 'error',
-                                        boutonClose: true,
-                                        titre: 'Vous allez supprimer un rôle.',
-                                        texte: "Toutes les données du rôle serront supprimées. Êtes-vous sûr de vouloir continuer ?",
-                                        texteBoutonAction: "Supprimer le rôle",
-                                        onValidate: () => {
-                                            controller.send(instanceRef.current, {admin_supprimer_role: role._id})
-                                        },
-                                    })}
-                                            className="liste-roles--actions--supp">
-                                        <FeatherIcon icon="trash" size={20}/>
-                                    </button>
+                                    <>
+                                        <LinkTo to={`/admin/roles/${role._id || role.id}/edit`}
+                                                className="liste-roles--actions--modif">
+                                            <FeatherIcon icon="edit-2" size={20}/>
+                                        </LinkTo>
+                                        <button onClick={() => newModal({
+                                            type: 'error',
+                                            boutonClose: true,
+                                            titre: 'Vous allez supprimer un rôle.',
+                                            texte: "Toutes les données du rôle serront supprimées. Êtes-vous sûr de vouloir continuer ?",
+                                            texteBoutonAction: "Supprimer le rôle",
+                                            onValidate: () => {
+                                                controller.send(instanceRef.current, {admin_supprimer_role: role._id})
+                                            },
+                                        })}
+                                                className="liste-roles--actions--supp">
+                                            <FeatherIcon icon="trash" size={20}/>
+                                        </button>
+                                    </>
+
                                 )}
 
                             </td>
