@@ -7,6 +7,7 @@ const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const {
+  initializeRoles,
   initializeUsers,
   initializeDiscussions,
     resetCalls
@@ -48,6 +49,7 @@ const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async () => {
     console.log("We're connected to the mongo.");
+    await initializeRoles();
     await initializeUsers();
     await initializeDiscussions();
     await resetCalls();

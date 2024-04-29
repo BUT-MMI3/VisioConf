@@ -1,5 +1,7 @@
 require('dotenv').config();
 const {v4: uuidv4} = require('uuid');
+const Role = require('../models/role');
+const Permission = require('../models/permission');
 const User = require('../models/user');
 const Discussion = require('../models/discussion');
 const Call = require('../models/call');
@@ -17,7 +19,7 @@ const usersToInsert = [
         user_job: "Responsable RH",
         user_desc: "Chef de département MMI à l’universite de Toulon. Également professeur de développement web.",
         user_status: 'active',
-        user_roles: ["MMI3 Alternant", "Etudiant"],
+        user_roles: ["user", "MMI3 Alternant", "Etudiant"],
         user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17',
     },
     {
@@ -58,6 +60,148 @@ const usersToInsert = [
         user_tokens: {inscription: 'azerty1234'},
     },
 ];
+
+const initializeRoles = async () => {
+    const permissionIds = await initializePermissions();
+    try {
+        await Role.deleteMany({});
+        const rolesToInsert = [
+            {
+                role_uuid: 'admin',
+                role_label: 'Administrateur',
+                role_permissions: [
+                    permissionIds['admin_demande_liste_utilisateurs'],
+                    permissionIds['admin_ajouter_utilisateur'],
+                    permissionIds['admin_demande_utilisateur_details'],
+                    permissionIds['admin_supprimer_utilisateur'],
+                    permissionIds['admin_modifier_utilisateur'],
+                    permissionIds['admin_demande_liste_roles'],
+                    permissionIds['admin_demande_role_details'],
+                    permissionIds['admin_ajouter_role'],
+                    permissionIds['admin_supprimer_role'],
+                    permissionIds['admin_demande_liste_permissions'],
+                ],
+                role_default: true,
+            },
+            {
+                role_uuid: 'user',
+                role_label: 'Utilisateur',
+                role_permissions: [
+                    permissionIds['demande_liste_utilisateurs'],
+                    permissionIds['demande_annuaire'],
+                    permissionIds['demande_info_utilisateur'],
+                    permissionIds['envoie_message'],
+                    permissionIds['demande_liste_discussions'],
+                    permissionIds['demande_historique_discussion'],
+                    permissionIds['demande_notifications'],
+                    permissionIds['demande_changement_status'],
+                    permissionIds['update_notifications'],
+                    permissionIds['demande_creation_discussion'],
+                    permissionIds['demande_discussion_info'],
+                ],
+                role_default: true,
+            },
+        ];
+        for (const roleData of rolesToInsert) {
+            const roleExists = await Role.findOne({role_label: roleData.role_label});
+            if (!roleExists) {
+                const newRole = new Role(roleData);
+                await newRole.save();
+                console.log(`Role '${roleData.role_label}' inserted`);
+            } else {
+                console.log(`Role '${roleData.role_label}' already exists`);
+            }
+        }
+    } catch (err) {
+        console.error(err);
+    }
+
+}
+
+const initializePermissions = async () => {
+    try {
+        await Permission.deleteMany({});
+        const permissions = [
+            {
+                permission_uuid: 'admin_demande_liste_utilisateurs',
+                permission_label: 'Lister les utilisateurs',
+            },
+            {
+                permission_uuid: 'admin_ajouter_utilisateur',
+                permission_label: 'Ajouter un utilisateur',
+            },
+            {
+                permission_uuid: 'admin_demande_utilisateur_details',
+                permission_label: 'Détails de l\'utilisateur',
+            },
+            {
+                permission_uuid: 'admin_supprimer_utilisateur',
+                permission_label: 'Supprimer un utilisateur',
+            },
+            {
+                permission_uuid: 'admin_modifier_utilisateur',
+                permission_label: 'Modifier un utilisateur',
+            },
+            {
+                permission_uuid: 'demande_liste_utilisateurs',
+                permission_label: 'Lister les utilisateurs',
+            },
+            {
+                permission_uuid: 'demande_annuaire',
+                permission_label: 'Annuaire',
+            },
+            {
+                permission_uuid: 'demande_info_utilisateur',
+                permission_label: 'Information sur un utilisateur',
+            },
+            {
+                permission_uuid: 'envoie_message',
+                permission_label: 'Envoyer un message',
+            },
+            {
+                permission_uuid: 'demande_liste_discussions',
+                permission_label: 'Lister les discussions',
+            },
+            {
+                permission_uuid: 'demande_historique_discussion',
+                permission_label: 'Historique des discussions',
+            },
+            {
+                permission_uuid: 'demande_notifications',
+                permission_label: 'Notifications',
+            },
+            {
+                permission_uuid: 'demande_changement_status',
+                permission_label: 'Changement de status',
+            },
+            {
+                permission_uuid: 'update_notifications',
+                permission_label: 'Mise à jour des notifications',
+            },
+            {
+                permission_uuid: 'demande_creation_discussion',
+                permission_label: 'Création d\'une discussion',
+            },
+            {
+                permission_uuid: 'demande_discussion_info',
+                permission_label: 'Information sur une discussion',
+            },
+        ];
+
+        const permissionIds = {};
+        for (const permission of permissions) {
+            const newPermission = new Permission(permission);
+            await newPermission.save();
+            permissionIds[permission.permission_uuid] = newPermission._id;
+            console.log(`Permission '${permission.permission_label}' inserted`);
+        }
+
+        return permissionIds;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 const initializeUsers = async () => {
     try {
         if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
@@ -156,6 +300,7 @@ const resetCalls = async () => {
 };
 
 module.exports = {
+    initializeRoles,
     initializeUsers,
     initializeDiscussions,
     resetCalls,
