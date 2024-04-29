@@ -1,5 +1,6 @@
 require('dotenv').config();
 const {v4: uuidv4} = require('uuid');
+const Role = require('../models/role');
 const User = require('../models/user');
 const Discussion = require('../models/discussion');
 const Call = require('../models/call');
@@ -17,7 +18,7 @@ const usersToInsert = [
         user_job: "Responsable RH",
         user_desc: "Chef de département MMI à l’universite de Toulon. Également professeur de développement web.",
         user_status: 'active',
-        user_roles: ["MMI3 Alternant", "Etudiant"],
+        user_roles: ["user", "MMI3 Alternant", "Etudiant"],
         user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17',
     },
     {
@@ -58,6 +59,58 @@ const usersToInsert = [
         user_tokens: {inscription: 'azerty1234'},
     },
 ];
+
+const initializeRoles = async () => {
+    try {
+        await Role.deleteMany({});
+        const rolesToInsert = [
+            {
+                role_uuid: 'admin',
+                role_label: 'Administrateur',
+                role_permissions: [
+                    "admin_demande_liste_utilisateurs",
+                    "admin_ajouter_utilisateur",
+                    "admin_demande_utilisateur_details",
+                    "admin_supprimer_utilisateur",
+                    "admin_modifier_utilisateur",
+                ],
+                role_default: true,
+            },
+            {
+                role_uuid: 'user',
+                role_label: 'Utilisateur',
+                role_permissions: [
+                    "demande_liste_utilisateurs",
+                    "demande_annuaire",
+                    "demande_info_utilisateur",
+                    "envoie_message",
+                    "demande_liste_discussions",
+                    "demande_historique_discussion",
+                    "demande_notifications",
+                    "demande_changement_status",
+                    "update_notifications",
+                    "demande_creation_discussion",
+                    "demande_discussion_info",
+                ],
+                role_default: true,
+            },
+        ];
+        for (const roleData of rolesToInsert) {
+            const roleExists = await Role.findOne({role_label: roleData.role_label});
+            if (!roleExists) {
+                const newRole = new Role(roleData);
+                await newRole.save();
+                console.log(`Role '${roleData.role_label}' inserted`);
+            } else {
+                console.log(`Role '${roleData.role_label}' already exists`);
+            }
+        }
+    } catch (err) {
+        console.error(err);
+    }
+
+}
+
 const initializeUsers = async () => {
     try {
         if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
@@ -156,6 +209,7 @@ const resetCalls = async () => {
 };
 
 module.exports = {
+    initializeRoles,
     initializeUsers,
     initializeDiscussions,
     resetCalls,
