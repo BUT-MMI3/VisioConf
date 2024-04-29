@@ -150,20 +150,25 @@ class LogIn {
         //         user_tokens: {}
         //     });
         //     if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
-        }else if (typeof msg.demande_changement_status !== "undefined") {
-            if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Demande de changement de statut");
-            let user = await User.findOne({ user_socket_id: msg.id });
-            if (user) {
-                user.user_disturb_status = msg.demande_changement_status;
-                await user.save();
-                this.controller.send(this, {
-                    status_answer: user.user_disturb_status,
-                    id: msg.id
-                });
-            } else {
-                if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur non trouvé dans la base de données pour changement de statut");
+        } else if (typeof msg.demande_changement_status !== "undefined") {
+            try {
+                if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Demande de changement de statut");
+                let user = await User.findOne({ user_socket_id: msg.id });
+                if (user) {
+                    user.user_disturb_status = msg.demande_changement_status;
+                    await user.save();
+                    this.controller.send(this, {
+                        status_answer: user.user_disturb_status,
+                        id: msg.id
+                    });
+                } else {
+                    if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur non trouvé dans la base de données pour changement de statut");
+                }
+            } catch (error) {
+                console.error("Erreur lors de la mise à jour du statut utilisateur :", error);
             }
         }
+
     }
 }
 
