@@ -62,6 +62,7 @@ const usersToInsert = [
 ];
 
 const initializeRoles = async () => {
+    const permissionIds = await initializePermissions();
     try {
         await Role.deleteMany({});
         const rolesToInsert = [
@@ -69,11 +70,16 @@ const initializeRoles = async () => {
                 role_uuid: 'admin',
                 role_label: 'Administrateur',
                 role_permissions: [
-                    "admin_demande_liste_utilisateurs",
-                    "admin_ajouter_utilisateur",
-                    "admin_demande_utilisateur_details",
-                    "admin_supprimer_utilisateur",
-                    "admin_modifier_utilisateur",
+                    permissionIds['admin_demande_liste_utilisateurs'],
+                    permissionIds['admin_ajouter_utilisateur'],
+                    permissionIds['admin_demande_utilisateur_details'],
+                    permissionIds['admin_supprimer_utilisateur'],
+                    permissionIds['admin_modifier_utilisateur'],
+                    permissionIds['admin_demande_liste_roles'],
+                    permissionIds['admin_demande_role_details'],
+                    permissionIds['admin_ajouter_role'],
+                    permissionIds['admin_supprimer_role'],
+                    permissionIds['admin_demande_liste_permissions'],
                 ],
                 role_default: true,
             },
@@ -81,17 +87,17 @@ const initializeRoles = async () => {
                 role_uuid: 'user',
                 role_label: 'Utilisateur',
                 role_permissions: [
-                    "demande_liste_utilisateurs",
-                    "demande_annuaire",
-                    "demande_info_utilisateur",
-                    "envoie_message",
-                    "demande_liste_discussions",
-                    "demande_historique_discussion",
-                    "demande_notifications",
-                    "demande_changement_status",
-                    "update_notifications",
-                    "demande_creation_discussion",
-                    "demande_discussion_info",
+                    permissionIds['demande_liste_utilisateurs'],
+                    permissionIds['demande_annuaire'],
+                    permissionIds['demande_info_utilisateur'],
+                    permissionIds['envoie_message'],
+                    permissionIds['demande_liste_discussions'],
+                    permissionIds['demande_historique_discussion'],
+                    permissionIds['demande_notifications'],
+                    permissionIds['demande_changement_status'],
+                    permissionIds['update_notifications'],
+                    permissionIds['demande_creation_discussion'],
+                    permissionIds['demande_discussion_info'],
                 ],
                 role_default: true,
             },
@@ -115,7 +121,7 @@ const initializeRoles = async () => {
 const initializePermissions = async () => {
     try {
         await Permission.deleteMany({});
-        const permissionsToInsert = [
+        const permissions = [
             {
                 permission_uuid: 'admin_demande_liste_utilisateurs',
                 permission_label: 'Lister les utilisateurs',
@@ -181,16 +187,16 @@ const initializePermissions = async () => {
                 permission_label: 'Information sur une discussion',
             },
         ];
-        for (const permissionData of permissionsToInsert) {
-            const permissionExists = await Permission.findOne({permission_label: permissionData.permission_label});
-            if (!permissionExists) {
-                const newPermission = new Permission(permissionData);
-                await newPermission.save();
-                console.log(`Permission '${permissionData.permission_label}' inserted`);
-            } else {
-                console.log(`Permission '${permissionData.permission_label}' already exists`);
-            }
+
+        const permissionIds = {};
+        for (const permission of permissions) {
+            const newPermission = new Permission(permission);
+            await newPermission.save();
+            permissionIds[permission.permission_uuid] = newPermission._id;
+            console.log(`Permission '${permission.permission_label}' inserted`);
         }
+
+        return permissionIds;
     } catch (err) {
         console.error(err);
     }
@@ -295,7 +301,6 @@ const resetCalls = async () => {
 
 module.exports = {
     initializeRoles,
-    initializePermissions,
     initializeUsers,
     initializeDiscussions,
     resetCalls,

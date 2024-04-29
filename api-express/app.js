@@ -8,7 +8,6 @@ const express = require("express");
 const path = require("path");
 const {
   initializeRoles,
-  initializePermissions,
   initializeUsers,
   initializeDiscussions,
     resetCalls
@@ -51,7 +50,6 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async () => {
     console.log("We're connected to the mongo.");
     await initializeRoles();
-    await initializePermissions();
     await initializeUsers();
     await initializeDiscussions();
     await resetCalls();

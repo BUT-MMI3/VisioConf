@@ -38,7 +38,7 @@ class Roles {
 
     handleListRoles = async (msg) => {
         try {
-            const roles = await Role.find({});
+            const roles = await Role.find({}).populate('role_permissions');
             this.controller.send(this, {
                 admin_liste_roles: {
                     success: true,
@@ -60,7 +60,7 @@ class Roles {
 
     handleRoleDetails = async (msg) => {
         try {
-            const role = await Role.findOne({ _id: msg.admin_demande_role_details.roleId });
+            const role = await Role.findOne({ _id: msg.admin_demande_role_details.roleId }).populate('role_permissions');
             this.controller.send(this, {
                 admin_role_details: {
                     success: true,

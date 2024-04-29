@@ -78,7 +78,7 @@ const AdminVoirRole = () => {
                                 </div>
                                 <div className="voir-role--content--card--content--row">
                                     <span>Permissions : </span>
-                                    <span>{role.role_permissions.join(", ")}</span>
+                                    <span>{role.role_permissions.map( p => p.permission_label).join(", ")}</span>
                                 </div>
                             </div>
                         </div>

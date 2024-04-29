@@ -104,7 +104,7 @@ const AdminListeRoles = () => {
                         {filteredRoles.map((role, index) => (<tr key={index}>
                             <td>{role.role_uuid}</td>
                             <td>{role.role_label}</td>
-                            <td>{role.role_permissions.join(", ")}</td>
+                            <td>{role.role_permissions.map( p => p.permission_label).join(", ")}</td>
                             <td className="liste-roles--actions">
                                 <LinkTo to={`/admin/roles/${role._id || role.id}/view`}
                                         className="liste-roles--actions--voir">
