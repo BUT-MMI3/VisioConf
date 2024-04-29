@@ -27,6 +27,7 @@ import AdminModifierUtilisateur from "./elements/AdminModifierUtilisateur/AdminM
 import NoyauAnnuaire from "./elements/NoyauAnnuaire/NoyauAnnuaire.jsx";
 import AdminVoirRole from "./elements/AdminVoirRole/AdminVoirRole.jsx";
 import AdminAjouterRole from "./elements/AdminAjouterRole/AdminAjouterRole.jsx";
+import AdminModifierRole from "./elements/AdminModifierRole/AdminModifierRole.jsx";
 
 const listeMessageEmis = []
 
@@ -248,7 +249,7 @@ const App = () => {
                             path="admin/roles/:id/edit"
                             element={
                                 <>
-                                    <AdminListeRoles/>
+                                    <AdminModifierRole/>
                                 </>
                             }
                         />

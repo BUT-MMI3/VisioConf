@@ -29,7 +29,7 @@ class Roles {
         } else if (typeof msg.admin_ajouter_role !== 'undefined') {
             this.handleAddRole(msg.admin_ajouter_role);
         } else if (typeof msg.admin_modifier_role !== 'undefined') {
-            this.handleModifyRole(msg.admin_modifier_role);
+            this.handleModifyRole(msg.admin_modifier_role.roleData);
         } else if (typeof msg.admin_supprimer_role !== 'undefined') {
             await this.handleDeleteRole(msg.admin_supprimer_role);
             this.handleListRoles(msg);
@@ -112,7 +112,7 @@ class Roles {
 
     handleModifyRole = async (roleData) => {
         try {
-            const role = await Role.findOne({ role_uuid: roleData.role_uuid });
+            const role = await Role.findOne({ _id: roleData.role_id });
             role.role_label = roleData.role_label;
             role.role_permissions = roleData.role_permissions;
             await role.save();
