@@ -1,6 +1,7 @@
 require('dotenv').config();
 const {v4: uuidv4} = require('uuid');
 const Role = require('../models/role');
+const Permission = require('../models/permission');
 const User = require('../models/user');
 const Discussion = require('../models/discussion');
 const Call = require('../models/call');
@@ -111,6 +112,90 @@ const initializeRoles = async () => {
 
 }
 
+const initializePermissions = async () => {
+    try {
+        await Permission.deleteMany({});
+        const permissionsToInsert = [
+            {
+                permission_uuid: 'admin_demande_liste_utilisateurs',
+                permission_label: 'Lister les utilisateurs',
+            },
+            {
+                permission_uuid: 'admin_ajouter_utilisateur',
+                permission_label: 'Ajouter un utilisateur',
+            },
+            {
+                permission_uuid: 'admin_demande_utilisateur_details',
+                permission_label: 'Détails de l\'utilisateur',
+            },
+            {
+                permission_uuid: 'admin_supprimer_utilisateur',
+                permission_label: 'Supprimer un utilisateur',
+            },
+            {
+                permission_uuid: 'admin_modifier_utilisateur',
+                permission_label: 'Modifier un utilisateur',
+            },
+            {
+                permission_uuid: 'demande_liste_utilisateurs',
+                permission_label: 'Lister les utilisateurs',
+            },
+            {
+                permission_uuid: 'demande_annuaire',
+                permission_label: 'Annuaire',
+            },
+            {
+                permission_uuid: 'demande_info_utilisateur',
+                permission_label: 'Information sur un utilisateur',
+            },
+            {
+                permission_uuid: 'envoie_message',
+                permission_label: 'Envoyer un message',
+            },
+            {
+                permission_uuid: 'demande_liste_discussions',
+                permission_label: 'Lister les discussions',
+            },
+            {
+                permission_uuid: 'demande_historique_discussion',
+                permission_label: 'Historique des discussions',
+            },
+            {
+                permission_uuid: 'demande_notifications',
+                permission_label: 'Notifications',
+            },
+            {
+                permission_uuid: 'demande_changement_status',
+                permission_label: 'Changement de status',
+            },
+            {
+                permission_uuid: 'update_notifications',
+                permission_label: 'Mise à jour des notifications',
+            },
+            {
+                permission_uuid: 'demande_creation_discussion',
+                permission_label: 'Création d\'une discussion',
+            },
+            {
+                permission_uuid: 'demande_discussion_info',
+                permission_label: 'Information sur une discussion',
+            },
+        ];
+        for (const permissionData of permissionsToInsert) {
+            const permissionExists = await Permission.findOne({permission_label: permissionData.permission_label});
+            if (!permissionExists) {
+                const newPermission = new Permission(permissionData);
+                await newPermission.save();
+                console.log(`Permission '${permissionData.permission_label}' inserted`);
+            } else {
+                console.log(`Permission '${permissionData.permission_label}' already exists`);
+            }
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 const initializeUsers = async () => {
     try {
         if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
@@ -210,6 +295,7 @@ const resetCalls = async () => {
 
 module.exports = {
     initializeRoles,
+    initializePermissions,
     initializeUsers,
     initializeDiscussions,
     resetCalls,
