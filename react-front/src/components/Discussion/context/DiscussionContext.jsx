@@ -44,12 +44,13 @@ const listeMessagesRecus = [
     "discussion_info",
     "nouveau_message",
     "erreur_envoi_message",
+    "notification_answer",
 ];
 
 export function DiscussionContextProvider() {
     // INIT COMPONENT
     const instanceName = "Discussion Context";
-    const verbose = true;
+    const verbose = false;
 
     // CALL CONTROLLER
     const [controller] = useState(appInstance.getController());

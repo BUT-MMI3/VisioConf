@@ -5,18 +5,18 @@ import LinkTo from "../../elements/LinkTo/LinkTo.jsx";
 import "./NoyauAccueil.css";
 import {useSelector} from "react-redux";
 
-const listeMessageEmis = ["demande_notifications", "update_notifications"];
+const listeMessageEmis = ["update_notifications"];
 const listeMessageRecus = ["notification_answer"];
 
 const NoyauAccueil = () => {
     const instanceName = "NoyauAccueil";
-    const verbose = false;
+    const verbose = true;
     const [controller] = useState(appInstance.getController());
 
     const session = useSelector((state) => state.session);
-    const [notifications, setNotifications] = useState([]);
+    const [messages, setMessages] = useState([]);
     const [historiqueAppels, setHistoriqueAppels] = useState([]);
-    const [showNotifications, setShowNotifications] = useState(false);
+    const [showMessages, setShowMessages] = useState(false);
     const [showHistorique, setShowHistorique] = useState(false);
 
     const {current} = useRef({
@@ -26,35 +26,35 @@ const NoyauAccueil = () => {
 
             if (typeof msg.notification_answer !== "undefined") {
                 console.log("Notifications reçues :", msg.notification_answer);
-                setNotifications(msg.notification_answer.historique); // Modification ici
+                setMessages(msg.notification_answer.historique); // Modification ici
             } else {
                 console.log("Erreur lors du traitement du message :", msg);
             }
         }
     });
 
-    const notification = async () => {
-        if (verbose || controller.verboseall) console.log(`INFO: (${instanceName})`);
-
-        return new Promise((resolve, reject) => {
-            try {
-                controller.send(current, {"demande_notifications": "information utilisateur"});
-                resolve();
-            } catch (error) {
-                reject(error);
-            }
-        });
-    };
+    // const notification = async () => {
+    //     if (verbose || controller.verboseall) console.log(`INFO: (${instanceName})`);
+    //
+    //     return new Promise((resolve, reject) => {
+    //         try {
+    //             controller.send(current, {"demande_notifications": "information utilisateur"});
+    //             resolve();
+    //         } catch (error) {
+    //             reject(error);
+    //         }
+    //     });
+    // };
     // setInterval(notification, 10000);
     const markAllAsRead = async () => {
-        const updatedNotifications = notifications.map(notification => {
+        const updatedMessages = messages.map(notification => {
             return {...notification, status: 'read'};
         });
 
-        setNotifications(updatedNotifications);
+        setMessages(updatedMessages);
 
         try {
-            await controller.send(current, {update_notifications: updatedNotifications});
+            await controller.send(current, {update_notifications: updatedMessages});
         } catch (error) {
             console.error('Erreur lors de la mise à jour des notifications:', error);
         }
@@ -65,15 +65,15 @@ const NoyauAccueil = () => {
         return () => {
             controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
         };
-    }, [current, controller]);
+    }, [current, controller, controller.verboseall,verbose,messages]);
 
-    useEffect(() => {
-        notification();
-    }, []);
+    // useEffect(() => {
+    //     notification();
+    // }, []);
 
     // Fonction pour basculer l'affichage des notifications et changer l'icône
     const toggleNotifications = () => {
-        setShowNotifications(!showNotifications);
+        setShowMessages(!showMessages);
     };
     const toggleHistorique = () => {
         setShowHistorique(!showHistorique);
@@ -134,29 +134,29 @@ const NoyauAccueil = () => {
                             </div>
 
                             <div className="notifications w-100 fr jc-c ai-c">
-                                {notifications.length === 0 ? (
+                                {messages.length === 0 ? (
                                     <h2 style={{fontSize: '15px'}}>Aucune nouvelle notification</h2>
                                 ) : (
-                                    <h2 style={{fontSize: '15px'}}>{notifications.length} Nouvelle(s) notification(s)
+                                    <h2 style={{fontSize: '15px'}}>{messages.length} Nouvelle(s) notification(s)
                                         non lue(s).</h2>
                                 )}
                             </div>
 
                             <div className="notification-affiche w-100 fr jc-c ai-c" onClick={toggleNotifications}>
                                 <FeatherIcon
-                                    icon={showNotifications && notifications.length !== 0 ? 'chevron-down' : 'chevron-right'}
+                                    icon={showMessages && messages.length !== 0 ? 'chevron-down' : 'chevron-right'}
                                     size="20"
                                     strokeWidth="1" className="icon"/>
                             </div>
                         </div>
                     </div>
 
-                    {showNotifications && notifications.length !== 0 && (
+                    {showMessages && messages.length !== 0 && (
                         <div className="section-notification-hidden">
                             <div className="notification-info fr jc-sa">
                                 <div className="notifications w-100 fr ai-c">
                                     <ul>
-                                        {notifications.map((notification, index) => (
+                                        {messages.map((notification, index) => (
                                             <li key={index}
                                                 className="notification-item if ai-c">
                                                 <img src={notification.message.message_sender.user_picture}
@@ -172,7 +172,7 @@ const NoyauAccueil = () => {
                                     </ul>
                                 </div>
                             </div>
-                            {notifications.length > 0 && (
+                            {messages.length > 0 && (
                                 <div className="fr jc-fe" style={{padding: '1rem'}}>
                                     <button onClick={markAllAsRead}>vider</button>
                                 </div>
