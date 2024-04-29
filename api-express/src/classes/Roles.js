@@ -77,12 +77,14 @@ class Roles {
         }
     }
 
-    handleAddRole = async (roleData) => {
+    handleAddRole = async (msg) => {
+        console.log("roleData", msg.roleData);
         try {
+            console.log(msg.roleData.role_label);
             const newRole = new Role({
                 role_uuid: uuidv4(),
-                role_label: roleData.role_label,
-                role_permissions: roleData.role_permissions
+                role_label: msg.roleData.role_label,
+                role_permissions: msg.roleData.role_permissions || []
             });
             await newRole.save();
             this.controller.send(this, {
@@ -90,7 +92,7 @@ class Roles {
                     success: true,
                     role: newRole
                 },
-                id: roleData.id
+                id: msg.id
             });
         } catch (error) {
             console.error(`ERROR (${this.instanceName}) -`, error);
@@ -99,10 +101,11 @@ class Roles {
                     success: false,
                     message: "Failed to create role"
                 },
-                id: roleData.id
+                id: msg.id
             });
         }
     }
+
 
     handleModifyRole = async (roleData) => {
         try {

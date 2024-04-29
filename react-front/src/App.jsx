@@ -26,6 +26,7 @@ import AdminVoirUtilisateur from "./elements/AdminVoirUtilisateur/AdminVoirUtili
 import AdminModifierUtilisateur from "./elements/AdminModifierUtilisateur/AdminModifierUtilisateur.jsx";
 import NoyauAnnuaire from "./elements/NoyauAnnuaire/NoyauAnnuaire.jsx";
 import AdminVoirRole from "./elements/AdminVoirRole/AdminVoirRole.jsx";
+import AdminAjouterRole from "./elements/AdminAjouterRole/AdminAjouterRole.jsx";
 
 const listeMessageEmis = []
 
@@ -231,7 +232,7 @@ const App = () => {
                             path="admin/roles/new"
                             element={
                                 <>
-                                    <AdminListeRoles/>
+                                    <AdminAjouterRole/>
                                 </>
                             }
                         />
