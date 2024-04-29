@@ -6,21 +6,23 @@ import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
 import {useToasts} from "../Toasts/ToastContext.jsx";
 
-const listeMessagesEmis = ["admin_ajouter_role"];
-const listeMessagesRecus = ["admin_role_cree"];
+const listeMessagesEmis = ["admin_ajouter_role", "admin_demande_liste_permissions"];
+const listeMessagesRecus = ["admin_role_cree", "admin_liste_permissions"];
 
 const AdminAjouterRole = () => {
     const navigate = useNavigate();
     const {pushToast} = useToasts();
 
     const [label, setLabel] = useState("");
+    const [permissions, setPermissions] = useState([]);
+    const [selectedPermissions, setSelectedPermissions] = useState([]);
 
     const controller = useRef(appInstance.getController()).current;
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!label) {
+        if (!label || selectedPermissions.length === 0) {
             pushToast({
                 title: "Erreur",
                 message: "Veuillez remplir tous les champs obligatoires.",
@@ -31,8 +33,16 @@ const AdminAjouterRole = () => {
 
         const roleData = {
             role_label: label,
+            role_permissions: selectedPermissions,
         };
         controller.send(instanceRef.current, {"admin_ajouter_role": {roleData: roleData}});
+    };
+
+    const handlePermissionChange = (permissionId) => {
+        const newSelection = selectedPermissions.includes(permissionId)
+            ? selectedPermissions.filter(id => id !== permissionId)
+            : [...selectedPermissions, permissionId];
+        setSelectedPermissions(newSelection);
     };
 
     const instanceRef = useRef({
@@ -51,6 +61,14 @@ const AdminAjouterRole = () => {
                     });
 
                 }
+            } else if (msg && msg.admin_liste_permissions) {
+                if (msg.admin_liste_permissions.success) {
+                    setPermissions(msg.admin_liste_permissions.permissions || []);
+                } else {
+                    pushToast({
+                        title: "Erreur", message: "Erreur lors de la récupération des permissions", type: "error",
+                    });
+                }
             }
         },
     });
@@ -58,6 +76,7 @@ const AdminAjouterRole = () => {
     useEffect(() => {
         controller.subscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
 
+        controller.send(instanceRef.current, { "admin_demande_liste_permissions": {} });
 
         return () => {
             controller.unsubscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
@@ -85,6 +104,17 @@ const AdminAjouterRole = () => {
                 <h4>Nom du rôle : <p>*</p></h4>
                 <input type="text" placeholder={"Utilisateur"} value={label}
                        onChange={(e) => setLabel(e.target.value)} required/>
+            </label>
+            <label className={"ajouter-role-label w-100"}>
+                <h4>Permissions : <p>*</p></h4>
+                <div className={"fc ajouter-role-chechboxes"}>
+                    {permissions.map(permission => (
+                        <label key={permission._id} className="checkbox-label">
+                            <input type="checkbox" checked={selectedPermissions.includes(permission._id)} onChange={() => handlePermissionChange(permission._id)} />
+                            {permission.permission_label}
+                        </label>
+                    ))}
+                </div>
             </label>
             <button type="submit">Créer le rôle</button>
         </form>

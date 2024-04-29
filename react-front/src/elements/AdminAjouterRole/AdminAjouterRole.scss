@@ -196,3 +196,21 @@
   }
 
 }
+.ajouter-role-chechboxes{
+  display: flex;
+  gap: 0;
+  max-height: 200px;
+  overflow-y: scroll;
+  width: 100%;
+
+  label{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+  }
+  input[type="checkbox"]{
+    width: 1rem;
+    height: 1rem;
+  }
+}

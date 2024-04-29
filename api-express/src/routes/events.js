@@ -12,6 +12,7 @@ const Messages = require("../classes/Messages.js");
 const Notifications = require("../classes/Notifications.js");
 const WebRTC = require("../classes/WebRTC.js");
 const Roles = require("../classes/Roles.js");
+const Permissions = require("../classes/Permissions.js");
 
 const SocketApp = (io) => {
     /**
@@ -36,6 +37,7 @@ const SocketApp = (io) => {
     new Notifications(controller, "Notifications");
     new WebRTC(controller, "WebRTC");
     new Roles(controller, "Roles");
+    new Permissions(controller, "Permissions");
 };
 
 module.exports = SocketApp;
