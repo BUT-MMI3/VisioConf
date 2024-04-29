@@ -137,13 +137,26 @@ class Roles {
 
     handleDeleteRole = async (msg) => {
         try {
-            await Role.deleteOne({ _id: msg });
-            this.controller.send(this, {
-                admin_role_supprime: {
-                    success: true
-                },
-                id: msg.id
-            });
+            // cant delete if role.role_default == true
+            const role = await Role.findOne({ _id: msg });
+            if (role.role_default) {
+                this.controller.send(this, {
+                    admin_role_supprime: {
+                        success: false,
+                        message: "Can't delete default role"
+                    },
+                    id: msg.id
+                });
+            }else{
+                await Role.deleteOne({ _id: msg });
+                this.controller.send(this, {
+                    admin_role_supprime: {
+                        success: true
+                    },
+                    id: msg.id
+                });
+            }
+
         } catch (error) {
             console.error(`ERROR (${this.instanceName}) -`, error);
             this.controller.send(this, {
