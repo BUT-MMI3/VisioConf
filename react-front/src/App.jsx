@@ -33,6 +33,7 @@ const listeMessageRecus = [
     "inscription_acceptee",
     "client_deconnexion",
     "liste_utilisateurs",
+    "distribue_notification",
 ]
 
 const App = () => {
@@ -42,6 +43,7 @@ const App = () => {
     const [loading, setLoading] = useState(appInstance.loading);
     const [controller, setController] = useState(appInstance.controller);
     const [canal, setCanal] = useState(appInstance.canal);
+    const [notifications, setNotifications] = useState([]);
     const [listeUtilisateurs, setListeUtilisateurs] = useState([]); // liste des utilisateurs connectés [ {id: 1, nom: "Mathis", prenom: "Lambert"}, ...
     const [webRTCManager, setWebRTCManager] = useState(appInstance.webRTCManager);
 
@@ -73,7 +75,9 @@ const App = () => {
                     user_info: msg.inscription_acceptee.user_info
                 }));
             } else if (typeof msg.liste_utilisateurs !== "undefined") {
-                setListeUtilisateurs(msg.liste_utilisateurs)
+                setListeUtilisateurs(msg.liste_utilisateurs);
+            } else if (typeof msg.distribue_notification !== "undefined") {
+                setNotifications(msg.distribue_notification);
             }
         }
     });

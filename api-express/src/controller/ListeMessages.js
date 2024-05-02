@@ -59,7 +59,6 @@ const ListeMessagesRecus = [
     "erreur_envoi_message",
     "liste_discussions",
     "historique_discussion",
-    "demande_notification",
     "distribue_notification",
     "discussion_creee",
     "discussion_non_creee",
