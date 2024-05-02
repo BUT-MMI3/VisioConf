@@ -6,7 +6,7 @@ class Messages {
     instanceName = 'Messages';
     controller = null;
 
-    listeMessagesEmis = ["demande_historique_discussion", "nouveau_message", "erreur_envoi_message"];
+    listeMessagesEmis = ["demande_historique_discussion", "nouveau_message", "erreur_envoi_message", "notification_answer"];
     listeMessagesRecus = ["envoie_message"];
 
     verbose = false;
@@ -92,6 +92,14 @@ class Messages {
                         nouveau_message: {
                             discussionId: discussion.discussion_uuid,
                             message: lastMessage
+                        },
+                        id: member.user_socket_id
+                    });
+                    this.controller.send(this, {
+                        notification_answer: {
+                            discussionId: discussion.discussion_uuid,
+                            message: lastMessage,
+                            discussionName: discussion.discussion_name
                         },
                         id: member.user_socket_id
                     });
