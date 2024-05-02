@@ -33,18 +33,6 @@ const NoyauAccueil = () => {
         }
     });
 
-    const notification = async () => {
-        if (verbose || controller.verboseall) console.log(`INFO: (${instanceName})`);
-
-        return new Promise((resolve, reject) => {
-            try {
-                console.log("Demande de notifications");
-                resolve();
-            } catch (error) {
-                reject(error);
-            }
-        });
-    };
     // setInterval(notification, 10000);
     const markAllAsRead = async () => {
         const updatedNotifications = notifications.map(notification => {
@@ -66,10 +54,6 @@ const NoyauAccueil = () => {
             controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
         };
     }, [current, controller, controller.verboseall,verbose,notifications]);
-
-    useEffect(() => {
-        notification();
-    }, []);
 
     // Fonction pour basculer l'affichage des notifications et changer l'icône
     const toggleNotifications = () => {
