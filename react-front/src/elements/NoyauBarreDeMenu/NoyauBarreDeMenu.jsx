@@ -17,7 +17,7 @@ const NoyauBarreDeMenu = () => {
 
 
     const instanceName = "NoyauBarreDeMenu";
-    const verbose = true;
+    const verbose = false;
     const [controller] = useState(appInstance.getController());
 
     const [status, setStatus] = useState(null);

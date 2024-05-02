@@ -50,7 +50,7 @@ const listeMessagesRecus = [
 export function DiscussionContextProvider() {
     // INIT COMPONENT
     const instanceName = "Discussion Context";
-    const verbose = false;
+    const verbose = true;
 
     // CALL CONTROLLER
     const [controller] = useState(appInstance.getController());

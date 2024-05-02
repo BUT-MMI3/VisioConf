@@ -9,7 +9,7 @@ class Messages {
     listeMessagesEmis = ["demande_historique_discussion", "nouveau_message", "erreur_envoi_message", "notification_answer"];
     listeMessagesRecus = ["envoie_message"];
 
-    verbose = false;
+    verbose = true;
 
     constructor(controller, instanceName) {
         this.controller = controller;
@@ -85,7 +85,6 @@ class Messages {
                 })
             const lastMessage = populatedDiscussion.discussion_messages[populatedDiscussion.discussion_messages.length - 1];
 
-
             discussion.discussion_members.forEach(member => {
                 if (member.user_socket_id && member.user_socket_id !== 'none') {
                     this.controller.send(this, {
@@ -98,8 +97,8 @@ class Messages {
                     this.controller.send(this, {
                         notification_answer: {
                             discussionId: discussion.discussion_uuid,
-                            message: lastMessage,
-                            discussionName: discussion.discussion_name
+                            discussionName: discussion.discussion_name,
+                            message: lastMessage
                         },
                         id: member.user_socket_id
                     });
