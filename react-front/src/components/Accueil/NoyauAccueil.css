@@ -32,10 +32,12 @@ ul {
     width: 80px;
     border-radius: 50%;
 }
+
 .logo-profil-reception {
     width: 3rem;
     border-radius: 50%;
 }
+
 .notification-item {
     display: flex;
     align-items: center;
@@ -58,11 +60,12 @@ ul {
     font-weight: bold;
     margin-right: 5px;
 }
+
 .profil-info, .notification-affiche, .notification-info, .historique-info, .historique-affiche {
     height: 100%;
 }
 
-.notification-info, .notification-affiche{
+.notification-info, .notification-affiche {
     margin: auto;
 }
 
@@ -86,20 +89,25 @@ ul {
     fill: white;
     stroke: white;
 }
+
 .feather-clock {
     stroke: white;
 }
+
 .notifications, .historiques {
     padding: 1em;
     max-height: 70vh;
     overflow: scroll;
 }
-ul{
+
+ul {
     width: 100%;
 }
-ul li{
+
+ul li {
     padding: 0.5em;
 }
+
 @media screen and (max-width: 768px) {
     .noyau-accueil > .container, .noyau-accueil .container div.section div.section-profil div.profil-info.fr {
         flex-direction: column !important;
@@ -108,9 +116,11 @@ ul li{
     .section-header h2 {
         text-align: center;
     }
+
     .section-notification-hidden, .section-historique-hidden {
         min-height: 200px;
     }
+
     .section-profil, .section-notification, .section-historique {
         height: 200px !important;
     }

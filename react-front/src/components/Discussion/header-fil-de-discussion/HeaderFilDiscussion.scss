@@ -7,7 +7,7 @@
   padding: 1rem;
   background-color: var(--color-light-transparent);
   backdrop-filter: blur(3px);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   border-radius: 1rem;
   display: flex;
   flex-direction: row;
@@ -32,7 +32,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-
 
 
       svg {

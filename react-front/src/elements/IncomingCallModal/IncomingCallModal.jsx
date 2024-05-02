@@ -32,11 +32,11 @@ const IncomingCallModal = ({offer, calling, acceptCall}) => {
                     <h2>Appel entrant de {name}</h2>
                     <div className={"modal-buttons"}>
                         <button className={'btn btn-secondary'} onClick={handleAccept}
-                                >
+                        >
                             Accepter
                         </button>
                         <button className={'btn btn-tertiary'} onClick={handleReject}
-                                >
+                        >
                             Rejeter
                         </button>
                     </div>

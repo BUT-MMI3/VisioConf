@@ -25,10 +25,10 @@ const AdminVoirUtilisateur = () => {
         traitementMessage: (msg) => {
             console.log("Received data:", msg);
             if (msg && msg.admin_utilisateur_details) {
-                if(msg.admin_utilisateur_details.success){
+                if (msg.admin_utilisateur_details.success) {
                     console.log("Utilisateur trouvé:", msg.admin_utilisateur_details.user);
                     setUser(msg.admin_utilisateur_details.user || {});
-                }else {
+                } else {
                     pushToast({
                         title: "Erreur",
                         message: "Erreur lors de la récupération de l'utilisateur",

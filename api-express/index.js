@@ -33,5 +33,5 @@ SocketApp(io);
  * Listen on provided port, on all network interfaces.
  */
 server.listen(port);
-server.on("error",(e) => onError(e, port));
+server.on("error", (e) => onError(e, port));
 server.on("listening", () => onListening(server));

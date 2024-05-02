@@ -2,14 +2,14 @@
  * Author: @mathis-lambert
  * Date : Janvier 2024
  */
-const { v4: uuidv4 } = require('uuid');
+const {v4: uuidv4} = require('uuid');
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const {
-  initializeRoles,
-  initializeUsers,
-  initializeDiscussions,
+    initializeRoles,
+    initializeUsers,
+    initializeDiscussions,
     resetCalls
 } = require("./src/scripts/initializeDb");
 

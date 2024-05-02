@@ -1,7 +1,6 @@
 import "./AdminListePermissions.scss";
 import {useEffect, useRef, useState} from "react";
 import {appInstance} from "../../controller/index.js";
-import LinkTo from "../LinkTo/LinkTo.jsx";
 import {useToasts} from "../Toasts/ToastContext.jsx";
 import FeatherIcon from "feather-icons-react";
 import {useModal} from "../Modale/ModaleContext.jsx";
@@ -37,7 +36,7 @@ const AdminListePermissions = () => {
     useEffect(() => {
         controller.subscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
 
-        controller.send(instanceRef.current, { "admin_demande_liste_permissions": {} });
+        controller.send(instanceRef.current, {"admin_demande_liste_permissions": {}});
 
         return () => {
             controller.unsubscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);

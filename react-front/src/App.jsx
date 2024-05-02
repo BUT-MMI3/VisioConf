@@ -29,13 +29,15 @@ import AdminVoirRole from "./elements/AdminVoirRole/AdminVoirRole.jsx";
 import AdminAjouterRole from "./elements/AdminAjouterRole/AdminAjouterRole.jsx";
 import AdminModifierRole from "./elements/AdminModifierRole/AdminModifierRole.jsx";
 
-const listeMessageEmis = []
+const listeMessageEmis = ["connected_users", "info_session"];
 
 const listeMessageRecus = [
     "connexion_acceptee",
     "inscription_acceptee",
     "client_deconnexion",
     "liste_utilisateurs",
+    "demande_connected_users",
+    "demande_info_session"
 ]
 
 const App = () => {
@@ -46,8 +48,6 @@ const App = () => {
     const [controller, setController] = useState(appInstance.controller);
     const [canal, setCanal] = useState(appInstance.canal);
     const [listeUtilisateurs, setListeUtilisateurs] = useState([]); // liste des utilisateurs connectés [ {id: 1, nom: "Mathis", prenom: "Lambert"}, ...
-    const [webRTCManager, setWebRTCManager] = useState(appInstance.webRTCManager);
-
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -55,56 +55,64 @@ const App = () => {
     const session = useSelector((state) => state.session);
     const dispatch = useDispatch();
 
-    const {current} = useRef({
-        instanceName,
-        traitementMessage: (msg) => {
-            if (verbose || (controller ? controller.verboseall : null)) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
+    const AppInstanceRef = useRef(null);
 
-            if (typeof msg.connexion_acceptee !== "undefined") {
-                dispatch(signIn({
-                    session_token: msg.connexion_acceptee.session_token,
-                    user_info: msg.connexion_acceptee.user_info
-                }));
-            } else if (typeof msg.client_deconnexion !== "undefined") {
-                socket.disconnect(); // déconnecte le socket pour éviter les erreurs
-                dispatch(signOut()); // déconnexion
-                canal ? canal.setSessionToken(null) : null; // supprime le token de session
-                socket.connect(); // reconnect
-            } else if (typeof msg.inscription_acceptee !== "undefined") {
-                dispatch(signIn({
-                    session_token: msg.inscription_acceptee.session_token,
-                    user_info: msg.inscription_acceptee.user_info
-                }));
-            } else if (typeof msg.liste_utilisateurs !== "undefined") {
-                setListeUtilisateurs(msg.liste_utilisateurs)
+    useEffect(() => {
+        AppInstanceRef.current = {
+            instanceName,
+            traitementMessage: (msg) => {
+                if (verbose || (controller ? controller.verboseall : null)) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
+
+                if (typeof msg.connexion_acceptee !== "undefined") {
+                    dispatch(signIn({
+                        session_token: msg.connexion_acceptee.session_token,
+                        user_info: msg.connexion_acceptee.user_info
+                    }));
+                } else if (typeof msg.client_deconnexion !== "undefined") {
+                    socket.disconnect(); // déconnecte le socket pour éviter les erreurs
+                    dispatch(signOut()); // déconnexion
+                    canal ? canal.setSessionToken(null) : null; // supprime le token de session
+                    socket.connect(); // reconnect
+                } else if (typeof msg.inscription_acceptee !== "undefined") {
+                    dispatch(signIn({
+                        session_token: msg.inscription_acceptee.session_token,
+                        user_info: msg.inscription_acceptee.user_info
+                    }));
+                } else if (typeof msg.liste_utilisateurs !== "undefined") {
+                    setListeUtilisateurs(msg.liste_utilisateurs)
+                    controller.send(AppInstanceRef.current, {"connected_users": msg.liste_utilisateurs.utilisateurs_connectes})
+                } else if (typeof msg.demande_connected_users !== "undefined") {
+                    controller.send(AppInstanceRef.current, {"connected_users": listeUtilisateurs.utilisateurs_connectes})
+                } else if (typeof msg.demande_info_session !== "undefined") {
+                    controller.send(AppInstanceRef.current, {"info_session": session})
+                }
             }
         }
-    });
+    }, [canal, controller, dispatch, listeUtilisateurs, session, verbose]);
+
 
     useEffect(() => {
         // Définir un callback pour être notifié des changements de `loading`
         appInstance.setLoadingCallback(setLoading);
         appInstance.setControllerCallback(setController);
         appInstance.setCanalCallback(setCanal);
-        appInstance.setWebRTCManagerCallback(setWebRTCManager);
 
         return () => {
             appInstance.setLoadingCallback(null);
             appInstance.setControllerCallback(null);
             appInstance.setCanalCallback(null);
-            appInstance.setWebRTCManagerCallback(null);
         }
     }, []);
 
     useEffect(() => {
         if (!loading) {
-            controller.subscribe(current, listeMessageEmis, listeMessageRecus);
+            controller.subscribe(AppInstanceRef.current, listeMessageEmis, listeMessageRecus);
 
             return () => {
-                controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
+                controller.unsubscribe(AppInstanceRef.current, listeMessageEmis, listeMessageRecus);
             };
         }
-    }, [controller, current, loading]);
+    }, [controller, loading]);
 
     useEffect(() => {
         if (!session.isSignedIn && (location.pathname !== "/login" && location.pathname !== "/forgot-password" && location.pathname !== "/inscription")) {
@@ -116,17 +124,18 @@ const App = () => {
         }
     }, [session.isSignedIn, location.pathname, navigate]);
 
+    useEffect(() => {
+        if (session.isSignedIn) {
+            controller.send(AppInstanceRef.current, {"info_session": session})
+        }
+    }, [controller, session.isSignedIn, session]);
+
 
     useEffect(() => {
         if (session.user_session_token) {
             canal.setSessionToken(session.user_session_token);
-
-            if (webRTCManager) {
-                webRTCManager.setSession(session)
-                webRTCManager.setConnectedUsers(listeUtilisateurs.utilisateurs_connectes)
-            }
         }
-    }, [canal, listeUtilisateurs.utilisateurs_connectes, session, session.user_session_token, webRTCManager]);
+    }, [canal, listeUtilisateurs.utilisateurs_connectes, session, session.user_session_token]);
 
     return (
         <Routes>

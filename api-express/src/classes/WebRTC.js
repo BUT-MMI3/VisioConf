@@ -54,7 +54,10 @@ class WebRTC {
                     await call.addMemberToCall(userFrom.user_socket_id);
                 }
 
-                call = await Call.findOne({discussion_uuid: msg.send_offer.discussion, is_ended: false}).populate('in_call_members').populate('call_creator');
+                call = await Call.findOne({
+                    discussion_uuid: msg.send_offer.discussion,
+                    is_ended: false
+                }).populate('in_call_members').populate('call_creator');
 
                 if (call && userTo && userTo.user_socket_id && userTo.user_is_online && userTo.user_socket_id !== msg.id) {
                     console.log(msg.id + " is sending offer to: " + msg.send_offer.target);

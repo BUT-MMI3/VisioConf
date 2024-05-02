@@ -8,32 +8,6 @@ class WebRTCManager {
     config = {iceServers: [{urls: "stun:stun.l.google.com:19302"}]}
     session = null
     connectedUsers = []
-    callbacks = {
-        updateRemoteStreams: (socket_id, stream) => {
-            console.log("Remote streams updated: ", socket_id, stream)
-        },
-        setRemoteStreams: (streams) => {
-            console.log("Remote streams set: ", streams)
-        },
-        setInCall: (bool) => {
-            console.log("In call: ", bool)
-        },
-        setCalling: (bool) => {
-            console.log("Calling: ", bool)
-        },
-        incomingCall: (offer) => {
-            console.log("Accepting incoming call: ", offer)
-        },
-        setIsSharingScreen: (bool) => {
-            console.log("Sharing screen: ", bool)
-        },
-        setCallCreator: (socket_id) => {
-            console.log("Call creator: ", socket_id)
-        },
-        setCallInfo: (callInfo) => {
-            console.log("Call Info: ", callInfo)
-        }
-    }
     // callbacks = {updateRemoteStreams, setInCall, setCalling, acceptIncomingCall, setIsSharingScreen, setCallCreator}
     peers = {} // The peer connections for each user
     remoteStreams = {} // The remote streams for each peer {socketId: {user, stream}}
@@ -49,26 +23,51 @@ class WebRTCManager {
     callCreator = "" // The user who created the call
 
     controller = null
-    listeMessagesRecus = ["receive_offer", "receive_answer", "receive_ice_candidate", "hung_up", "call_connected_users", "call_created"]
-    listeMessagesEmis = ["send_offer", "send_answer", "send_ice_candidate", "hang_up", "reject_offer"]
+    listeMessagesRecus = [
+        "receive_offer",
+        "receive_answer",
+        "receive_ice_candidate",
+        "hung_up",
+        "call_connected_users",
+        "call_created",
+        "accept_incoming_call",
+        "connected_users",
+        "info_session",
+        "create_offer",
+        "end_call"
+    ]
+    listeMessagesEmis = [
+        "send_offer",
+        "send_answer",
+        "send_ice_candidate",
+        "hang_up",
+        "reject_offer",
+        "update_remote_streams",
+        "set_remote_streams",
+        "set_in_call",
+        "set_calling",
+        "incoming_call",
+        "set_is_sharing_screen",
+        "set_call_creator",
+        "set_call_info",
+        "demande_info_session",
+        "demande_connected_users"
+    ]
 
     verbose = true
 
     constructor(controller) {
         this.controller = controller // Le controller est un objet qui permet de gérer les messages reçus et émis
         this.controller.subscribe(this, this.listeMessagesEmis, this.listeMessagesRecus) // On s'abonne à ces messages
-
         if (this.verbose) console.log("WebRTCManager initialized")
+
+        this.controller.send(this, {"demande_info_session": {}})
+        this.controller.send(this, {"demande_connected_users": {}})
     }
 
     setSession = session => {
         if (this.verbose) console.log("Session set: ", session)
         this.session = session
-    }
-
-    setCallback = (callback, value) => {
-        if (this.verbose) console.log("Callback set: ", callback, value)
-        this.callbacks[callback] = value
     }
 
     setConnectedUsers = connectedUsers => {
@@ -102,6 +101,16 @@ class WebRTCManager {
             this.discussion = message.discussion
         } else if (typeof message.call_created !== "undefined") {           // {members: [], discussion: "", type: "", initiator: ""}
             console.log("CALL CREATED", message.call_created)
+        } else if (typeof message.connected_users !== "undefined") {        // {connected_users: []}
+            this.setConnectedUsers(message.connected_users)
+        } else if (typeof message.info_session !== "undefined") {           // {session: {}}
+            this.setSession(message.info_session)
+        } else if (typeof message.accept_incoming_call !== "undefined") {  // {accepted: true, offer: {}}
+            await this.acceptIncomingCall(message.accept_incoming_call.value, message.accept_incoming_call.offer)
+        } else if (typeof message.create_offer !== "undefined") {           // {members: [], discussion: "", type: "", initiator: ""}
+            await this.createOffer(message.create_offer.members, message.create_offer.discussion, message.create_offer.type, message.create_offer.initiator)
+        } else if (typeof message.end_call !== "undefined") {               // {}
+            await this.endCall()
         }
     }
 
@@ -141,11 +150,15 @@ class WebRTCManager {
                 console.error("Impossible de trouver l'utilisateur parmi les utilisateurs connectés")
             }
             this.remoteStreams[socketId] = {user: user, stream: event.streams[0]}
-            this.callbacks.updateRemoteStreams(socketId, {
-                user: user,
-                stream: event.streams[0]
+
+            this.controller.send(this, {
+                "update_remote_streams": {
+                    target: socketId,
+                    stream: event.streams[0],
+                    discussion: this.discussion
+                }
             })
-            this.callbacks.setCallInfo(this.getCallInfo())
+            this.controller.send(this, {"set_call_info": this.getCallInfo()})
         }
 
         this.peers[socketId].onicecandidate = event => {
@@ -159,7 +172,7 @@ class WebRTCManager {
                     }
                 })
             }
-            this.callbacks.setCallInfo(this.getCallInfo())
+            this.controller.send(this, {"set_call_info": this.getCallInfo()})
         }
 
         this.peers[socketId].oniceconnectionstatechange = () => {
@@ -169,12 +182,22 @@ class WebRTCManager {
 
             if (this.remoteStreams[socketId]) {
                 this.remoteStreams[socketId].status = this.peers[socketId].iceConnectionState;
-                this.callbacks.updateRemoteStreams(socketId, this.remoteStreams[socketId]);
+                this.controller.send(this, {
+                    "update_remote_streams": {
+                        target: socketId,
+                        stream: this.remoteStreams[socketId],
+                        discussion: this.discussion
+                    }
+                })
             }
 
             if (this.peers[socketId].iceConnectionState === "connected") {
-                this.callbacks.setCalling(false)
-                this.callbacks.setInCall(true)
+                this.controller.send(this, {
+                    "set_in_call": true
+                })
+                this.controller.send(this, {
+                    "set_calling": false
+                })
             }
 
             if (
@@ -187,16 +210,20 @@ class WebRTCManager {
 
                 if (this.remoteStreams[socketId]) {
                     delete this.remoteStreams[socketId]
-                    this.callbacks.setRemoteStreams(this.remoteStreams)
+                    this.controller.send(this, {
+                        "set_remote_streams": this.remoteStreams
+                    })
                 }
 
                 if (Object.keys(this.peers).length === 0) {
-                    this.callbacks.setInCall(false)
+                    this.controller.send(this, {
+                        "set_in_call": false
+                    })
                     this.endCall()
                 }
             }
 
-            this.callbacks.setCallInfo(this.getCallInfo())
+            this.controller.send(this, {"set_call_info": this.getCallInfo()})
         }
     }
 
@@ -228,8 +255,7 @@ class WebRTCManager {
             }
         })
 
-
-        this.callbacks.setCallInfo(this.getCallInfo())
+        this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
     createOffer = async (members, discussion, type, initiator) => {
@@ -268,7 +294,7 @@ class WebRTCManager {
                 }
             })
         }
-        this.callbacks.setCallInfo(this.getCallInfo())
+        this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
     getLocalStream = async type => {
@@ -321,7 +347,8 @@ class WebRTCManager {
             }
         }
 
-        this.callbacks.setIsSharingScreen(true)
+        // this.callbacks.setIsSharingScreen(true)
+        this.controller.send(this, {"set_is_sharing_screen": true})
         this.isScreenSharing = true
     }
 
@@ -341,7 +368,8 @@ class WebRTCManager {
 
         this.localScreen.getTracks().forEach(track => track.stop())
         this.localScreen = new MediaStream()
-        this.callbacks.setIsSharingScreen(false)
+        // this.callbacks.setIsSharingScreen(false)
+        this.controller.send(this, {"set_is_sharing_screen": false})
         this.isScreenSharing = false
     }
 
@@ -368,11 +396,13 @@ class WebRTCManager {
             this.callCreator = offer.call_creator
             await this.newPeerConnection(offer.sender)
             this.setDiscussion(offer.discussion)
-            this.callbacks.setCallCreator(offer.initiator);
+            // this.callbacks.setCallCreator(offer.initiator);
+            this.controller.send(this, {"set_call_creator": offer.initiator})
 
             this.type = offer.type
             this.callMembers = offer.members
-            this.callbacks.incomingCall(offer)
+            // this.callbacks.incomingCall(offer)
+            this.controller.send(this, {"incoming_call": offer})
         } else if (this.callAccepted) {
             if (this.verbose)
                 console.log(
@@ -418,7 +448,8 @@ class WebRTCManager {
         const answer = await this.peers[offer.sender].createAnswer()
         await this.peers[offer.sender].setLocalDescription(answer)
         await this.handlePendingIceCandidates(offer.sender) // Handle any pending ice candidates
-        this.callbacks.setInCall(true)
+        // this.callbacks.setInCall(true)
+        this.controller.send(this, {"set_in_call": true})
 
         this.controller.send(this, {"send_answer": {target: offer.sender, answer: answer, discussion: this.discussion}})
 
@@ -439,7 +470,8 @@ class WebRTCManager {
             )
         }
 
-        this.callbacks.setCallInfo(this.getCallInfo())
+        // this.callbacks.setCallInfo(this.getCallInfo())
+        this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
     handleAnswer = async answer => {
@@ -455,9 +487,11 @@ class WebRTCManager {
             console.warn("No peer connection for: ", answer.sender)
             return
         }
-        this.callbacks.setInCall(true)
+        // this.callbacks.setInCall(true)
+        this.controller.send(this, {"set_in_call": true})
         await this.peers[answer.sender].setRemoteDescription(answer.answer)
-        this.callbacks.setCallInfo(this.getCallInfo())
+        // this.callbacks.setCallInfo(this.getCallInfo())
+        this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
     handleIceCandidate = async data => {
@@ -480,8 +514,8 @@ class WebRTCManager {
             ) {
                 await this.handlePendingIceCandidates(data.sender)
             }
-            this.callbacks.setCallInfo(this.getCallInfo())
-
+            // this.callbacks.setCallInfo(this.getCallInfo())
+            this.controller.send(this, {"set_call_info": this.getCallInfo()})
         } catch (e) {
             console.error("Error adding ice candidate: ", e)
         }
@@ -515,7 +549,9 @@ class WebRTCManager {
                 }
             }
             delete this.pendingIceCandidates[socketId]
-            this.callbacks.setCallInfo(this.getCallInfo())
+            // this.callbacks.setCallInfo(this.getCallInfo())
+            this.controller.send(this, {"set_call_info": this.getCallInfo()})
+
         } else {
             if (this.verbose)
                 console.warn("No pending ice candidates for: ", socketId)
@@ -540,15 +576,14 @@ class WebRTCManager {
 
             if (this.remoteStreams[data.sender]) {
                 delete this.remoteStreams[data.sender]
-                this.callbacks.setRemoteStreams(this.remoteStreams)
+                this.controller.send(this, {"set_remote_streams": this.remoteStreams})
             }
 
             if (Object.keys(this.peers).length === 0) {
-                this.callbacks.setInCall(false)
+                this.controller.send(this, {"set_in_call": false})
                 await this.endCall()
             }
         }
-        this.callbacks.setCallInfo(this.getCallInfo())
     }
 
     endCall = async () => {
@@ -575,7 +610,7 @@ class WebRTCManager {
 
         this.controller.send(this, {"hang_up": {discussion: this.discussion}})
         this.reset()
-        this.callbacks.setCallInfo(this.getCallInfo())
+        this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
     getCallInfo = () => {
@@ -602,10 +637,12 @@ class WebRTCManager {
         this.callCreator = ""
         this.callAccepted = false
         this.isScreenSharing = false
-        this.callbacks.setInCall(false)
-        this.callbacks.setIsSharingScreen(false)
-        this.callbacks.setRemoteStreams({})
-        this.callbacks.setCallCreator("")
+        this.controller.send(this, {"set_call_info": this.getCallInfo()})
+        this.controller.send(this, {"set_in_call": false})
+        this.controller.send(this, {"set_calling": false})
+        this.controller.send(this, {"set_is_sharing_screen": false})
+        this.controller.send(this, {"set_call_creator": ""})
+        this.controller.send(this, {"set_remote_streams": {}})
     }
 }
 

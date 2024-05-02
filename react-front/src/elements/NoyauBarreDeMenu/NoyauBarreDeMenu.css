@@ -1,6 +1,6 @@
 /* styles.css */
 #root {
-    padding: 0px;
+    padding: 0;
 }
 
 .app-container {
@@ -88,15 +88,17 @@ a {
     background-color: #ffffff;
     border-radius: 10px;
     color: black;
-    box-shadow: rgba(0, 0, 0, 0.31) 0px 1px 4px;
+    box-shadow: rgba(0, 0, 0, 0.31) 0 1px 4px;
     min-height: 125px;
     position: absolute;
     margin-left: 100%;
     margin-top: 6rem;
 }
-.section-status-hidden li:hover{
+
+.section-status-hidden li:hover {
     background-color: #f0f0f0;
 }
+
 .status-info {
     margin: auto;
     height: 100%;
@@ -105,5 +107,5 @@ a {
 .status {
     padding: 1em;
     max-height: 70vh;
-    overflow: scroll;
+    /*overflow: scroll;*/
 }

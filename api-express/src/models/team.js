@@ -5,14 +5,14 @@ DEFAULT_TEAM_LOGO = "/others/default.png";
 DEFAULT_CHANNEL_TYPE = "public";
 
 const teamSchema = new Schema({
-    team_uuid: { type: String, required: true },
-    team_name: { type: String, required: true },
+    team_uuid: {type: String, required: true},
+    team_name: {type: String, required: true},
     team_logo: {
         type: String,
         required: true,
         default: DEFAULT_TEAM_LOGO,
     },
-    team_description: { type: String, required: true },
+    team_description: {type: String, required: true},
 
     // Pas sur de ça
     // team_roles: [
@@ -40,7 +40,7 @@ const teamSchema = new Schema({
             },
         },
     ],
-    team_creation_date: { type: Date, required: true, default: Date.now },
+    team_creation_date: {type: Date, required: true, default: Date.now},
 });
 
 module.exports = mongoose.model("Team", teamSchema);

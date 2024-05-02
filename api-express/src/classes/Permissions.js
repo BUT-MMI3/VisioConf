@@ -1,5 +1,5 @@
 const Permission = require('../models/permission');
-const { v4: uuidv4 } = require("uuid");
+const {v4: uuidv4} = require("uuid");
 
 class Permissions {
     controller = null;

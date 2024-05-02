@@ -4,12 +4,13 @@
   height: 100vh;
   padding: 0.5rem;
 
-  &--tools{
+  &--tools {
     display: flex;
     gap: 1rem;
     width: 100%;
   }
-  &--back{
+
+  &--back {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -32,12 +33,13 @@
       font-size: 1.5rem;
     }
   }
+
   &--tools {
     display: flex;
     gap: 1rem;
     width: 100%;
 
-    &--search{
+    &--search {
       display: flex;
       align-items: center;
       background-color: #EAEAEA;
@@ -45,10 +47,11 @@
       width: 100%;
       overflow: hidden;
 
-      svg{
+      svg {
         margin-left: 0.5rem;
         color: #4A4A4A;
       }
+
       input {
         padding: 0.5rem;
         border: none;
@@ -75,11 +78,12 @@
     border-collapse: collapse;
     border-radius: 10px;
     overflow: hidden;
-    color:black;
+    color: black;
 
-    tr{
+    tr {
       padding: 0.5rem;
     }
+
     th,
     td {
       padding: 8px;
@@ -110,7 +114,8 @@
       border-top-right-radius: 10px;
     }
   }
-  &--actions{
+
+  &--actions {
     display: flex;
     border-radius: 10px;
     overflow: hidden;
@@ -138,7 +143,7 @@
 
 }
 
-.ajouter-utilisateur-label{
+.ajouter-utilisateur-label {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -154,11 +159,12 @@
     color: #4A4A4A;
   }
 
-  input[type="checkbox"]{
+  input[type="checkbox"] {
     width: 1rem;
     height: 1rem;
   }
-  textarea{
+
+  textarea {
     resize: vertical;
     min-height: 100px;
     max-height: 300px;
@@ -167,7 +173,7 @@
 }
 
 
-.ajouter-role-form{
+.ajouter-role-form {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -183,33 +189,36 @@
     border-radius: 5rem;
     background-color: var(--color-primary);
     font-size: 0.8rem;
-    margin-left:auto;
+    margin-left: auto;
   }
 
-  h4,span {
+  h4, span {
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
   }
-  p{
+
+  p {
     color: red;
   }
 
 }
-.modifier-role-checkboxes{
+
+.modifier-role-checkboxes {
   display: flex;
   gap: 0;
   max-height: 200px;
   overflow-y: scroll;
   width: 100%;
 
-  label{
+  label {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     font-size: 0.8rem;
   }
-  input[type="checkbox"]{
+
+  input[type="checkbox"] {
     width: 1rem;
     height: 1rem;
   }

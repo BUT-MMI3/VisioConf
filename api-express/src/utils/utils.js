@@ -1,11 +1,11 @@
 // generate random string
 const randomString = (len) => {
-  const chars =
-    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let result = "";
-  for (let i = len; i > 0; --i)
-    result += chars[Math.floor(Math.random() * chars.length)];
-  return result;
+    const chars =
+        "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let result = "";
+    for (let i = len; i > 0; --i)
+        result += chars[Math.floor(Math.random() * chars.length)];
+    return result;
 };
 
 /**
@@ -62,7 +62,7 @@ const sha256 = async (text) => {
 };
 
 module.exports = {
-  randomString,
+    randomString,
     normalizePort,
     onError,
     onListening,

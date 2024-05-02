@@ -51,7 +51,7 @@ const AdminListeRoles = () => {
     useEffect(() => {
         controller.subscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
 
-        controller.send(instanceRef.current, { "admin_demande_liste_roles": {} });
+        controller.send(instanceRef.current, {"admin_demande_liste_roles": {}});
 
         return () => {
             controller.unsubscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
@@ -104,7 +104,7 @@ const AdminListeRoles = () => {
                         {filteredRoles.map((role, index) => (<tr key={index}>
                             <td>{role.role_uuid}</td>
                             <td>{role.role_label}</td>
-                            <td>{role.role_permissions.map( p => p.permission_label).join(", ")}</td>
+                            <td>{role.role_permissions.map(p => p.permission_label).join(", ")}</td>
                             <td className="liste-roles--actions">
                                 <LinkTo to={`/admin/roles/${role._id || role.id}/view`}
                                         className="liste-roles--actions--voir">

@@ -22,10 +22,10 @@ const AdminListeUtilisateurs = () => {
         instanceName: "AdminListeUtilisateurs",
         traitementMessage: (msg) => {
             console.log("Received data:", msg);
-            if (msg && msg.admin_liste_utilisateurs ) {
-                if(msg.admin_liste_utilisateurs.success){
+            if (msg && msg.admin_liste_utilisateurs) {
+                if (msg.admin_liste_utilisateurs.success) {
                     setUtilisateurs(msg.admin_liste_utilisateurs.liste_utilisateurs || []);
-                }else{
+                } else {
                     pushToast({
                         title: "Erreur",
                         message: "Erreur lors de la récupération de la liste des utilisateurs",
@@ -33,13 +33,13 @@ const AdminListeUtilisateurs = () => {
                     });
                 }
             } else if (msg && msg.admin_utilisateur_supprime) {
-                if(msg.admin_utilisateur_supprime.success){
+                if (msg.admin_utilisateur_supprime.success) {
                     pushToast({
                         title: "Succès",
                         message: "Utilisateur supprimé avec succès",
                         type: "success",
                     });
-                }else{
+                } else {
                     pushToast({
                         title: "Erreur",
                         message: "Erreur lors de la suppression de l'utilisateur",
@@ -53,7 +53,7 @@ const AdminListeUtilisateurs = () => {
     useEffect(() => {
         controller.subscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
 
-        controller.send(instanceRef.current, { "admin_demande_liste_utilisateurs": {} });
+        controller.send(instanceRef.current, {"admin_demande_liste_utilisateurs": {}});
 
         return () => {
             controller.unsubscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
@@ -123,7 +123,9 @@ const AdminListeUtilisateurs = () => {
                                         titre: 'Vous allez supprimer un utilisateur.',
                                         texte: "Toutes les données personnelles de l'utilisateur serront supprimées, mais l'ensemble des contenus associés au compte resteront visibles (messages, posts, etc...). Le profil de l'utilisateur apparaîtra comme \"Utilisateur supprimé\". Êtes-vous sûr de vouloir continuer ?",
                                         texteBoutonAction: "Supprimer l'utilisateur",
-                                        onValidate: () => {controller.send(instanceRef.current, {admin_supprimer_utilisateur: user._id})},
+                                        onValidate: () => {
+                                            controller.send(instanceRef.current, {admin_supprimer_utilisateur: user._id})
+                                        },
                                     })}
                                             className="liste-utilisateurs--actions--supp">
                                         <FeatherIcon icon="trash" size={20}/>

@@ -55,7 +55,7 @@ const NoyauBarreDeMenu = () => {
     const handleChangeStatus = async (newStatus) => {
         try {
             setSelectedStatus(newStatus);
-            await controller.send(current, { demande_changement_status: newStatus });
+            await controller.send(current, {demande_changement_status: newStatus});
             console.log("Demande de changement de statut envoyée", newStatus)
         } catch (error) {
             console.error("Erreur lors de la demande de changement de statut :", error);
@@ -321,7 +321,10 @@ const NoyauBarreDeMenu = () => {
                                                                         marginLeft: "0.5rem",
                                                                         color: "#CB0000"
                                                                     }}>●</span>
-                                                                    <span style={{marginLeft: "0.5rem", whiteSpace: "nowrap",}}> Ne pas déranger</span>
+                                                                    <span style={{
+                                                                        marginLeft: "0.5rem",
+                                                                        whiteSpace: "nowrap",
+                                                                    }}> Ne pas déranger</span>
                                                                 </>
                                                             )}
                                                         </li>
