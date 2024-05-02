@@ -6,7 +6,7 @@ import "./NoyauAccueil.css";
 import {useSelector} from "react-redux";
 
 const listeMessageEmis = ["update_notifications"];
-const listeMessageRecus = ["notification_sent"];
+const listeMessageRecus = ["distribue_notification"];
 
 const NoyauAccueil = () => {
     const instanceName = "NoyauAccueil";
@@ -24,9 +24,9 @@ const NoyauAccueil = () => {
         traitementMessage: (msg) => {
             if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
-            if (typeof msg.notification_sent !== "undefined") {
-                console.log(msg.notification_sent);
-                setNotifications(msg.notification_sent);
+            if (typeof msg.distribue_notification !== "undefined") {
+                console.log(msg.distribue_notification);
+                setNotifications(msg.distribue_notification);
             } else {
                 console.log("Erreur lors du traitement du message :", msg);
             }

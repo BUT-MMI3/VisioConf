@@ -4,8 +4,8 @@ class Notifications {
     constructor(controller, instanceName) {
         this.instanceName = instanceName || 'Notifications';
         this.controller = controller;
-        this.listeMessagesEmis = ["notification_sent"];
-        this.listeMessagesRecus = ["update_notifications", "notification_answer"];
+        this.listeMessagesEmis = ["distribue_notification"];
+        this.listeMessagesRecus = ["update_notifications", "demande_notification"];
         this.verbose = true;
 
         if (this.verbose || this.controller.verboseall) {
@@ -20,10 +20,10 @@ class Notifications {
             console.log(`INFO (${this.instanceName}) - Réception d'un message : ${JSON.stringify(msg)}`);
         }
 
-        if (typeof msg.notification_answer !== 'undefined') {
+        if (typeof msg.demande_notification !== 'undefined') {
             console.log(`INFO (${this.instanceName}) - Demande de notifications reçue`);
-            console.log(msg.notification_answer);
-            this.controller.send(this, {notification_sent: msg.notification_answer, id: msg.id});
+            console.log(msg.demande_notification);
+            this.controller.send(this, {distribue_notification: msg.demande_notification, id: msg.id});
         }
 
         if (typeof msg.update_notifications !== 'undefined') {
