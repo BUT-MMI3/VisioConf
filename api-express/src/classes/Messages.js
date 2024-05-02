@@ -61,7 +61,7 @@ class Messages {
                     erreur_envoi_message: "Discussion non trouvée",
                     id: msg.id
                 });
-                // TODO: Checker ca
+                // TODO: Checker ca (création de discussion si elle n'existe pas et envoi du message)
                 // discussion = new Discussion({
                 //     id: msg.envoie_message.discussionId,
                 //     messages: []
