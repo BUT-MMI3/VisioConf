@@ -1,8 +1,25 @@
-.liste-roles {
+.modifier-role {
   display: flex;
   flex-direction: column;
   height: 100vh;
   padding: 0.5rem;
+
+  &--tools{
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+  }
+  &--back{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    text-wrap: nowrap;
+    padding: 0.6rem 1rem;
+    border-radius: 5rem;
+    background-color: var(--color-primary);
+    font-size: 0.8rem;
+  }
 
   &--card {
     padding: 1rem;
@@ -17,7 +34,6 @@
   }
   &--tools {
     display: flex;
-    margin-bottom: 1rem;
     gap: 1rem;
     width: 100%;
 
@@ -100,7 +116,7 @@
     overflow: hidden;
 
     &--modif,
-    &--supp, &--voir {
+    &--supp {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -111,9 +127,6 @@
       margin-right: 0.5rem;
     }
 
-    &--voir {
-      background-color: var(--color-primary)
-    }
     &--modif {
       background-color: var(--color-primary)
     }
@@ -123,4 +136,81 @@
     }
   }
 
+}
+
+.ajouter-utilisateur-label{
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 1rem;
+  color: var(--color-primary);
+
+
+  input, textarea {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #EAEAEA;
+    color: #4A4A4A;
+  }
+
+  input[type="checkbox"]{
+    width: 1rem;
+    height: 1rem;
+  }
+  textarea{
+    resize: vertical;
+    min-height: 100px;
+    max-height: 300px;
+    width: 100%;
+  }
+}
+
+
+.ajouter-role-form{
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  button[type="submit"] {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    text-wrap: nowrap;
+    padding: 0.6rem 1rem;
+    border-radius: 5rem;
+    background-color: var(--color-primary);
+    font-size: 0.8rem;
+    margin-left:auto;
+  }
+
+  h4,span {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  p{
+    color: red;
+  }
+
+}
+.modifier-role-checkboxes{
+  display: flex;
+  gap: 0;
+  max-height: 200px;
+  overflow-y: scroll;
+  width: 100%;
+
+  label{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+  }
+  input[type="checkbox"]{
+    width: 1rem;
+    height: 1rem;
+  }
 }

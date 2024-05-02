@@ -25,6 +25,9 @@ import AdminAjouterUtilisateur from "./elements/AdminAjouterUtilisateur/AdminAjo
 import AdminVoirUtilisateur from "./elements/AdminVoirUtilisateur/AdminVoirUtilisateur.jsx";
 import AdminModifierUtilisateur from "./elements/AdminModifierUtilisateur/AdminModifierUtilisateur.jsx";
 import NoyauAnnuaire from "./elements/NoyauAnnuaire/NoyauAnnuaire.jsx";
+import AdminVoirRole from "./elements/AdminVoirRole/AdminVoirRole.jsx";
+import AdminAjouterRole from "./elements/AdminAjouterRole/AdminAjouterRole.jsx";
+import AdminModifierRole from "./elements/AdminModifierRole/AdminModifierRole.jsx";
 
 const listeMessageEmis = []
 
@@ -227,6 +230,30 @@ const App = () => {
                             element={
                                 <>
                                     <AdminListeRoles/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="admin/roles/new"
+                            element={
+                                <>
+                                    <AdminAjouterRole/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path={"admin/roles/:id/view"}
+                            element={
+                                <>
+                                    <AdminVoirRole/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="admin/roles/:id/edit"
+                            element={
+                                <>
+                                    <AdminModifierRole/>
                                 </>
                             }
                         />
