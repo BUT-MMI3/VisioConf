@@ -96,9 +96,13 @@ class Messages {
                     });
                     this.controller.send(this, {
                         demande_notification: {
-                            discussionId: discussion.discussion_uuid,
-                            discussionName: discussion.discussion_name,
-                            message: lastMessage
+                            type: "Info",
+                            content: lastMessage,
+                            data: {
+                                discussionId: discussion.discussion_uuid,
+                                discussionName: discussion.discussion_name,
+                            },
+
                         },
                         id: member.user_socket_id
                     });

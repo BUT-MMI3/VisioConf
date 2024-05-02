@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import FeatherIcon from 'feather-icons-react';
-import { appInstance } from "../../controller/index.js";
+import {appInstance} from "../../controller/index.js";
 import LinkTo from "../../elements/LinkTo/LinkTo.jsx";
 import "./NoyauAccueil.css";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 
 const listeMessageEmis = ["update_notifications"];
 const listeMessageRecus = ["distribue_notification"];
@@ -19,13 +19,13 @@ const NoyauAccueil = () => {
     const [showNotifications, setShowNotifications] = useState(false);
     const [showHistorique, setShowHistorique] = useState(false);
 
-    const { current } = useRef({
+    const {current} = useRef({
         instanceName,
         traitementMessage: (msg) => {
             if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
             if (typeof msg.distribue_notification !== "undefined") {
-                if (msg.distribue_notification.message.message_status !== 'read') {
+                if (msg.distribue_notification.content.message_status !== 'read') {
                     setNotifications(prevNotifications => [...prevNotifications, msg.distribue_notification]);
                 }
             } else {
@@ -35,10 +35,10 @@ const NoyauAccueil = () => {
     });
 
     const markAllAsRead = async () => {
-        const unreadNotifications = notifications.filter(notification => notification.message.message_status !== 'read');
+        const unreadNotifications = notifications.filter(notification => notification.content.message_status !== 'read');
 
         try {
-            await controller.send(current, { update_notifications: unreadNotifications });
+            await controller.send(current, {update_notifications: unreadNotifications});
             setNotifications([]);
         } catch (error) {
             console.error('Erreur lors de la mise à jour des notifications:', error);
@@ -74,7 +74,8 @@ const NoyauAccueil = () => {
                             {session && (
                                 <>
                                     <div className="profil-info-image w-100">
-                                        <img src={session.user_picture} className='logo-profil-info fr ma' alt="Photo de profil"/>
+                                        <img src={session.user_picture} className='logo-profil-info fr ma'
+                                             alt="Photo de profil"/>
                                     </div>
                                     <div className="profil-details w-100 fc ai-fs">
                                         <h2>{session.user_lastname} {session.user_firstname}</h2>
@@ -83,7 +84,8 @@ const NoyauAccueil = () => {
                                     <div className="profil-modification w-100">
                                         <div className="icon-button fr jc-c ai-c">
                                             <LinkTo to="/profil">
-                                                <FeatherIcon icon="edit-2" size="20" strokeWidth="1" className="icon fr"/>
+                                                <FeatherIcon icon="edit-2" size="20" strokeWidth="1"
+                                                             className="icon fr"/>
                                             </LinkTo>
                                         </div>
                                     </div>
@@ -108,9 +110,10 @@ const NoyauAccueil = () => {
 
                             <div className="notifications w-100 fr jc-c ai-c">
                                 {notifications.length === 0 ? (
-                                    <h2 style={{ fontSize: '15px' }}>Aucune nouvelle notification</h2>
+                                    <h2 style={{fontSize: '15px'}}>Aucune nouvelle notification</h2>
                                 ) : (
-                                    <h2 style={{ fontSize: '15px' }}>{notifications.length} Nouvelle(s) notification(s) non lue(s).</h2>
+                                    <h2 style={{fontSize: '15px'}}>{notifications.length} Nouvelle(s) notification(s)
+                                        non lue(s).</h2>
                                 )}
                             </div>
 
@@ -127,21 +130,26 @@ const NoyauAccueil = () => {
                         <div className="section-notification-hidden">
                             <div className="notification-info fr jc-sa">
                                 <div className="notifications w-100 fr ai-c">
-                                    <ul>
+                                    <ul style={{maxHeight:"40vh"}}>
                                         {notifications.map((notification, index) => (
-                                            <li key={index} className="notification-item if ai-c">
-                                                <img src={notification.message.message_sender.user_picture} className='logo-profil-reception' alt="Photo de profil"/>
-                                                <p>
-                                                    <span className="sender-name">{notification.message.message_sender.user_firstname} {notification.message.message_sender.user_lastname},</span> vous a envoyé un nouveau message dans :
-                                                    "{notification.discussionName}"
-                                                </p>
-                                            </li>
+                                            <LinkTo key={index} to={"/discussion/"+notification.data.discussionId}>
+                                                <li  className="notification-item if ai-c">
+                                                    <img src={notification.content.message_sender.user_picture}
+                                                         className='logo-profil-reception' alt="Photo de profil"/>
+                                                    <p>
+                                                        <span
+                                                            className="sender-name">{notification.content.message_sender.user_firstname} {notification.content.message_sender.user_lastname},</span> vous
+                                                        a envoyé un nouveau message dans :
+                                                        "{notification.data.discussionName}"
+                                                    </p>
+                                                </li>
+                                            </LinkTo>
                                         ))}
                                     </ul>
                                 </div>
                             </div>
                             {notifications.length > 0 && (
-                                <div className="fr jc-fe" style={{ padding: '1rem' }}>
+                                <div className="fr jc-fe" style={{padding: '1rem'}}>
                                     <button onClick={markAllAsRead}>vider</button>
                                 </div>
                             )}
@@ -154,19 +162,21 @@ const NoyauAccueil = () => {
                         <h2>Historique des appels</h2>
                     </div>
 
-                    <div className="section-historique fc jc-c" style={{ height: 'auto' }}>
+                    <div className="section-historique fc jc-c" style={{height: 'auto'}}>
                         <div className="historique-appels fr jc-c">
                             <div className="historique-info w-100 fr jc-sa">
                                 <div className="icon-button2 fr jc-c ai-c" onClick={toggleHistorique}>
-                                    <FeatherIcon icon="clock" size="20" strokeWidth="2" className="icon fr feather-clock"/>
+                                    <FeatherIcon icon="clock" size="20" strokeWidth="2"
+                                                 className="icon fr feather-clock"/>
                                 </div>
                             </div>
 
                             <div className="historique w-100 fr jc-c ai-c">
-                                <h2 style={{ fontSize: '15px' }}>votre historique d&apos;appels</h2>
+                                <h2 style={{fontSize: '15px'}}>votre historique d&apos;appels</h2>
                             </div>
                             <div className="historique-affiche w-100 fr jc-c ai-c" onClick={toggleHistorique}>
-                                <FeatherIcon icon={showHistorique ? 'chevron-down' : 'chevron-right'} size="20" strokeWidth="1" fill="white" className="icon"/>
+                                <FeatherIcon icon={showHistorique ? 'chevron-down' : 'chevron-right'} size="20"
+                                             strokeWidth="1" fill="white" className="icon"/>
                             </div>
                         </div>
                     </div>
