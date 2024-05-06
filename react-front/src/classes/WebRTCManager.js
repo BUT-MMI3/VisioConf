@@ -5,7 +5,14 @@
 
 class WebRTCManager {
     instanceName = "WebRTCManager"
-    config = {iceServers: [{urls: "stun:stun.l.google.com:19302"}]}
+    config = {
+        iceServers:
+            [
+                {urls: "stun:stun.l.google.com:19302"},
+                {urls: "stun:stun1.l.google.com:19302"},
+                {urls: "stun:stun2.l.google.com:19302"}
+            ]
+    }
     session = null
     connectedUsers = []
     // callbacks = {updateRemoteStreams, setInCall, setCalling, acceptIncomingCall, setIsSharingScreen, setCallCreator}
@@ -116,24 +123,21 @@ class WebRTCManager {
         } else if (typeof message.end_call !== "undefined") {               // {}
             await this.endCall()
         } else if (typeof message.is_in_call !== "undefined") {             // {value: true}
-            console.log(this.discussion)
-            if (message.is_in_call.discussion === this.discussion) {
-                this.controller.send(this, {"set_in_call": this.inCall})
-            } else {
-                this.controller.send(this, {"set_in_call": false})
-            }
+            this.controller.send(this, {
+                "set_in_call": {
+                    value: this.inCall,
+                    discussion: this.discussion
+                }
+            })
         } else if (typeof message.get_call_info !== "undefined") {          // {}
-            console.log(this.discussion)
             if (message.get_call_info.discussion === this.discussion) {
                 this.controller.send(this, {"set_call_info": this.getCallInfo()})
             } else {
                 this.controller.send(this, {"set_call_info": {}})
             }
         } else if (typeof message.get_streams !== "undefined") {            // {}
-            console.log(this.discussion)
             if (message.get_streams.discussion === this.discussion) {
                 this.controller.send(this, {"set_remote_streams": this.remoteStreams})
-                this.controller.send(this, {"set_call_info": this.getCallInfo()})
             } else {
                 this.controller.send(this, {"set_remote_streams": {}})
             }
@@ -221,7 +225,10 @@ class WebRTCManager {
                 if (this.verbose || this.controller.verboseall) console.log("Call connected for: ", socketId)
                 this.inCall = true
                 this.controller.send(this, {
-                    "set_in_call": true
+                    "set_in_call": {
+                        value: this.inCall,
+                        discussion: this.discussion
+                    }
                 })
                 this.controller.send(this, {
                     "set_calling": false
@@ -245,7 +252,10 @@ class WebRTCManager {
 
                 if (Object.keys(this.peers).length === 0) {
                     this.controller.send(this, {
-                        "set_in_call": false
+                        "set_in_call": {
+                            value: false,
+                            discussion: this.discussion
+                        }
                     })
                     this.endCall()
                 }
@@ -477,7 +487,12 @@ class WebRTCManager {
         await this.peers[offer.sender].setLocalDescription(answer)
         await this.handlePendingIceCandidates(offer.sender) // Handle any pending ice candidates
         // this.callbacks.setInCall(true)
-        this.controller.send(this, {"set_in_call": true})
+        this.controller.send(this, {
+            "set_in_call": {
+                value: true,
+                discussion: this.discussion
+            }
+        })
 
         this.controller.send(this, {"send_answer": {target: offer.sender, answer: answer, discussion: this.discussion}})
 
@@ -516,7 +531,12 @@ class WebRTCManager {
             return
         }
         // this.callbacks.setInCall(true)
-        this.controller.send(this, {"set_in_call": true})
+        this.controller.send(this, {
+            "set_in_call": {
+                value: true,
+                discussion: this.discussion
+            }
+        })
         await this.peers[answer.sender].setRemoteDescription(answer.answer)
         // this.callbacks.setCallInfo(this.getCallInfo())
         this.controller.send(this, {"set_call_info": this.getCallInfo()})
@@ -608,7 +628,12 @@ class WebRTCManager {
             }
 
             if (Object.keys(this.peers).length === 0) {
-                this.controller.send(this, {"set_in_call": false})
+                this.controller.send(this, {
+                    "set_in_call": {
+                        value: false,
+                        discussion: this.discussion
+                    }
+                })
                 await this.endCall()
             }
         }
@@ -666,7 +691,12 @@ class WebRTCManager {
         this.callAccepted = false
         this.isScreenSharing = false
         this.controller.send(this, {"set_call_info": this.getCallInfo()})
-        this.controller.send(this, {"set_in_call": false})
+        this.controller.send(this, {
+            "set_in_call": {
+                value: false,
+                discussion: this.discussion
+            }
+        })
         this.controller.send(this, {"set_calling": false})
         this.controller.send(this, {"set_is_sharing_screen": false})
         this.controller.send(this, {"set_call_creator": ""})
