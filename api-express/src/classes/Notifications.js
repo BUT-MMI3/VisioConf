@@ -30,7 +30,7 @@ class Notifications {
             console.log(`INFO (${this.instanceName}) - Mise à jour des notifications reçue`);
 
             for (const notificationData of msg.update_notifications) {
-                const messageToUpdate = notificationData.content;
+                const messageToUpdate = notificationData.data;
                 messageToUpdate.message_status = 'read';
 
                 await Discussion.updateOne(

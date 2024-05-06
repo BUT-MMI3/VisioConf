@@ -73,14 +73,21 @@ ul {
     margin: auto;
     border-radius: 50%;
     background-color: var(--color-primary) !important;
-    height: 30px;
-    width: 30px;
+    height: 50px;
+    width: 50px;
 }
 
 .icon-button2 {
     margin: auto;
     border-radius: 50%;
     background-color: #429BDB;
+    height: 50px;
+    width: 50px;
+}
+.icon-button3 {
+    margin: auto;
+    border-radius: 50%;
+    background-color: var(--color-primary);
     height: 30px;
     width: 30px;
 }
@@ -97,7 +104,7 @@ ul {
 .notifications, .historiques {
     padding: 1em;
     max-height: 50vh;
-    overflow: scroll;
+    overflow-y: auto;
 }
 
 ul {

@@ -82,7 +82,7 @@ const NoyauAccueil = () => {
                                         <p>{session.user_job}</p>
                                     </div>
                                     <div className="profil-modification w-100">
-                                        <div className="icon-button fr jc-c ai-c">
+                                        <div className="icon-button3 fr jc-c ai-c">
                                             <LinkTo to="/profil">
                                                 <FeatherIcon icon="edit-2" size="20" strokeWidth="1"
                                                              className="icon fr"/>
@@ -104,7 +104,7 @@ const NoyauAccueil = () => {
                         <div className="notification-info w-100 fr jc-sa">
                             <div className="notification-info w-100 fr">
                                 <div className="icon-button2 fr jc-c ai-c" onClick={toggleNotifications}>
-                                    <FeatherIcon icon="bell" size="20" strokeWidth="1" className="icon fr"/>
+                                    <FeatherIcon icon="bell" size="30" strokeWidth="1" className="icon fr"/>
                                 </div>
                             </div>
 
@@ -120,7 +120,7 @@ const NoyauAccueil = () => {
                             <div className="notification-affiche w-100 fr jc-c ai-c" onClick={toggleNotifications}>
                                 <FeatherIcon
                                     icon={showNotifications && notifications.length !== 0 ? 'chevron-down' : 'chevron-right'}
-                                    size="20"
+                                    size="30"
                                     strokeWidth="1" className="icon"/>
                             </div>
                         </div>
@@ -166,7 +166,7 @@ const NoyauAccueil = () => {
                         <div className="historique-appels fr jc-c">
                             <div className="historique-info w-100 fr jc-sa">
                                 <div className="icon-button2 fr jc-c ai-c" onClick={toggleHistorique}>
-                                    <FeatherIcon icon="clock" size="20" strokeWidth="2"
+                                    <FeatherIcon icon="clock" size="30" strokeWidth="2"
                                                  className="icon fr feather-clock"/>
                                 </div>
                             </div>
@@ -174,8 +174,8 @@ const NoyauAccueil = () => {
                             <div className="historique w-100 fr jc-c ai-c">
                                 <h2 style={{fontSize: '15px'}}>votre historique d&apos;appels</h2>
                             </div>
-                            <div className="historique-affiche w-100 fr jc-c ai-c" onClick={toggleHistorique}>
-                                <FeatherIcon icon={showHistorique ? 'chevron-down' : 'chevron-right'} size="20"
+                            <div className="historique-affiche w-100 fr jc-c ai-c ma" onClick={toggleHistorique}>
+                                <FeatherIcon icon={showHistorique ? 'chevron-down' : 'chevron-right'} size="30"
                                              strokeWidth="1" fill="white" className="icon"/>
                             </div>
                         </div>
