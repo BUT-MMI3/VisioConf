@@ -42,7 +42,7 @@ const listeMessageRecus = [
 
 const App = () => {
     const instanceName = "App";
-    const verbose = false;
+    const verbose = true;
 
     const [loading, setLoading] = useState(appInstance.loading);
     const [controller, setController] = useState(appInstance.controller);
@@ -71,7 +71,7 @@ const App = () => {
                 } else if (typeof msg.client_deconnexion !== "undefined") {
                     socket.disconnect(); // déconnecte le socket pour éviter les erreurs
                     dispatch(signOut()); // déconnexion
-                    canal ? canal.setSessionToken(null) : null; // supprime le token de session
+                    canal ? canal.setSessionToken(null) : console.error("No canal available"); // supprime le token de session
                     socket.connect(); // reconnect
                 } else if (typeof msg.inscription_acceptee !== "undefined") {
                     dispatch(signIn({

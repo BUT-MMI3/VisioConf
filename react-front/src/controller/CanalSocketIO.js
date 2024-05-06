@@ -62,6 +62,10 @@ class CanalSocketIO {
             return new Error("No session token");
         }
 
+        if (typeof msg.demande_de_connexion !== "undefined" || typeof msg.demande_inscription !== "undefined") {
+            this.sessionToken = null;
+        }
+
         this.socket.emit("message", JSON.stringify({
             ...msg,
             sessionToken: this.sessionToken
