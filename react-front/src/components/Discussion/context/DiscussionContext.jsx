@@ -44,6 +44,7 @@ const listeMessagesRecus = [
     "discussion_info",
     "nouveau_message",
     "erreur_envoi_message",
+    "notification_answer",
 ];
 
 export function DiscussionContextProvider() {
