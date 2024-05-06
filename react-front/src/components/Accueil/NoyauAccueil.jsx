@@ -134,13 +134,13 @@ const NoyauAccueil = () => {
                                         {notifications.map((notification, index) => (
                                             <LinkTo key={index} to={"/discussion/"+notification.data.discussionId}>
                                                 <li  className="notification-item if ai-c">
-                                                    <img src={notification.content.message_sender.user_picture}
+                                                    <img src={notification.data.lastMessage.message_sender.user_picture}
                                                          className='logo-profil-reception' alt="Photo de profil"/>
                                                     <p>
                                                         <span
-                                                            className="sender-name">{notification.content.message_sender.user_firstname} {notification.content.message_sender.user_lastname},</span> vous
-                                                        a envoyé un nouveau message dans :
-                                                        "{notification.data.discussionName}"
+                                                            className="sender-name">{notification.data.lastMessage.message_sender.user_firstname} {notification.data.lastMessage.message_sender.user_lastname},
+                                                        </span>
+                                                        vous a envoyé un nouveau message dans : &quot;{notification.data?.discussionName}&quot;
                                                     </p>
                                                 </li>
                                             </LinkTo>
