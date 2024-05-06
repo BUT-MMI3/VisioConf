@@ -57,15 +57,24 @@ class CanalSocketIO {
 
         if (this.controller.verboseall || this.verbose) console.log(`INFO (${this.instanceName}): envoie ce message: ${JSON.stringify(msg)}`);
 
-        if (!this.sessionToken && typeof msg.demande_de_connexion === "undefined" && typeof msg.demande_inscription === "undefined") {
-            console.error("No session token")
-            return new Error("No session token");
-        }
+        if (typeof msg.update_session_token !== "undefined") {
+            this.setSessionToken(msg.update_session_token);
+            delete msg.update_session_token;
+        } else {
+            if (!this.sessionToken && typeof msg.demande_de_connexion === "undefined" && typeof msg.demande_inscription === "undefined") {
+                console.error("No session token")
+                return new Error("No session token");
+            }
 
-        this.socket.emit("message", JSON.stringify({
-            ...msg,
-            sessionToken: this.sessionToken
-        }));
+            if (typeof msg.demande_de_connexion !== "undefined" || typeof msg.demande_inscription !== "undefined") {
+                this.sessionToken = null;
+            }
+
+            this.socket.emit("message", JSON.stringify({
+                ...msg,
+                sessionToken: this.sessionToken
+            }));
+        }
     }
 
     setSessionToken(token) {

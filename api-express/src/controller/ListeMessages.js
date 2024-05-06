@@ -40,7 +40,8 @@ const ListeMessagesEmis = [
     "send_answer",
     "send_ice_candidate",
     "reject_offer",
-    "hang_up"
+    "hang_up",
+    "update_session_token"
 ]
 
 /**

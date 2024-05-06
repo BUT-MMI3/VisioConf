@@ -63,7 +63,7 @@ class AppInstance {
     setCanal() {
         console.log("Setting CanalSocketIO");
         this.canal = new CanalSocketIO(socket, this.controller, "CanalSocketIO");
-        this.canal.verbose = false;
+        this.canal.verbose = true;
 
         if (this.onCanalChange) {
             this.onCanalChange(this.canal);

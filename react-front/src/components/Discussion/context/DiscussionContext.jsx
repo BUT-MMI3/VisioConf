@@ -189,19 +189,6 @@ export function DiscussionContextProvider() {
     }, [controller, discussionId]);
 
     useEffect(() => {
-        webRTCManager.setCallback("setInCall", setInCall)
-        webRTCManager.setCallback("updateRemoteStreams", updateRemoteStreams)
-        webRTCManager.setCallback("setCallInfo", setCallInfo)
-
-
-        return () => {
-            webRTCManager.setCallback("setInCall", null)
-            webRTCManager.setCallback("updateRemoteStreams", null)
-            webRTCManager.setCallback("setCallInfo", null)
-        }
-    }, [webRTCManager]);
-
-    useEffect(() => {
         if (calling) {
            pushToast({
                title: "Appel en cours",
