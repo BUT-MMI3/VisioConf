@@ -6,10 +6,10 @@ class Messages {
     instanceName = 'Messages';
     controller = null;
 
-    listeMessagesEmis = ["demande_historique_discussion", "nouveau_message", "erreur_envoi_message", "notification_answer"];
+    listeMessagesEmis = ["demande_historique_discussion", "nouveau_message", "erreur_envoi_message", "demande_notification"];
     listeMessagesRecus = ["envoie_message"];
 
-    verbose = false;
+    verbose = true;
 
     constructor(controller, instanceName) {
         this.controller = controller;
@@ -61,7 +61,7 @@ class Messages {
                     erreur_envoi_message: "Discussion non trouvée",
                     id: msg.id
                 });
-                // TODO: Checker ca
+                // TODO: Checker ca (création de discussion si elle n'existe pas et envoi du message)
                 // discussion = new Discussion({
                 //     id: msg.envoie_message.discussionId,
                 //     messages: []
@@ -85,7 +85,6 @@ class Messages {
                 })
             const lastMessage = populatedDiscussion.discussion_messages[populatedDiscussion.discussion_messages.length - 1];
 
-
             discussion.discussion_members.forEach(member => {
                 if (member.user_socket_id && member.user_socket_id !== 'none') {
                     this.controller.send(this, {
@@ -96,10 +95,14 @@ class Messages {
                         id: member.user_socket_id
                     });
                     this.controller.send(this, {
-                        notification_answer: {
-                            discussionId: discussion.discussion_uuid,
-                            message: lastMessage,
-                            discussionName: discussion.discussion_name
+                        demande_notification: {
+                            type: "Info",
+                            content: lastMessage,
+                            data: {
+                                discussionId: discussion.discussion_uuid,
+                                discussionName: discussion.discussion_name,
+                            },
+
                         },
                         id: member.user_socket_id
                     });

@@ -6,7 +6,7 @@ import "./NoyauAccueil.css";
 import {useSelector} from "react-redux";
 
 const listeMessageEmis = ["update_notifications"];
-const listeMessageRecus = ["notification_answer"];
+const listeMessageRecus = ["distribue_notification"];
 
 const NoyauAccueil = () => {
     const instanceName = "NoyauAccueil";
@@ -14,9 +14,9 @@ const NoyauAccueil = () => {
     const [controller] = useState(appInstance.getController());
 
     const session = useSelector((state) => state.session);
-    const [messages, setMessages] = useState([]);
+    const [notifications, setNotifications] = useState([]);
     const [historiqueAppels, setHistoriqueAppels] = useState([]);
-    const [showMessages, setShowMessages] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
     const [showHistorique, setShowHistorique] = useState(false);
 
     const {current} = useRef({
@@ -24,75 +24,53 @@ const NoyauAccueil = () => {
         traitementMessage: (msg) => {
             if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
-            if (typeof msg.notification_answer !== "undefined") {
-                console.log("Notifications reçues :", msg.notification_answer);
-                setMessages(msg.notification_answer.historique); // Modification ici
+            if (typeof msg.distribue_notification !== "undefined") {
+                if (msg.distribue_notification.content.message_status !== 'read') {
+                    setNotifications(prevNotifications => [...prevNotifications, msg.distribue_notification]);
+                }
             } else {
                 console.log("Erreur lors du traitement du message :", msg);
             }
         }
     });
 
-    // const notification = async () => {
-    //     if (verbose || controller.verboseall) console.log(`INFO: (${instanceName})`);
-    //
-    //     return new Promise((resolve, reject) => {
-    //         try {
-    //             controller.send(current, {"demande_notifications": "information utilisateur"});
-    //             resolve();
-    //         } catch (error) {
-    //             reject(error);
-    //         }
-    //     });
-    // };
-    // setInterval(notification, 10000);
     const markAllAsRead = async () => {
-        const updatedMessages = messages.map(notification => {
-            return {...notification, status: 'read'};
-        });
-
-        setMessages(updatedMessages);
+        const unreadNotifications = notifications.filter(notification => notification.content.message_status !== 'read');
 
         try {
-            await controller.send(current, {update_notifications: updatedMessages});
+            await controller.send(current, {update_notifications: unreadNotifications});
+            setNotifications([]);
         } catch (error) {
             console.error('Erreur lors de la mise à jour des notifications:', error);
         }
     }
+
+
     useEffect(() => {
         controller.subscribe(current, listeMessageEmis, listeMessageRecus);
 
         return () => {
             controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
         };
-    }, [current, controller, controller.verboseall,verbose,messages]);
+    }, [current, controller, controller.verboseall, verbose]);
 
-    // useEffect(() => {
-    //     notification();
-    // }, []);
-
-    // Fonction pour basculer l'affichage des notifications et changer l'icône
     const toggleNotifications = () => {
-        setShowMessages(!showMessages);
+        setShowNotifications(!showNotifications);
     };
+
     const toggleHistorique = () => {
         setShowHistorique(!showHistorique);
     };
 
     return (
         <div className="noyau-accueil layout-content--full">
-            {/* Section d'informations du profil */}
             <div className="container fr jc-sa g1">
-
                 <div className="section w-100">
-
                     <div className="section-header fr">
                         <h2>Mon Profil</h2>
                     </div>
-
                     <div className="section-profil fc jc-c">
                         <div className="profil-info fr jc-sa ai-c">
-
                             {session && (
                                 <>
                                     <div className="profil-info-image w-100">
@@ -118,15 +96,12 @@ const NoyauAccueil = () => {
                 </div>
 
                 <div className="section w-100">
-                    {/* Section des notifications */}
                     <div className="section-header fr">
                         <h2>Boite de réception</h2>
                     </div>
 
                     <div className="section-notification fc jc-c">
-
                         <div className="notification-info w-100 fr jc-sa">
-
                             <div className="notification-info w-100 fr">
                                 <div className="icon-button2 fr jc-c ai-c" onClick={toggleNotifications}>
                                     <FeatherIcon icon="bell" size="20" strokeWidth="1" className="icon fr"/>
@@ -134,45 +109,46 @@ const NoyauAccueil = () => {
                             </div>
 
                             <div className="notifications w-100 fr jc-c ai-c">
-                                {messages.length === 0 ? (
+                                {notifications.length === 0 ? (
                                     <h2 style={{fontSize: '15px'}}>Aucune nouvelle notification</h2>
                                 ) : (
-                                    <h2 style={{fontSize: '15px'}}>{messages.length} Nouvelle(s) notification(s)
+                                    <h2 style={{fontSize: '15px'}}>{notifications.length} Nouvelle(s) notification(s)
                                         non lue(s).</h2>
                                 )}
                             </div>
 
                             <div className="notification-affiche w-100 fr jc-c ai-c" onClick={toggleNotifications}>
                                 <FeatherIcon
-                                    icon={showMessages && messages.length !== 0 ? 'chevron-down' : 'chevron-right'}
+                                    icon={showNotifications && notifications.length !== 0 ? 'chevron-down' : 'chevron-right'}
                                     size="20"
                                     strokeWidth="1" className="icon"/>
                             </div>
                         </div>
                     </div>
 
-                    {showMessages && messages.length !== 0 && (
+                    {showNotifications && notifications.length !== 0 && (
                         <div className="section-notification-hidden">
                             <div className="notification-info fr jc-sa">
                                 <div className="notifications w-100 fr ai-c">
-                                    <ul>
-                                        {messages.map((notification, index) => (
-                                            <li key={index}
-                                                className="notification-item if ai-c">
-                                                <img src={notification.message.message_sender.user_picture}
-                                                     className='logo-profil-reception' alt="Photo de profil"/>
-                                                <p>
+                                    <ul style={{maxHeight:"40vh"}}>
+                                        {notifications.map((notification, index) => (
+                                            <LinkTo key={index} to={"/discussion/"+notification.data.discussionId}>
+                                                <li  className="notification-item if ai-c">
+                                                    <img src={notification.content.message_sender.user_picture}
+                                                         className='logo-profil-reception' alt="Photo de profil"/>
+                                                    <p>
                                                         <span
-                                                            className="sender-name"> {notification.message.message_sender.user_firstname} {notification.message.message_sender.user_lastname},</span> vous
-                                                    a envoyé un nouveau message dans :
-                                                    "{notification.discussionName}"
-                                                </p>
-                                            </li>
+                                                            className="sender-name">{notification.content.message_sender.user_firstname} {notification.content.message_sender.user_lastname},</span> vous
+                                                        a envoyé un nouveau message dans :
+                                                        "{notification.data.discussionName}"
+                                                    </p>
+                                                </li>
+                                            </LinkTo>
                                         ))}
                                     </ul>
                                 </div>
                             </div>
-                            {messages.length > 0 && (
+                            {notifications.length > 0 && (
                                 <div className="fr jc-fe" style={{padding: '1rem'}}>
                                     <button onClick={markAllAsRead}>vider</button>
                                 </div>
@@ -182,7 +158,6 @@ const NoyauAccueil = () => {
                 </div>
 
                 <div className="section w-100">
-                    {/* Section de l'historique des appels */}
                     <div className="section-header fr">
                         <h2>Historique des appels</h2>
                     </div>
