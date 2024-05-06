@@ -29,13 +29,14 @@ import AdminVoirRole from "./elements/AdminVoirRole/AdminVoirRole.jsx";
 import AdminAjouterRole from "./elements/AdminAjouterRole/AdminAjouterRole.jsx";
 import AdminModifierRole from "./elements/AdminModifierRole/AdminModifierRole.jsx";
 
-const listeMessageEmis = ["connected_users", "info_session"];
+const listeMessageEmis = []
 
 const listeMessageRecus = [
     "connexion_acceptee",
     "inscription_acceptee",
     "client_deconnexion",
     "liste_utilisateurs",
+    "distribue_notification",
     "demande_connected_users",
     "demande_info_session"
 ]
@@ -47,7 +48,10 @@ const App = () => {
     const [loading, setLoading] = useState(appInstance.loading);
     const [controller, setController] = useState(appInstance.controller);
     const [canal, setCanal] = useState(appInstance.canal);
+    const [notifications, setNotifications] = useState([]);
     const [listeUtilisateurs, setListeUtilisateurs] = useState([]); // liste des utilisateurs connectés [ {id: 1, nom: "Mathis", prenom: "Lambert"}, ...
+    const [webRTCManager, setWebRTCManager] = useState(appInstance.webRTCManager);
+
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -63,29 +67,30 @@ const App = () => {
             traitementMessage: (msg) => {
                 if (verbose || (controller ? controller.verboseall : null)) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
-                if (typeof msg.connexion_acceptee !== "undefined") {
-                    dispatch(signIn({
-                        session_token: msg.connexion_acceptee.session_token,
-                        user_info: msg.connexion_acceptee.user_info
-                    }));
-                } else if (typeof msg.client_deconnexion !== "undefined") {
-                    socket.disconnect(); // déconnecte le socket pour éviter les erreurs
-                    dispatch(signOut()); // déconnexion
-                    canal ? canal.setSessionToken(null) : null; // supprime le token de session
-                    socket.connect(); // reconnect
-                } else if (typeof msg.inscription_acceptee !== "undefined") {
-                    dispatch(signIn({
-                        session_token: msg.inscription_acceptee.session_token,
-                        user_info: msg.inscription_acceptee.user_info
-                    }));
-                } else if (typeof msg.liste_utilisateurs !== "undefined") {
-                    setListeUtilisateurs(msg.liste_utilisateurs)
-                    controller.send(AppInstanceRef.current, {"connected_users": msg.liste_utilisateurs.utilisateurs_connectes})
-                } else if (typeof msg.demande_connected_users !== "undefined") {
-                    controller.send(AppInstanceRef.current, {"connected_users": listeUtilisateurs.utilisateurs_connectes})
-                } else if (typeof msg.demande_info_session !== "undefined") {
-                    controller.send(AppInstanceRef.current, {"info_session": session})
-                }
+            if (typeof msg.connexion_acceptee !== "undefined") {
+                dispatch(signIn({
+                    session_token: msg.connexion_acceptee.session_token,
+                    user_info: msg.connexion_acceptee.user_info
+                }));
+            } else if (typeof msg.client_deconnexion !== "undefined") {
+                socket.disconnect(); // déconnecte le socket pour éviter les erreurs
+                dispatch(signOut()); // déconnexion
+                canal ? canal.setSessionToken(null) : null; // supprime le token de session
+                socket.connect(); // reconnect
+            } else if (typeof msg.inscription_acceptee !== "undefined") {
+                dispatch(signIn({
+                    session_token: msg.inscription_acceptee.session_token,
+                    user_info: msg.inscription_acceptee.user_info
+                }));
+            } else if (typeof msg.liste_utilisateurs !== "undefined") {
+                setListeUtilisateurs(msg.liste_utilisateurs)
+                controller.send(AppInstanceRef.current, {"connected_users": msg.liste_utilisateurs.utilisateurs_connectes})
+            } else if (typeof msg.demande_connected_users !== "undefined") {
+                controller.send(AppInstanceRef.current, {"connected_users": listeUtilisateurs.utilisateurs_connectes})
+            } else if (typeof msg.demande_info_session !== "undefined") {
+                controller.send(AppInstanceRef.current, {"info_session": session})
+            } else if (typeof msg.distribue_notification !== "undefined") {
+                setNotifications(msg.distribue_notification);
             }
         }
     }, [canal, controller, dispatch, listeUtilisateurs, session, verbose]);
