@@ -29,7 +29,11 @@ import AdminVoirRole from "./elements/AdminVoirRole/AdminVoirRole.jsx";
 import AdminAjouterRole from "./elements/AdminAjouterRole/AdminAjouterRole.jsx";
 import AdminModifierRole from "./elements/AdminModifierRole/AdminModifierRole.jsx";
 
-const listeMessageEmis = []
+const listeMessageEmis = [
+    "update_session_token",
+    "connected_users",
+    "info_session"
+]
 
 const listeMessageRecus = [
     "connexion_acceptee",
@@ -47,7 +51,6 @@ const App = () => {
 
     const [loading, setLoading] = useState(appInstance.loading);
     const [controller, setController] = useState(appInstance.controller);
-    const [canal, setCanal] = useState(appInstance.canal);
     const [notifications, setNotifications] = useState([]);
     const [listeUtilisateurs, setListeUtilisateurs] = useState([]); // liste des utilisateurs connectés [ {id: 1, nom: "Mathis", prenom: "Lambert"}, ...
 
@@ -73,7 +76,7 @@ const App = () => {
                 } else if (typeof msg.client_deconnexion !== "undefined") {
                     socket.disconnect(); // déconnecte le socket pour éviter les erreurs
                     dispatch(signOut()); // déconnexion
-                    canal ? canal.setSessionToken(null) : console.error("No canal available"); // supprime le token de session
+                    controller.send(AppInstanceRef.current, {"update_session_token": ""});
                     socket.connect(); // reconnect
                 } else if (typeof msg.inscription_acceptee !== "undefined") {
                     dispatch(signIn({
@@ -92,19 +95,17 @@ const App = () => {
                 }
             }
         }
-    }, [canal, controller, dispatch, listeUtilisateurs, session, verbose]);
+    }, [controller, dispatch, listeUtilisateurs, session, verbose]);
 
 
     useEffect(() => {
         // Définir un callback pour être notifié des changements de `loading`
         appInstance.setLoadingCallback(setLoading);
         appInstance.setControllerCallback(setController);
-        appInstance.setCanalCallback(setCanal);
 
         return () => {
             appInstance.setLoadingCallback(null);
             appInstance.setControllerCallback(null);
-            appInstance.setCanalCallback(null);
         }
     }, []);
 
@@ -137,9 +138,9 @@ const App = () => {
 
     useEffect(() => {
         if (session.user_session_token) {
-            canal.setSessionToken(session.user_session_token);
+            controller.send(AppInstanceRef.current, {"update_session_token": session.user_session_token})
         }
-    }, [canal, listeUtilisateurs.utilisateurs_connectes, session, session.user_session_token]);
+    }, [controller, listeUtilisateurs.utilisateurs_connectes, session, session.user_session_token]);
 
     return (
         <Routes>
