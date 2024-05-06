@@ -95,24 +95,30 @@ const HeaderFilDiscussion = ({discussion, inCall}) => {
                                 <Cast/></button>
                         )}
 
-                        {callInfo.muted.audio && (
-                            <button className="btn btn-secondary" title={'Activer le micro'}
-                                    onClick={() => muteUnmute("audio")}>
-                                <MicOff/></button>
-                        ) || (
-                            <button className="btn btn-primary" title={'Couper le micro'}
-                                    onClick={() => muteUnmute("audio")}>
-                                <Mic/></button>
-                        )}
+                        {callInfo.muted && (
+                            <>
+                                {callInfo.muted?.audio && (
+                                    <button className="btn btn-secondary" title={'Activer le micro'}
+                                            onClick={() => muteUnmute("audio")}>
+                                        <MicOff/></button>
+                                ) || (
+                                    <button className="btn btn-primary" title={'Couper le micro'}
+                                            onClick={() => muteUnmute("audio")}>
+                                        <Mic/></button>
+                                )
+                                }
 
-                        {callInfo.muted.video && (
-                            <button className="btn btn-secondary" title={'Activer la vidéo'}
-                                    onClick={() => muteUnmute("video")}>
-                                <VideoOff/></button>
-                        ) || (
-                            <button className="btn btn-primary" title={'Couper la vidéo'}
-                                    onClick={() => muteUnmute("video")}>
-                                <Video/></button>
+                                {callInfo.muted?.video && (
+                                    <button className="btn btn-secondary" title={'Activer la vidéo'}
+                                            onClick={() => muteUnmute("video")}>
+                                        <VideoOff/></button>
+                                ) || (
+                                    <button className="btn btn-primary" title={'Couper la vidéo'}
+                                            onClick={() => muteUnmute("video")}>
+                                        <Video/></button>
+                                )
+                                }
+                            </>
                         )}
                     </>
                 ) || (
