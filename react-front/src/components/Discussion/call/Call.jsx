@@ -34,7 +34,7 @@ const Call = ({streams, callInfo}) => {
                 {Object.keys(streams).length > 0 && (
                     <div id="remote-videos">
                         {Object.values(streams).map((stream) => {
-                            if (stream.user.user_socket_id) {
+                            if (stream.user && stream.user.user_socket_id) {
                                 return (
                                     <RemoteVideo key={stream.user.user_socket_id || "inconnu"}
                                                  stream={stream}
