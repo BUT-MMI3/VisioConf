@@ -37,6 +37,10 @@ const listeMessagesEmis = [
     "demande_historique_discussion",
     "demande_discussion_info",
     "create_offer",
+    "is_call_initiator",
+    "is_in_call",
+    "get_call_info",
+    "get_streams",
 ];
 const listeMessagesRecus = [
     "liste_discussions",
@@ -48,6 +52,7 @@ const listeMessagesRecus = [
     "set_in_call",
     "update_remote_streams",
     "set_call_info",
+    "set_remote_streams"
 ];
 
 export function DiscussionContextProvider() {
@@ -76,7 +81,7 @@ export function DiscussionContextProvider() {
     const [messages, setMessages] = useState([]);
 
     // WEBRTC STATES
-    const [peersStreams, setPeersStreams] = useState({});
+    const [remoteStreams, setRemoteStreams] = useState({});
     const [inCall, setInCall] = useState(false);
     const [callInfo, setCallInfo] = useState({});
     const [calling, setCalling] = useState(false);
@@ -135,11 +140,30 @@ export function DiscussionContextProvider() {
                         return newMessages;
                     });
                 } else if (typeof msg.set_in_call !== "undefined") {
-                    setInCall(msg.set_in_call);
+                    if (discussionId === msg.set_in_call.discussion) {
+                        setInCall(msg.set_in_call.value);
+                        if (msg.set_in_call.value) {
+                            controller.send(discussionInstanceRef.current, {
+                                "get_call_info": {
+                                    discussion: discussionId,
+                                }
+                            })
+                            controller.send(discussionInstanceRef.current, {
+                                "get_streams": {
+                                    discussion: discussionId,
+                                }
+                            })
+                        }
+                    } else {
+                        setInCall(false);
+                    }
+
                 } else if (typeof msg.update_remote_streams !== "undefined") {
                     updateRemoteStreams(msg.update_remote_streams.target, msg.update_remote_streams.stream);
                 } else if (typeof msg.set_call_info !== "undefined") {
                     setCallInfo(msg.set_call_info);
+                } else if (typeof msg.set_remote_streams !== "undefined") {
+                    setRemoteStreams(msg.set_remote_streams);
                 }
             }
         };
@@ -190,6 +214,11 @@ export function DiscussionContextProvider() {
                 discussionId: discussionId,
             },
         });
+        controller.send(discussionInstanceRef.current, {
+            "is_in_call": {
+                discussion: discussionId,
+            },
+        });
     }, [controller, discussionId]);
 
     useEffect(() => {
@@ -198,12 +227,13 @@ export function DiscussionContextProvider() {
                 title: "Appel en cours",
                 message: "Appel en cours",
                 type: "info",
+                duration: 5,
             })
         }
     }, [calling, pushToast]);
 
     const updateRemoteStreams = (socketId, stream) => {
-        setPeersStreams((prevStreams) => {
+        setRemoteStreams((prevStreams) => {
             return {...prevStreams, [socketId]: stream};
         });
     }
@@ -321,7 +351,7 @@ export function DiscussionContextProvider() {
 
                         {inCall && (
                             <>
-                                <Call streams={peersStreams} callInfo={callInfo}/>
+                                <Call streams={remoteStreams} callInfo={callInfo}/>
                             </>
                         ) || (
                             <>
