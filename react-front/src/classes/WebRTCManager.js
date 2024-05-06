@@ -24,6 +24,10 @@ class WebRTCManager {
     connectedMembers = [] // The members connected to the call
     callAccepted = false // Whether the call has been accepted
     inCall = false // Whether the user is in a call
+    muted = {
+        audio: false,
+        video: false
+    } // Whether the user is muted
     isScreenSharing = false
     discussion = "" // The discussion id
     localStream = new MediaStream() // The local stream for the call
@@ -45,7 +49,11 @@ class WebRTCManager {
         "end_call",
         "is_in_call",
         "get_call_info",
-        "get_streams"
+        "get_streams",
+        "mute_unmute_audio",
+        "mute_unmute_video",
+        "share_screen",
+        "stop_sharing_screen"
     ]
     listeMessagesEmis = [
         "send_offer",
@@ -141,6 +149,14 @@ class WebRTCManager {
             } else {
                 this.controller.send(this, {"set_remote_streams": {}})
             }
+        } else if (typeof message.mute_unmute_audio !== "undefined") {      // {}
+            this.muteUnmute("audio")
+        } else if (typeof message.mute_unmute_video !== "undefined") {
+            this.muteUnmute("video")
+        } else if (typeof message.share_screen !== "undefined") {           // {}
+            await this.shareScreen()
+        } else if (typeof message.stop_sharing_screen !== "undefined") {    // {}
+            await this.stopSharingScreen()
         }
     }
 
@@ -296,6 +312,24 @@ class WebRTCManager {
         this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
+    muteUnmute = (type) => {
+        if (type === "audio") {
+            if (this.verbose) console.log("Muting/unmuting audio")
+            this.muted.audio = !this.muted.audio
+            this.localStream.getAudioTracks().forEach(track => {
+                track.enabled = !this.muted.audio
+            })
+        } else if (type === "video") {
+            if (this.verbose) console.log("Muting/unmuting video")
+            this.muted.video = !this.muted.video
+            this.localStream.getVideoTracks().forEach(track => {
+                track.enabled = !this.muted.video
+            })
+        }
+
+        this.controller.send(this, {"set_call_info": this.getCallInfo()})
+    }
+
     createOffer = async (members, discussion, type, initiator) => {
         /**
          * For each member in the discussion, create a new peer connection and send an offer
@@ -388,6 +422,8 @@ class WebRTCManager {
         // this.callbacks.setIsSharingScreen(true)
         this.controller.send(this, {"set_is_sharing_screen": true})
         this.isScreenSharing = true
+
+        this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
     stopSharingScreen = async () => {
@@ -409,6 +445,8 @@ class WebRTCManager {
         // this.callbacks.setIsSharingScreen(false)
         this.controller.send(this, {"set_is_sharing_screen": false})
         this.isScreenSharing = false
+
+        this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
     handleOffer = async offer => {
@@ -613,7 +651,7 @@ class WebRTCManager {
             return
         }
 
-        if (data.sender === this.session.user_socket_id || data.sender === this.callInitiator) {
+        if (data.sender === this.session.user_socket_id || data.sender === this.callCreator) {
             await this.endCall()
         } else {
             if (this.peers[data.sender]) {
@@ -673,8 +711,12 @@ class WebRTCManager {
             isScreenSharing: this.isScreenSharing,
             remoteStreams: this.remoteStreams,
             callCreator: this.callCreator,
-            isCallCreator: this.callCreator === this.session.user_socket_id,
-            discussion: this.discussion
+            isCallCreator: this.callCreator === (this.session.user_socket_id ? this.session.user_socket_id : ""),
+            discussion: this.discussion,
+            inCall: this.inCall,
+            callAccepted: this.callAccepted,
+            type: this.type,
+            muted: this.muted
         }
     }
 
