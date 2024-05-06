@@ -37,6 +37,10 @@ const listeMessagesEmis = [
     "demande_historique_discussion",
     "demande_discussion_info",
     "create_offer",
+    "is_call_initiator",
+    "is_in_call",
+    "get_call_info",
+    "get_streams",
 ];
 const listeMessagesRecus = [
     "liste_discussions",
@@ -48,6 +52,7 @@ const listeMessagesRecus = [
     "set_in_call",
     "update_remote_streams",
     "set_call_info",
+    "set_remote_streams"
 ];
 
 export function DiscussionContextProvider() {
@@ -136,10 +141,24 @@ export function DiscussionContextProvider() {
                     });
                 } else if (typeof msg.set_in_call !== "undefined") {
                     setInCall(msg.set_in_call);
+                    if (msg.set_in_call) {
+                        controller.send(discussionInstanceRef.current, {
+                            "get_call_info": {
+                                discussion: discussionId,
+                            }
+                        })
+                        controller.send(discussionInstanceRef.current, {
+                            "get_streams": {
+                                discussion: discussionId,
+                            }
+                        })
+                    }
                 } else if (typeof msg.update_remote_streams !== "undefined") {
                     updateRemoteStreams(msg.update_remote_streams.target, msg.update_remote_streams.stream);
                 } else if (typeof msg.set_call_info !== "undefined") {
                     setCallInfo(msg.set_call_info);
+                } else if (typeof msg.set_remote_streams !== "undefined") {
+                    setPeersStreams(msg.set_remote_streams);
                 }
             }
         };
@@ -188,6 +207,11 @@ export function DiscussionContextProvider() {
         controller.send(discussionInstanceRef.current, {
             "demande_discussion_info": {
                 discussionId: discussionId,
+            },
+        });
+        controller.send(discussionInstanceRef.current, {
+            "is_in_call": {
+                discussion: discussionId,
             },
         });
     }, [controller, discussionId]);
