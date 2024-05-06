@@ -48,6 +48,7 @@ const listeMessagesRecus = [
     "set_in_call",
     "update_remote_streams",
     "set_call_info",
+    "notification_answer",
 ];
 
 export function DiscussionContextProvider() {
@@ -76,6 +77,7 @@ export function DiscussionContextProvider() {
     const [messages, setMessages] = useState([]);
 
     // WEBRTC STATES
+    const [webRTCManager] = useState(appInstance.getWebRTCManager());
     const [peersStreams, setPeersStreams] = useState({});
     const [inCall, setInCall] = useState(false);
     const [callInfo, setCallInfo] = useState({});
@@ -134,12 +136,6 @@ export function DiscussionContextProvider() {
                         newMessages[newMessages.length - 1].message_status = "error";
                         return newMessages;
                     });
-                } else if (typeof msg.set_in_call !== "undefined") {
-                    setInCall(msg.set_in_call);
-                } else if (typeof msg.update_remote_streams !== "undefined") {
-                    updateRemoteStreams(msg.update_remote_streams.target, msg.update_remote_streams.stream);
-                } else if (typeof msg.set_call_info !== "undefined") {
-                    setCallInfo(msg.set_call_info);
                 }
             }
         };
@@ -193,14 +189,27 @@ export function DiscussionContextProvider() {
     }, [controller, discussionId]);
 
     useEffect(() => {
-        if (calling) {
-            pushToast({
-                title: "Appel en cours",
-                message: "Appel en cours",
-                type: "info",
-            })
+        webRTCManager.setCallback("setInCall", setInCall)
+        webRTCManager.setCallback("updateRemoteStreams", updateRemoteStreams)
+        webRTCManager.setCallback("setCallInfo", setCallInfo)
+
+
+        return () => {
+            webRTCManager.setCallback("setInCall", null)
+            webRTCManager.setCallback("updateRemoteStreams", null)
+            webRTCManager.setCallback("setCallInfo", null)
         }
-    }, [calling, pushToast]);
+    }, [webRTCManager]);
+
+    useEffect(() => {
+        if (calling) {
+           pushToast({
+               title: "Appel en cours",
+               message: "Appel en cours",
+               type: "info",
+           })
+        }
+    }, [calling]);
 
     const updateRemoteStreams = (socketId, stream) => {
         setPeersStreams((prevStreams) => {
@@ -282,15 +291,8 @@ export function DiscussionContextProvider() {
         console.log("Calling type: " + type);
         console.log("Calling discussionId: " + discussionId);
         console.log("Calling session: " + session);
-        controller.send(discussionInstanceRef.current, {
-            "create_offer": {
-                members: ids,
-                discussion: discussionId,
-                type: type,
-                initiator: session.user_socket_id
-            },
-        });
-    }, [controller, discussion, discussionId, session]);
+        webRTCManager ? await webRTCManager.createOffer(ids, discussionId, type, session.user_socket_id) : null;
+    }, [discussion, discussionId, session, webRTCManager]);
 
     // La valeur fournie au contexte
     const contextValue = {
@@ -317,11 +319,11 @@ export function DiscussionContextProvider() {
                     </div>
                 )) || (discussionId && !createDiscussion && discussion && (
                     <div className="discussion-content">
-                        <HeaderFilDiscussion discussion={discussion} inCall={inCall}/>
+                        <HeaderFilDiscussion discussion={discussion} inCall={inCall} />
 
                         {inCall && (
                             <>
-                                <Call streams={peersStreams} callInfo={callInfo}/>
+                                <Call streams={peersStreams} callInfo={callInfo} />
                             </>
                         ) || (
                             <>

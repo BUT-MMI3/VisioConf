@@ -1,4 +1,4 @@
-import {useModal} from '../../elements/Modale/ModaleContext';
+import {useModal} from '../Modale/ModaleContext.jsx';
 import FeatherIcon from 'feather-icons-react'
 import {appInstance} from "../../controller/index.js";
 import {useEffect, useRef, useState} from "react";

@@ -29,13 +29,14 @@ import AdminVoirRole from "./elements/AdminVoirRole/AdminVoirRole.jsx";
 import AdminAjouterRole from "./elements/AdminAjouterRole/AdminAjouterRole.jsx";
 import AdminModifierRole from "./elements/AdminModifierRole/AdminModifierRole.jsx";
 
-const listeMessageEmis = ["connected_users", "info_session"];
+const listeMessageEmis = []
 
 const listeMessageRecus = [
     "connexion_acceptee",
     "inscription_acceptee",
     "client_deconnexion",
     "liste_utilisateurs",
+    "distribue_notification",
     "demande_connected_users",
     "demande_info_session"
 ]
@@ -47,6 +48,7 @@ const App = () => {
     const [loading, setLoading] = useState(appInstance.loading);
     const [controller, setController] = useState(appInstance.controller);
     const [canal, setCanal] = useState(appInstance.canal);
+    const [notifications, setNotifications] = useState([]);
     const [listeUtilisateurs, setListeUtilisateurs] = useState([]); // liste des utilisateurs connectés [ {id: 1, nom: "Mathis", prenom: "Lambert"}, ...
 
     const navigate = useNavigate();
@@ -85,6 +87,8 @@ const App = () => {
                     controller.send(AppInstanceRef.current, {"connected_users": listeUtilisateurs.utilisateurs_connectes})
                 } else if (typeof msg.demande_info_session !== "undefined") {
                     controller.send(AppInstanceRef.current, {"info_session": session})
+                } else if (typeof msg.distribue_notification !== "undefined") {
+                    setNotifications(msg.distribue_notification);
                 }
             }
         }
