@@ -41,7 +41,7 @@ services:
       - ./databases/mongodb:/data/db
     networks:
       - visioconf
-      
+
   nginx:
     image: nginx:latest
     ports:

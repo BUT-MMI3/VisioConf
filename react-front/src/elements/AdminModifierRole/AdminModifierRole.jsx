@@ -1,10 +1,10 @@
 import "./AdminModifierRole.scss";
-import { useEffect, useRef, useState } from "react";
-import { appInstance } from "../../controller/index.js";
-import { useNavigate, useParams } from "react-router-dom";
+import {useEffect, useRef, useState} from "react";
+import {appInstance} from "../../controller/index.js";
+import {useNavigate} from "react-router-dom";
 import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
-import { useToasts } from "../Toasts/ToastContext.jsx";
+import {useToasts} from "../Toasts/ToastContext.jsx";
 
 const listeMessagesEmis = ["admin_demande_role_details", "admin_modifier_role", "admin_demande_liste_permissions"];
 const listeMessagesRecus = ["admin_role_details", "admin_role_modifie", "admin_liste_permissions"];
@@ -12,7 +12,7 @@ const listeMessagesRecus = ["admin_role_details", "admin_role_modifie", "admin_l
 const AdminModifierRole = () => {
     const roleId = location.pathname.split("/")[3];
     const navigate = useNavigate();
-    const { pushToast } = useToasts();
+    const {pushToast} = useToasts();
 
     const [label, setLabel] = useState("");
     const [permissions, setPermissions] = useState([]);
@@ -23,7 +23,7 @@ const AdminModifierRole = () => {
     useEffect(() => {
         controller.subscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
 
-        controller.send(instanceRef.current, { "admin_demande_liste_permissions": {} });
+        controller.send(instanceRef.current, {"admin_demande_liste_permissions": {}});
 
         return () => {
             controller.unsubscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
@@ -46,7 +46,7 @@ const AdminModifierRole = () => {
             role_label: label,
             role_permissions: selectedPermissions,
         };
-        controller.send(instanceRef.current, { "admin_modifier_role": { roleData } });
+        controller.send(instanceRef.current, {"admin_modifier_role": {roleData}});
     };
 
     const handlePermissionChange = (permissionId) => {
@@ -87,10 +87,9 @@ const AdminModifierRole = () => {
                         type: "error",
                     });
                 }
-            }
-            else if(msg.admin_liste_permissions){
+            } else if (msg.admin_liste_permissions) {
                 setPermissions(msg.admin_liste_permissions.permissions || []);
-                controller.send(instanceRef.current, { "admin_demande_role_details": { roleId } });
+                controller.send(instanceRef.current, {"admin_demande_role_details": {roleId}});
             }
         }
     });
@@ -111,14 +110,16 @@ const AdminModifierRole = () => {
             <form onSubmit={handleSubmit} className="modifier-role-form">
                 <label className="modifier-role-label">
                     <h4>Nom du rôle : <p>*</p></h4>
-                    <input type="text" placeholder="Nom du rôle" value={label} onChange={(e) => setLabel(e.target.value)} required/>
+                    <input type="text" placeholder="Nom du rôle" value={label}
+                           onChange={(e) => setLabel(e.target.value)} required/>
                 </label>
                 <label className="modifier-role-label w-100">
                     <h4>Permissions :</h4>
                     <div className="fc modifier-role-checkboxes">
                         {permissions.map(permission => (
                             <label key={permission._id} className="checkbox-label">
-                                <input type="checkbox" checked={selectedPermissions.includes(permission._id)} onChange={() => handlePermissionChange(permission._id)} />
+                                <input type="checkbox" checked={selectedPermissions.includes(permission._id)}
+                                       onChange={() => handlePermissionChange(permission._id)}/>
                                 {permission.permission_label}
                             </label>
                         ))}

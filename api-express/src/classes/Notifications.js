@@ -34,8 +34,8 @@ class Notifications {
                 messageToUpdate.message_status = 'read';
 
                 await Discussion.updateOne(
-                    { 'discussion_messages._id': messageToUpdate._id },
-                    { $set: { 'discussion_messages.$.message_status': 'read' } }
+                    {'discussion_messages._id': messageToUpdate._id},
+                    {$set: {'discussion_messages.$.message_status': 'read'}}
                 );
             }
         }

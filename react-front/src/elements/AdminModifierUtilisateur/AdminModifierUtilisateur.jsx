@@ -1,10 +1,9 @@
 import "./AdminModifierUtilisateur.scss";
 import {useEffect, useRef, useState} from "react";
 import {appInstance} from "../../controller/index.js";
-import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
-import {redirect} from "react-router-dom";
 import {useToasts} from "../Toasts/ToastContext.jsx";
 
 const listeMessagesEmis = ["admin_modifier_utilisateur", "admin_demande_utilisateur_details"];
@@ -48,7 +47,7 @@ const AdminModifierUtilisateur = () => {
             user_job: userJob,
             user_status: userStatus,
         };
-        controller.send(instanceRef.current, { "admin_modifier_utilisateur": {userData: userData} });
+        controller.send(instanceRef.current, {"admin_modifier_utilisateur": {userData: userData}});
     };
 
     const instanceRef = useRef({
@@ -56,7 +55,7 @@ const AdminModifierUtilisateur = () => {
         traitementMessage: (msg) => {
             console.log("Received data:", msg);
             if (msg && msg.admin_utilisateur_modifie) {
-                if(msg.admin_utilisateur_modifie.success) {
+                if (msg.admin_utilisateur_modifie.success) {
                     pushToast({
                         title: "Succès",
                         message: "Utilisateur modifié avec succès !",
@@ -72,8 +71,8 @@ const AdminModifierUtilisateur = () => {
                     });
 
                 }
-            }else if (msg && msg.admin_utilisateur_details) {
-                if(msg.admin_utilisateur_details.success){
+            } else if (msg && msg.admin_utilisateur_details) {
+                if (msg.admin_utilisateur_details.success) {
                     console.log("Utilisateur trouvé:", msg.admin_utilisateur_details.user);
                     setUserFirstname(msg.admin_utilisateur_details.user.user_firstname || "");
                     setUserLastname(msg.admin_utilisateur_details.user.user_lastname || "");
@@ -81,7 +80,7 @@ const AdminModifierUtilisateur = () => {
                     setUserPhone(msg.admin_utilisateur_details.user.user_phone || "");
                     setUserJob(msg.admin_utilisateur_details.user.user_job || "");
                     setUserStatus(msg.admin_utilisateur_details.user.user_status || "");
-                }else {
+                } else {
                     pushToast({
                         title: "Erreur",
                         message: "Erreur lors de la récupération de l'utilisateur",
@@ -117,7 +116,7 @@ const AdminModifierUtilisateur = () => {
             </div>
 
             <form onSubmit={handleSubmit} className={"ajouter-utilisateur-form"}>
-                <label className={"ajouter-utilisateur-label"} style={{width:'100%'}}>
+                <label className={"ajouter-utilisateur-label"} style={{width: '100%'}}>
                     <span>Les champs marqués d'une (<p>*</p>) sont obligatoires.</span>
                 </label>
                 <label className={"ajouter-utilisateur-label"}>

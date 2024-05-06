@@ -4,9 +4,9 @@ import {useSelector} from "react-redux";
 const NoyauProfil = () => {
 
     const session = useSelector((state) => state.session);
-    
+
     return (
-        <div className={"fc ai-fs g1"} style={{margin:"2rem",}}>
+        <div className={"fc ai-fs g1"} style={{margin: "2rem",}}>
             <div className={"content-profil fr g1"}>
                 <div className={"fc g1"}>
                     <h2>Mon profil</h2>
@@ -83,4 +83,4 @@ const NoyauProfil = () => {
     );
 };
 
-    export default NoyauProfil;
+export default NoyauProfil;

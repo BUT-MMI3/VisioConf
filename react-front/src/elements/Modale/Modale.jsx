@@ -47,50 +47,50 @@ const Modale = () => {
     };
 
     return (<AnimatePresence>
-            {modalProps.isOpen && (<motion.div
-                    className="modale-background"
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    onClick={closeModal}
-                >
-                    <motion.div
-                        className={`modale-container ${modalProps.type}`}
-                        variants={modalVariants}
-                        onClick={handleContainerClick}
-                    >
+        {modalProps.isOpen && (<motion.div
+            className="modale-background"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            onClick={closeModal}
+        >
+            <motion.div
+                className={`modale-container ${modalProps.type}`}
+                variants={modalVariants}
+                onClick={handleContainerClick}
+            >
 
-                        {modalProps.boutonClose && (<button onClick={closeModal} className="modale-close-button">
-                                <FeatherIcon icon="x"/>
-                            </button>)}
-                        {modalProps.htmlContent ? (<>
-                                {modalProps.htmlContent}
-                            </>) : (<>
-                                <div className="modale-icon">
+                {modalProps.boutonClose && (<button onClick={closeModal} className="modale-close-button">
+                    <FeatherIcon icon="x"/>
+                </button>)}
+                {modalProps.htmlContent ? (<>
+                    {modalProps.htmlContent}
+                </>) : (<>
+                    <div className="modale-icon">
                                       <span>
                                         {getIcon()}
                                       </span>
-                                </div>
-                                <div className="modale-header">
-                                    <h3>{modalProps.titre}</h3>
-                                </div>
-                                <div className="modale-body">
-                                    <p>{modalProps.texte}</p>
-                                </div>
-                                <div className="modale-footer">
-                                    <button onClick={closeModal} className="modale-cancel-button">
-                                        Annuler
-                                    </button>
-                                    {modalProps.onValidate && (
-                                        <button onClick={handleConfirm} className="modale-action-button">
-                                            {modalProps.texteBoutonAction}
-                                        </button>)}
-                                </div>
-                            </>)}
+                    </div>
+                    <div className="modale-header">
+                        <h3>{modalProps.titre}</h3>
+                    </div>
+                    <div className="modale-body">
+                        <p>{modalProps.texte}</p>
+                    </div>
+                    <div className="modale-footer">
+                        <button onClick={closeModal} className="modale-cancel-button">
+                            Annuler
+                        </button>
+                        {modalProps.onValidate && (
+                            <button onClick={handleConfirm} className="modale-action-button">
+                                {modalProps.texteBoutonAction}
+                            </button>)}
+                    </div>
+                </>)}
 
-                    </motion.div>
-                </motion.div>)}
-        </AnimatePresence>);
+            </motion.div>
+        </motion.div>)}
+    </AnimatePresence>);
 };
 
 export default Modale;

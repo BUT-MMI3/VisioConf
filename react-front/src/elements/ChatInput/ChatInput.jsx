@@ -6,7 +6,7 @@ Date: Janvier 2024
 import {useState} from "react";
 import {useDiscussion} from "../../components/Discussion/context/DiscussionContext.jsx";
 import "./ChatInput.scss";
-import { Send } from "react-feather";
+import {Send} from "react-feather";
 
 export default function ChatInput() {
     const {addMessage} = useDiscussion();

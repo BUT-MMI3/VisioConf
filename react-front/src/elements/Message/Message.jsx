@@ -4,13 +4,8 @@ Date: Janvier 2024
 */
 
 import './Message.scss';
-import FeatherIcon from "feather-icons-react";
 import {useSelector} from "react-redux";
-import {
-    Loader,
-    Check,
-    CheckCircle
-} from "react-feather";
+import {Check, CheckCircle, Loader} from "react-feather";
 
 const Message = ({message}) => {
     const session = useSelector((state) => state.session);

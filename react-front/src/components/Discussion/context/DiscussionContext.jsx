@@ -36,6 +36,7 @@ const listeMessagesEmis = [
     "demande_liste_discussions",
     "demande_historique_discussion",
     "demande_discussion_info",
+    "create_offer",
 ];
 const listeMessagesRecus = [
     "liste_discussions",
@@ -44,6 +45,9 @@ const listeMessagesRecus = [
     "discussion_info",
     "nouveau_message",
     "erreur_envoi_message",
+    "set_in_call",
+    "update_remote_streams",
+    "set_call_info",
     "notification_answer",
 ];
 

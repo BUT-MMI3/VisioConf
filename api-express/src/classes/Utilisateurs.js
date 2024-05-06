@@ -82,7 +82,7 @@ class Utilisateurs {
                 id: msg.id
             });
 
-        }else if (typeof msg.admin_demande_liste_utilisateurs !== 'undefined') {
+        } else if (typeof msg.admin_demande_liste_utilisateurs !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement d'une demande de liste d'utilisateurs par un administrateur`);
 
             try {

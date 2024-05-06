@@ -21,7 +21,7 @@ const callSchema = new Schema({
     },
     members_allowed_to_join: [{type: Schema.Types.ObjectId, ref: "User", required: true}],
     in_call_members: [{type: Schema.Types.ObjectId, ref: "User", required: true}],
-    call_creator:{type: Schema.Types.ObjectId, ref: "User", required: true},
+    call_creator: {type: Schema.Types.ObjectId, ref: "User", required: true},
     is_ended: {
         type: Boolean,
         default: false,

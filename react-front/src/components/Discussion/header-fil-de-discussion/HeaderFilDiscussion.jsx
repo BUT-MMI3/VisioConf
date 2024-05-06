@@ -1,18 +1,38 @@
 import './HeaderFilDiscussion.scss'
-import {Phone, UserPlus, Users, Video, PhoneOff} from "react-feather";
+import {Phone, PhoneOff, UserPlus, Users, Video} from "react-feather";
 import {useSelector} from "react-redux";
 import {useDiscussion} from "../context/DiscussionContext.jsx";
 import {appInstance} from "../../../controller/index.js";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
+
+const listeMessagesEmis = ["end_call"]
+const listeMessagesRecus = []
 
 const HeaderFilDiscussion = ({discussion, inCall}) => {
+    const instanceName = "HeaderFilDiscussion"
+    const verbose = false
     const session = useSelector(state => state.session)
     const {call} = useDiscussion()
-    const [webRTCManager] = useState(appInstance.getWebRTCManager())
+    const [controller] = useState(appInstance.getController())
+
+    const {current} = useRef({
+        instanceName,
+        traitementMessage: (msg) => {
+            if (verbose || controller.verboseall) console.log(`INFO (${instanceName}) - traitementMessage: `, msg);
+        }
+    })
+
+    useEffect(() => {
+        controller.subscribe(current, listeMessagesEmis, listeMessagesRecus)
+
+        return () => {
+            controller.unsubscribe(current, listeMessagesEmis, listeMessagesRecus)
+        }
+    }, [controller, current]);
 
     const hangUp = async () => {
-        if (webRTCManager && inCall) {
-            await webRTCManager.endCall()
+        if (inCall) {
+            controller.send(current, {"end_call": {}})
         }
     }
 
@@ -41,8 +61,10 @@ const HeaderFilDiscussion = ({discussion, inCall}) => {
                     </>
                 )}
 
-                <button className="btn btn-primary" title={'Ajouter un participant -> non implémenté'} disabled={true}><UserPlus/></button>
-                <button className="btn btn-secondary" title={'Infos du groupe -> non implémenté'} disabled={true}><Users/></button>
+                <button className="btn btn-primary" title={'Ajouter un participant -> non implémenté'} disabled={true}>
+                    <UserPlus/></button>
+                <button className="btn btn-secondary" title={'Infos du groupe -> non implémenté'} disabled={true}>
+                    <Users/></button>
             </div>
         </div>
     )

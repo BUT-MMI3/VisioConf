@@ -76,7 +76,7 @@ const AdminAjouterRole = () => {
     useEffect(() => {
         controller.subscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
 
-        controller.send(instanceRef.current, { "admin_demande_liste_permissions": {} });
+        controller.send(instanceRef.current, {"admin_demande_liste_permissions": {}});
 
         return () => {
             controller.unsubscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
@@ -110,7 +110,8 @@ const AdminAjouterRole = () => {
                 <div className={"fc ajouter-role-chechboxes"}>
                     {permissions.map(permission => (
                         <label key={permission._id} className="checkbox-label">
-                            <input type="checkbox" checked={selectedPermissions.includes(permission._id)} onChange={() => handlePermissionChange(permission._id)} />
+                            <input type="checkbox" checked={selectedPermissions.includes(permission._id)}
+                                   onChange={() => handlePermissionChange(permission._id)}/>
                             {permission.permission_label}
                         </label>
                     ))}

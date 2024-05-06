@@ -37,6 +37,8 @@ const listeMessageRecus = [
     "client_deconnexion",
     "liste_utilisateurs",
     "distribue_notification",
+    "demande_connected_users",
+    "demande_info_session"
 ]
 
 const App = () => {
@@ -57,10 +59,13 @@ const App = () => {
     const session = useSelector((state) => state.session);
     const dispatch = useDispatch();
 
-    const {current} = useRef({
-        instanceName,
-        traitementMessage: (msg) => {
-            if (verbose || (controller ? controller.verboseall : null)) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
+    const AppInstanceRef = useRef(null);
+
+    useEffect(() => {
+        AppInstanceRef.current = {
+            instanceName,
+            traitementMessage: (msg) => {
+                if (verbose || (controller ? controller.verboseall : null)) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
             if (typeof msg.connexion_acceptee !== "undefined") {
                 dispatch(signIn({
@@ -78,37 +83,41 @@ const App = () => {
                     user_info: msg.inscription_acceptee.user_info
                 }));
             } else if (typeof msg.liste_utilisateurs !== "undefined") {
-                setListeUtilisateurs(msg.liste_utilisateurs);
+                setListeUtilisateurs(msg.liste_utilisateurs)
+                controller.send(AppInstanceRef.current, {"connected_users": msg.liste_utilisateurs.utilisateurs_connectes})
+            } else if (typeof msg.demande_connected_users !== "undefined") {
+                controller.send(AppInstanceRef.current, {"connected_users": listeUtilisateurs.utilisateurs_connectes})
+            } else if (typeof msg.demande_info_session !== "undefined") {
+                controller.send(AppInstanceRef.current, {"info_session": session})
             } else if (typeof msg.distribue_notification !== "undefined") {
                 setNotifications(msg.distribue_notification);
             }
         }
-    });
+    }, [canal, controller, dispatch, listeUtilisateurs, session, verbose]);
+
 
     useEffect(() => {
         // Définir un callback pour être notifié des changements de `loading`
         appInstance.setLoadingCallback(setLoading);
         appInstance.setControllerCallback(setController);
         appInstance.setCanalCallback(setCanal);
-        appInstance.setWebRTCManagerCallback(setWebRTCManager);
 
         return () => {
             appInstance.setLoadingCallback(null);
             appInstance.setControllerCallback(null);
             appInstance.setCanalCallback(null);
-            appInstance.setWebRTCManagerCallback(null);
         }
     }, []);
 
     useEffect(() => {
         if (!loading) {
-            controller.subscribe(current, listeMessageEmis, listeMessageRecus);
+            controller.subscribe(AppInstanceRef.current, listeMessageEmis, listeMessageRecus);
 
             return () => {
-                controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
+                controller.unsubscribe(AppInstanceRef.current, listeMessageEmis, listeMessageRecus);
             };
         }
-    }, [controller, current, loading]);
+    }, [controller, loading]);
 
     useEffect(() => {
         if (!session.isSignedIn && (location.pathname !== "/login" && location.pathname !== "/forgot-password" && location.pathname !== "/inscription")) {
@@ -120,17 +129,18 @@ const App = () => {
         }
     }, [session.isSignedIn, location.pathname, navigate]);
 
+    useEffect(() => {
+        if (session.isSignedIn) {
+            controller.send(AppInstanceRef.current, {"info_session": session})
+        }
+    }, [controller, session.isSignedIn, session]);
+
 
     useEffect(() => {
         if (session.user_session_token) {
             canal.setSessionToken(session.user_session_token);
-
-            if (webRTCManager) {
-                webRTCManager.setSession(session)
-                webRTCManager.setConnectedUsers(listeUtilisateurs.utilisateurs_connectes)
-            }
         }
-    }, [canal, listeUtilisateurs.utilisateurs_connectes, session, session.user_session_token, webRTCManager]);
+    }, [canal, listeUtilisateurs.utilisateurs_connectes, session, session.user_session_token]);
 
     return (
         <Routes>

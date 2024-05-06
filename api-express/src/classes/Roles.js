@@ -1,5 +1,5 @@
 const Role = require('../models/role');
-const { v4: uuidv4 } = require("uuid");
+const {v4: uuidv4} = require("uuid");
 
 class Roles {
     controller = null;
@@ -60,7 +60,7 @@ class Roles {
 
     handleRoleDetails = async (msg) => {
         try {
-            const role = await Role.findOne({ _id: msg.admin_demande_role_details.roleId }).populate('role_permissions');
+            const role = await Role.findOne({_id: msg.admin_demande_role_details.roleId}).populate('role_permissions');
             this.controller.send(this, {
                 admin_role_details: {
                     success: true,
@@ -112,7 +112,7 @@ class Roles {
 
     handleModifyRole = async (roleData) => {
         try {
-            const role = await Role.findOne({ _id: roleData.role_id });
+            const role = await Role.findOne({_id: roleData.role_id});
             role.role_label = roleData.role_label;
             role.role_permissions = roleData.role_permissions;
             await role.save();
@@ -138,7 +138,7 @@ class Roles {
     handleDeleteRole = async (msg) => {
         try {
             // cant delete if role.role_default == true
-            const role = await Role.findOne({ _id: msg });
+            const role = await Role.findOne({_id: msg});
             if (role.role_default) {
                 this.controller.send(this, {
                     admin_role_supprime: {
@@ -147,8 +147,8 @@ class Roles {
                     },
                     id: msg.id
                 });
-            }else{
-                await Role.deleteOne({ _id: msg });
+            } else {
+                await Role.deleteOne({_id: msg});
                 this.controller.send(this, {
                     admin_role_supprime: {
                         success: true

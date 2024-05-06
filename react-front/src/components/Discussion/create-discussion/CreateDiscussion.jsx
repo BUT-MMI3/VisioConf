@@ -151,7 +151,8 @@ const CreateDiscussion = () => {
                                        }}/>
                                 <label
                                     htmlFor={user.user_uuid}
-                                    className={(discussionMembers.includes(user.user_uuid) ? 'selected' : '')}>{user.user_firstname} {user.user_lastname} ({user.user_job}) - {user.user_is_online ? 'En ligne' : 'Hors ligne'}</label>
+                                    className={(discussionMembers.includes(user.user_uuid) ? 'selected' : '')}>{user.user_firstname} {user.user_lastname} ({user.user_job})
+                                    - {user.user_is_online ? 'En ligne' : 'Hors ligne'}</label>
                             </li>
                         )
                     })}

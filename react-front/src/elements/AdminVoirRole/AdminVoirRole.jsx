@@ -25,10 +25,10 @@ const AdminVoirRole = () => {
         traitementMessage: (msg) => {
             console.log("Received data:", msg);
             if (msg && msg.admin_role_details) {
-                if(msg.admin_role_details.success){
+                if (msg.admin_role_details.success) {
                     console.log("Role trouvé:", msg.admin_role_details.role);
                     setRole(msg.admin_role_details.role || {});
-                }else {
+                } else {
                     pushToast({
                         title: "Erreur",
                         message: "Erreur lors de la récupération du rôle",
@@ -78,7 +78,7 @@ const AdminVoirRole = () => {
                                 </div>
                                 <div className="voir-role--content--card--content--row">
                                     <span>Permissions : </span>
-                                    <span>{role.role_permissions.map( p => p.permission_label).join(", ")}</span>
+                                    <span>{role.role_permissions.map(p => p.permission_label).join(", ")}</span>
                                 </div>
                             </div>
                         </div>

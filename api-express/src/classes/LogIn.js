@@ -111,7 +111,10 @@ class LogIn {
 
 
                     // check if the user was in a call
-                    const call = await Call.findOne({in_call_members: user._id, is_ended: false}).populate("in_call_members").populate("call_creator");
+                    const call = await Call.findOne({
+                        in_call_members: user._id,
+                        is_ended: false
+                    }).populate("in_call_members").populate("call_creator");
                     console.log("USER")
                     console.log(user)
                     console.log("CALL")
@@ -141,19 +144,19 @@ class LogIn {
             } catch (e) {
                 console.log("ERROR (LogIn) - " + e);
             }
-        // } else if (typeof msg.demande_user_info !== "undefined") {
-        //     if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Demande d'informations de l'utilisateur pour NoyauAccueil");
-        //     await User.updateOne({user_socket_id: msg.id}, {
-        //         user_socket_id: "none",
-        //         user_is_online: false,
-        //         user_last_connection: new Date(),
-        //         user_tokens: {}
-        //     });
-        //     if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
+            // } else if (typeof msg.demande_user_info !== "undefined") {
+            //     if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Demande d'informations de l'utilisateur pour NoyauAccueil");
+            //     await User.updateOne({user_socket_id: msg.id}, {
+            //         user_socket_id: "none",
+            //         user_is_online: false,
+            //         user_last_connection: new Date(),
+            //         user_tokens: {}
+            //     });
+            //     if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
         } else if (typeof msg.demande_changement_status !== "undefined") {
             try {
                 if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Demande de changement de statut");
-                let user = await User.findOne({ user_socket_id: msg.id });
+                let user = await User.findOne({user_socket_id: msg.id});
                 if (user) {
                     user.user_disturb_status = msg.demande_changement_status;
                     await user.save();

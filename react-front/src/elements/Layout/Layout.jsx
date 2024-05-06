@@ -1,37 +1,54 @@
 import "./Layout.scss";
 import NoyauBarreDeMenu from "../NoyauBarreDeMenu/NoyauBarreDeMenu";
 import Accueil from "../../components/Accueil/NoyauAccueil.jsx";
-import { Outlet, useLocation } from "react-router-dom";
+import {Outlet, useLocation} from "react-router-dom";
 import {appInstance} from "../../controller/index.js";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import IncomingCallModal from "../IncomingCallModal/IncomingCallModal.jsx";
+
+const listeMessagesEmis = ["accept_incoming_call"];
+const listeMessagesRecus = ["incoming_call"];
 
 export default function Layout() {
     const location = useLocation();
+    const instanceName = "Layout";
+    const verbose = true;
 
-    const [webRTCManager] = useState(appInstance.getWebRTCManager());
+    const [controller] = useState(appInstance.getController());
     const [offer, setOffer] = useState(null);
     const [incomingCall, setIncomingCall] = useState(false);
+
+    const {current} = useRef({
+        instanceName,
+        traitementMessage: (msg) => {
+            if (verbose || controller.verboseall) console.log(`INFO (${instanceName}) - traitementMessage: `, msg);
+
+            if (typeof msg.incoming_call !== "undefined") {
+                handleOffer(msg.incoming_call);
+            }
+        }
+    })
+
+    useEffect(() => {
+        controller.subscribe(current, listeMessagesEmis, listeMessagesRecus);
+        return () => {
+            controller.unsubscribe(current, listeMessagesEmis, listeMessagesRecus);
+        };
+    }, [controller, current]);
 
     function handleOffer(offer) {
         setOffer(offer);
         setIncomingCall(true);
     }
 
-    useEffect(() => {
-        webRTCManager.setCallback("incomingCall", (offer) => {
-            console.warn("INFO Incoming call");
-            handleOffer(offer);
-        });
-
-        return () => {
-            webRTCManager.setCallback("incomingCall", null);
-        };
-    }, [webRTCManager]);
-
     async function acceptCall(value, offer) {
         console.warn("INFO Accepting call");
-        await webRTCManager.acceptIncomingCall(value, offer);
+        controller.send(current, {
+            "accept_incoming_call": {
+                "value": value,
+                "offer": offer
+            }
+        });
         setIncomingCall(false);
     }
 

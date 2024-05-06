@@ -15,13 +15,14 @@
       font-size: 1.5rem;
     }
   }
+
   &--tools {
     display: flex;
     margin-bottom: 1rem;
     gap: 1rem;
     width: 100%;
 
-    &--search{
+    &--search {
       display: flex;
       align-items: center;
       background-color: #EAEAEA;
@@ -29,10 +30,11 @@
       width: 100%;
       overflow: hidden;
 
-      svg{
+      svg {
         margin-left: 0.5rem;
         color: #4A4A4A;
       }
+
       input {
         padding: 0.5rem;
         border: none;
@@ -59,11 +61,12 @@
     border-collapse: collapse;
     border-radius: 10px;
     overflow: hidden;
-    color:black;
+    color: black;
 
-    tr{
+    tr {
       padding: 0.5rem;
     }
+
     th,
     td {
       padding: 8px;
@@ -94,7 +97,8 @@
       border-top-right-radius: 10px;
     }
   }
-  &--actions{
+
+  &--actions {
     display: flex;
     border-radius: 10px;
     overflow: hidden;
@@ -114,6 +118,7 @@
     &--voir {
       background-color: var(--color-primary)
     }
+
     &--modif {
       background-color: var(--color-primary)
     }
