@@ -50,8 +50,6 @@ const App = () => {
     const [canal, setCanal] = useState(appInstance.canal);
     const [notifications, setNotifications] = useState([]);
     const [listeUtilisateurs, setListeUtilisateurs] = useState([]); // liste des utilisateurs connectés [ {id: 1, nom: "Mathis", prenom: "Lambert"}, ...
-    const [webRTCManager, setWebRTCManager] = useState(appInstance.webRTCManager);
-
 
     const navigate = useNavigate();
     const location = useLocation();
