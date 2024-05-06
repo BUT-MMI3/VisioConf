@@ -97,7 +97,7 @@ ul {
 .notifications, .historiques {
     padding: 1em;
     max-height: 50vh;
-    overflow: scroll;
+    overflow-y: auto;
 }
 
 ul {
