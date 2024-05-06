@@ -67,30 +67,31 @@ const App = () => {
             traitementMessage: (msg) => {
                 if (verbose || (controller ? controller.verboseall : null)) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
-            if (typeof msg.connexion_acceptee !== "undefined") {
-                dispatch(signIn({
-                    session_token: msg.connexion_acceptee.session_token,
-                    user_info: msg.connexion_acceptee.user_info
-                }));
-            } else if (typeof msg.client_deconnexion !== "undefined") {
-                socket.disconnect(); // déconnecte le socket pour éviter les erreurs
-                dispatch(signOut()); // déconnexion
-                canal ? canal.setSessionToken(null) : null; // supprime le token de session
-                socket.connect(); // reconnect
-            } else if (typeof msg.inscription_acceptee !== "undefined") {
-                dispatch(signIn({
-                    session_token: msg.inscription_acceptee.session_token,
-                    user_info: msg.inscription_acceptee.user_info
-                }));
-            } else if (typeof msg.liste_utilisateurs !== "undefined") {
-                setListeUtilisateurs(msg.liste_utilisateurs)
-                controller.send(AppInstanceRef.current, {"connected_users": msg.liste_utilisateurs.utilisateurs_connectes})
-            } else if (typeof msg.demande_connected_users !== "undefined") {
-                controller.send(AppInstanceRef.current, {"connected_users": listeUtilisateurs.utilisateurs_connectes})
-            } else if (typeof msg.demande_info_session !== "undefined") {
-                controller.send(AppInstanceRef.current, {"info_session": session})
-            } else if (typeof msg.distribue_notification !== "undefined") {
-                setNotifications(msg.distribue_notification);
+                if (typeof msg.connexion_acceptee !== "undefined") {
+                    dispatch(signIn({
+                        session_token: msg.connexion_acceptee.session_token,
+                        user_info: msg.connexion_acceptee.user_info
+                    }));
+                } else if (typeof msg.client_deconnexion !== "undefined") {
+                    socket.disconnect(); // déconnecte le socket pour éviter les erreurs
+                    dispatch(signOut()); // déconnexion
+                    canal ? canal.setSessionToken(null) : null; // supprime le token de session
+                    socket.connect(); // reconnect
+                } else if (typeof msg.inscription_acceptee !== "undefined") {
+                    dispatch(signIn({
+                        session_token: msg.inscription_acceptee.session_token,
+                        user_info: msg.inscription_acceptee.user_info
+                    }));
+                } else if (typeof msg.liste_utilisateurs !== "undefined") {
+                    setListeUtilisateurs(msg.liste_utilisateurs)
+                    controller.send(AppInstanceRef.current, {"connected_users": msg.liste_utilisateurs.utilisateurs_connectes})
+                } else if (typeof msg.demande_connected_users !== "undefined") {
+                    controller.send(AppInstanceRef.current, {"connected_users": listeUtilisateurs.utilisateurs_connectes})
+                } else if (typeof msg.demande_info_session !== "undefined") {
+                    controller.send(AppInstanceRef.current, {"info_session": session})
+                } else if (typeof msg.distribue_notification !== "undefined") {
+                    setNotifications(msg.distribue_notification);
+                }
             }
         }
     }, [canal, controller, dispatch, listeUtilisateurs, session, verbose]);
