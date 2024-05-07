@@ -114,7 +114,9 @@ export function DiscussionContextProvider() {
                 } else if (typeof msg.nouveau_message !== "undefined") {
                     // Si nouveau message dans la discussion en cours
                     if (msg.nouveau_message.discussionId === discussionId) {
-                        if (messages[messages.length - 1].message_status === "sending" && messages[messages.length - 1].message_sender.user_uuid === msg.nouveau_message.message.message_sender.user_uuid) {
+                        if (messages.length === 0) {
+                            setMessages([msg.nouveau_message.message]);
+                        } else if (messages[messages.length - 1].message_status === "sending" && messages[messages.length - 1].message_sender.user_uuid === msg.nouveau_message.message.message_sender.user_uuid) {
                             setMessages((prevMessages) => {
                                 const newMessages = [...prevMessages];
                                 newMessages[newMessages.length - 1] = msg.nouveau_message.message;
