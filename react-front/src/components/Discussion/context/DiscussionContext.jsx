@@ -37,6 +37,7 @@ const listeMessagesEmis = [
     "demande_historique_discussion",
     "demande_discussion_info",
     "create_offer",
+    "new_call",
     "is_call_initiator",
     "is_in_call",
     "get_call_info",
@@ -298,31 +299,16 @@ export function DiscussionContextProvider() {
         if (discussionId === undefined) return;
 
         setCalling(true);
-        const members = discussion?.discussion_members || [];
-        console.log(discussion)
-        const ids = []
-        if (members) {
-            for (const member of members) {
-                if (member.user_socket_id && member.user_is_online && member.user_uuid !== session.user_uuid) ids.push(member.user_socket_id);
-            }
-        } else {
-            console.log("No members in discussion");
-            alert("No members in discussion");
-        }
 
-        console.log("Calling members: " + JSON.stringify(ids));
-        console.log("Calling type: " + type);
         console.log("Calling discussionId: " + discussionId);
-        console.log("Calling session: " + session);
+        console.log("Calling type: " + type);
         controller.send(discussionInstanceRef.current, {
-            "create_offer": {
-                members: ids,
+            "new_call": {
                 discussion: discussionId,
                 type: type,
-                initiator: session.user_socket_id
             },
         });
-    }, [controller, discussion, discussionId, session]);
+    }, [controller, discussionId]);
 
     // La valeur fournie au contexte
     const contextValue = {

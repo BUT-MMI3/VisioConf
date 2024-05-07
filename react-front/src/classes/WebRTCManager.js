@@ -22,6 +22,8 @@ class WebRTCManager {
     pendingIceCandidates = {} // Pending ice candidates for each peer {socketId: RTCIceCandidate[]}
     callMembers = [] // The members selected for the call
     inCallMembers = [] // The members connected to the call
+    isCalling = false // Whether the user is calling
+    callCreated = false // Whether the call has been created
     callAccepted = false // Whether the call has been accepted
     inCall = false // Whether the user is in a call
     muted = {
@@ -54,7 +56,6 @@ class WebRTCManager {
         "mute_unmute_video",
         "share_screen",
         "stop_sharing_screen",
-        "leaved_call"
     ]
     listeMessagesEmis = [
         "send_offer",
@@ -72,7 +73,6 @@ class WebRTCManager {
         "set_call_info",
         "demande_info_session",
         "demande_connected_users",
-        "leave_call",
     ]
 
     verbose = true
@@ -108,8 +108,26 @@ class WebRTCManager {
          * @returns void
          */
         if (this.verbose) console.log("Message reçu par le WebRTCManager: ", message)
+        if (typeof message.call_created !== "undefined") {
+            // call_created: {
+            //    value: true,
+            //    call: {
+                //    members_allowed_to_join: [],
+                //    discussion_uuid: "",
+                //    type: "",
+                //    call_creator: ""
+            //    },
+            //    error?: string
+            // }
 
-        if (typeof message.receive_offer !== "undefined") {                         // {sender: "", offer: {}, type: "", discussion: ""}
+            if (message.call_created.value) {
+                this.callCreated = true
+                this.inCall = true
+
+                const membersToCall = message.call_created.call.members_allowed_to_join.filter(member => member !== this.session.user_socket_id)
+                await this.createOffer(membersToCall.map(member => member.user_socket_id), message.call_created.call.discussion_uuid, message.call_created.call.type, message.call_created.call.call_creator)
+            }
+        } else if (typeof message.receive_offer !== "undefined") {                         // {sender: "", offer: {}, type: "", discussion: ""}
             await this.handleOffer(message.receive_offer)
         } else if (typeof message.receive_answer !== "undefined") {                 // {sender: "", answer: {}, discussion: ""}
             await this.handleAnswer(message.receive_answer)
@@ -119,16 +137,12 @@ class WebRTCManager {
             await this.handleHangUp(message.hung_up)
         } else if (typeof message.call_connected_users !== "undefined") {   // {connected_users: [], discussion: ""}
             this.inCallMembers = message.call_connected_users.connected_users
-        } else if (typeof message.call_created !== "undefined") {           // {members: [], discussion: "", type: "", initiator: ""}
-            console.log("CALL CREATED", message.call_created)
         } else if (typeof message.connected_users !== "undefined") {        // {connected_users: []}
             this.setConnectedUsers(message.connected_users)
         } else if (typeof message.info_session !== "undefined") {           // {session: {}}
             this.setSession(message.info_session)
         } else if (typeof message.accept_incoming_call !== "undefined") {  // {accepted: true, offer: {}}
             await this.acceptIncomingCall(message.accept_incoming_call.value, message.accept_incoming_call.offer)
-        } else if (typeof message.create_offer !== "undefined") {           // {members: [], discussion: "", type: "", initiator: ""}
-            await this.createOffer(message.create_offer.members, message.create_offer.discussion, message.create_offer.type, message.create_offer.initiator)
         } else if (typeof message.end_call !== "undefined") {               // {}
             await this.endCall()
         } else if (typeof message.is_in_call !== "undefined") {             // {value: true}
@@ -158,8 +172,6 @@ class WebRTCManager {
             await this.shareScreen()
         } else if (typeof message.stop_sharing_screen !== "undefined") {    // {}
             await this.stopSharingScreen()
-        } else if (typeof message.leaved_call !== "undefined") {            // {}
-            await this.handleHangUp(message.leaved_call)
         }
     }
 
@@ -198,7 +210,11 @@ class WebRTCManager {
             if (!user) {
                 console.error("Impossible de trouver l'utilisateur parmi les utilisateurs connectés")
             }
-            this.remoteStreams[socketId] = {user: user, stream: event.streams[0], status: this.peers[socketId].iceConnectionState}
+            this.remoteStreams[socketId] = {
+                user: user,
+                stream: event.streams[0],
+                status: this.peers[socketId].iceConnectionState
+            }
 
             this.controller.send(this, {
                 "update_remote_streams": {
@@ -607,8 +623,6 @@ class WebRTCManager {
             ) {
                 await this.handlePendingIceCandidates(data.sender)
             }
-            // this.callbacks.setCallInfo(this.getCallInfo())
-            this.controller.send(this, {"set_call_info": this.getCallInfo()})
         } catch (e) {
             console.error("Error adding ice candidate: ", e)
         }
@@ -655,6 +669,11 @@ class WebRTCManager {
             return
         }
 
+        if (!this.inCall) {
+            console.warn("Not in a call to hang up")
+            return
+        }
+
         if (data.sender === this.session.user_socket_id || data.sender === this.callCreator) {
             await this.endCall()
         } else {
@@ -678,8 +697,6 @@ class WebRTCManager {
                 })
                 await this.endCall()
             }
-
-            this.controller.send(this, {"leave_call": {discussion: this.discussion}})
         }
 
         this.controller.send(this, {"set_call_info": this.getCallInfo()})

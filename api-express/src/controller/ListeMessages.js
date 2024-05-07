@@ -36,13 +36,13 @@ const ListeMessagesEmis = [
     "demande_creation_discussion",
     "demande_discussion_info",
     "naviguer_vers",
+    "new_call",
     "send_offer",
     "send_answer",
     "send_ice_candidate",
     "reject_offer",
     "hang_up",
     "update_session_token",
-    "leave_call",
 ]
 
 /**
@@ -86,7 +86,6 @@ const ListeMessagesRecus = [
     "call_ended",
     "hung_up",
     "call_connected_users",
-    "leaved_call",
 ]
 
 module.exports = {
