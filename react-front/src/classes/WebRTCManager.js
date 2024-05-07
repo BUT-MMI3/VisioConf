@@ -21,7 +21,7 @@ class WebRTCManager {
     type = "video" // The type of call (video or audio)
     pendingIceCandidates = {} // Pending ice candidates for each peer {socketId: RTCIceCandidate[]}
     callMembers = [] // The members selected for the call
-    connectedMembers = [] // The members connected to the call
+    inCallMembers = [] // The members connected to the call
     callAccepted = false // Whether the call has been accepted
     inCall = false // Whether the user is in a call
     muted = {
@@ -53,7 +53,8 @@ class WebRTCManager {
         "mute_unmute_audio",
         "mute_unmute_video",
         "share_screen",
-        "stop_sharing_screen"
+        "stop_sharing_screen",
+        "leaved_call"
     ]
     listeMessagesEmis = [
         "send_offer",
@@ -70,7 +71,8 @@ class WebRTCManager {
         "set_call_creator",
         "set_call_info",
         "demande_info_session",
-        "demande_connected_users"
+        "demande_connected_users",
+        "leave_call",
     ]
 
     verbose = true
@@ -116,8 +118,7 @@ class WebRTCManager {
         } else if (typeof message.hung_up !== "undefined") {                // {sender: "", discussion: ""}
             await this.handleHangUp(message.hung_up)
         } else if (typeof message.call_connected_users !== "undefined") {   // {connected_users: [], discussion: ""}
-            this.connectedMembers = message.connected_users
-            this.discussion = message.discussion
+            this.inCallMembers = message.call_connected_users.connected_users
         } else if (typeof message.call_created !== "undefined") {           // {members: [], discussion: "", type: "", initiator: ""}
             console.log("CALL CREATED", message.call_created)
         } else if (typeof message.connected_users !== "undefined") {        // {connected_users: []}
@@ -157,6 +158,8 @@ class WebRTCManager {
             await this.shareScreen()
         } else if (typeof message.stop_sharing_screen !== "undefined") {    // {}
             await this.stopSharingScreen()
+        } else if (typeof message.leaved_call !== "undefined") {            // {}
+            await this.handleHangUp(message.leaved_call)
         }
     }
 
@@ -195,7 +198,7 @@ class WebRTCManager {
             if (!user) {
                 console.error("Impossible de trouver l'utilisateur parmi les utilisateurs connectés")
             }
-            this.remoteStreams[socketId] = {user: user, stream: event.streams[0]}
+            this.remoteStreams[socketId] = {user: user, stream: event.streams[0], status: this.peers[socketId].iceConnectionState}
 
             this.controller.send(this, {
                 "update_remote_streams": {
@@ -366,6 +369,9 @@ class WebRTCManager {
                 }
             })
         }
+        this.inCall = true
+        this.controller.send(this, {"set_calling": true})
+        this.controller.send(this, {"set_in_call": {value: true, discussion: discussion}})
         this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
@@ -463,7 +469,7 @@ class WebRTCManager {
             return
         }
 
-        this.connectedMembers = offer.connected_users
+        this.inCallMembers = offer.in_call_members
 
         if (offer.call_creator === offer.sender && !this.callAccepted) {
             if (this.verbose)
@@ -534,7 +540,8 @@ class WebRTCManager {
 
         this.controller.send(this, {"send_answer": {target: offer.sender, answer: answer, discussion: this.discussion}})
 
-        for (const member of this.connectedMembers) {
+        console.info("In call members: ", this.inCallMembers)
+        for (const member of this.inCallMembers) {
             if (!this.session) {
                 console.warn("No session user to create offer")
                 return
@@ -635,9 +642,6 @@ class WebRTCManager {
                 }
             }
             delete this.pendingIceCandidates[socketId]
-            // this.callbacks.setCallInfo(this.getCallInfo())
-            this.controller.send(this, {"set_call_info": this.getCallInfo()})
-
         } else {
             if (this.verbose)
                 console.warn("No pending ice candidates for: ", socketId)
@@ -674,7 +678,11 @@ class WebRTCManager {
                 })
                 await this.endCall()
             }
+
+            this.controller.send(this, {"leave_call": {discussion: this.discussion}})
         }
+
+        this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
     endCall = async () => {
@@ -697,6 +705,11 @@ class WebRTCManager {
         for (const peer in this.peers) {
             this.peers[peer].close()
             delete this.peers[peer]
+        }
+
+        if (!this.discussion) {
+            console.error("No discussion to end call")
+            return
         }
 
         this.controller.send(this, {"hang_up": {discussion: this.discussion}})
@@ -728,8 +741,9 @@ class WebRTCManager {
         this.type = "video"
         this.pendingIceCandidates = {}
         this.callMembers = []
-        this.connectedMembers = []
+        this.inCallMembers = []
         this.callCreator = ""
+        this.inCall = false
         this.callAccepted = false
         this.isScreenSharing = false
         this.controller.send(this, {"set_call_info": this.getCallInfo()})

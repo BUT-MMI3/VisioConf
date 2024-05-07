@@ -41,6 +41,25 @@ const callSchema = new Schema({
 callSchema.methods.addMemberToCall = async function (socketId) {
     try {
         const user = await User.findBySocketId(socketId);
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        console.log("|||| USER TO ADD ||||")
+        console.log(user);
+
+        console.log("|||| AddMemberToCall ||||")
+        console.log(this)
+        console.log(this.in_call_members);
+
+        if (this.in_call_members.map(member => member.user_socket_id).includes(socketId)) {
+            console.log("User already in call");
+            return;
+        }
+        // if (!this.members_allowed_to_join.includes(user)) {
+        //     throw new Error('User is not allowed to join the call');
+        // }
         this.in_call_members.push(user);
         return this.save();
     } catch (error) {

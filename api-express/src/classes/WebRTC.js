@@ -8,8 +8,8 @@ class WebRTC {
     instanceName = 'WebRTC';
     controller = null;
 
-    listeMessagesEmis = ["receive_offer", "receive_answer", "receive_ice_candidate", "offer_rejected", "call_created", "hung_up"]
-    listeMessagesRecus = ["send_offer", "send_answer", "send_ice_candidate", "reject_offer", "hang_up"]
+    listeMessagesEmis = ["receive_offer", "receive_answer", "receive_ice_candidate", "offer_rejected", "call_created", "hung_up", "call_connected_users", "leaved_call"]
+    listeMessagesRecus = ["send_offer", "send_answer", "send_ice_candidate", "reject_offer", "hang_up", "leave_call"]
 
     verbose = true;
 
@@ -49,15 +49,12 @@ class WebRTC {
                         call_creator: userFrom,
                     });
                     await newCall.save();
-                } else {
-                    console.log("Adding user to call for discussion: " + msg.send_offer.discussion);
-                    await call.addMemberToCall(userFrom.user_socket_id);
                 }
 
                 call = await Call.findOne({
                     discussion_uuid: msg.send_offer.discussion,
                     is_ended: false
-                }).populate('in_call_members').populate('call_creator');
+                }).populate('in_call_members', 'user_socket_id').populate('call_creator');
 
                 if (call && userTo && userTo.user_socket_id && userTo.user_is_online && userTo.user_socket_id !== msg.id) {
                     console.log(msg.id + " is sending offer to: " + msg.send_offer.target);
@@ -74,7 +71,7 @@ class WebRTC {
                             call_creator: call.call_creator.user_socket_id,
                             pseudo_caller: pseudo_caller,
                             type: msg.send_offer.type,
-                            connected_users: call.in_call_members || [],
+                            in_call_members: call.in_call_members.map(member => member.user_socket_id) || [],
                         },
                         id: userTo.user_socket_id
                     });
@@ -93,12 +90,14 @@ class WebRTC {
             }
         } else if (typeof msg.send_answer !== 'undefined') {
             try {
-                const call = await Call.findOne({discussion_uuid: msg.send_answer.discussion});
+                const call = await Call.findOne({discussion_uuid: msg.send_answer.discussion}).populate('in_call_members').populate('members_allowed_to_join')
                 const userFrom = await User.findBySocketId(msg.id);
                 const userTo = await User.findBySocketId(msg.send_answer.target);
 
                 if (call && userTo && userTo.user_socket_id && userTo.user_is_online && userTo.user_socket_id !== msg.id) {
                     console.log(msg.id + " is sending answer to: " + msg.send_answer.target);
+                    console.log("{{{ ADDING MEMBER TO CALL }}}")
+                    console.log(userFrom.user_socket_id)
                     await call.addMemberToCall(userFrom.user_socket_id);
                     this.controller.send(this, {
                         receive_answer: {
@@ -107,9 +106,25 @@ class WebRTC {
                         },
                         id: msg.send_answer.target
                     });
+                    console.log("|||| CALL MEMBERS ||||")
+                    console.log(call.in_call_members)
+
+
+                    for (const member of call.members_allowed_to_join) {
+                        if (member.user_socket_id) {
+                            this.controller.send(this, {
+                                call_connected_users: {
+                                    discussion: msg.send_answer.discussion,
+                                    connected_users: call.in_call_members.map(member => member.user_socket_id),
+                                },
+                                id: member.user_socket_id
+                            })
+                        }
+                    }
                 }
             } catch (e) {
                 console.log("Utilisateur introuvable")
+                console.log(e)
             }
         } else if (typeof msg.send_ice_candidate !== 'undefined') {
             try {
@@ -158,10 +173,41 @@ class WebRTC {
                     is_ended: false
                 }).populate('in_call_members').populate('call_creator');
                 if (call) {
-                    for (const member of call.in_call_members) {
+                    const freshCall = await Call.findById(call._id).populate('in_call_members').populate('call_creator');
+                    freshCall.in_call_members = freshCall.in_call_members.filter(member => member.user_socket_id !== msg.id);
+                    if (freshCall.in_call_members.length === 0) {
+                        freshCall.is_ended = true;
+                        freshCall.date_ended = Date.now();
+                    }
+
+                    for (const member of freshCall.in_call_members) {
                         if (member.user_socket_id !== msg.id) {
                             this.controller.send(this, {
                                 hung_up: {
+                                    sender: msg.id,
+                                },
+                                id: member.user_socket_id
+                            });
+                        }
+                    }
+
+                    await freshCall.save();
+                }
+            } catch (e) {
+                console.log("Une erreur est survenue")
+                console.log(e)
+            }
+        } else if (typeof msg.leave_call !== 'undefined') {
+            try {
+                const call = await Call.findOne({
+                    discussion_uuid: msg.leave_call.discussion,
+                    is_ended: false
+                }).populate('in_call_members').populate('call_creator');
+                if (call) {
+                    for (const member of call.in_call_members) {
+                        if (member.user_socket_id !== msg.id) {
+                            this.controller.send(this, {
+                                leaved_call: {
                                     sender: msg.id,
                                 },
                                 id: member.user_socket_id
