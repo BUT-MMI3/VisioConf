@@ -21,7 +21,9 @@ class WebRTCManager {
     type = "video" // The type of call (video or audio)
     pendingIceCandidates = {} // Pending ice candidates for each peer {socketId: RTCIceCandidate[]}
     callMembers = [] // The members selected for the call
-    connectedMembers = [] // The members connected to the call
+    inCallMembers = [] // The members connected to the call
+    isCalling = false // Whether the user is calling
+    callCreated = false // Whether the call has been created
     callAccepted = false // Whether the call has been accepted
     inCall = false // Whether the user is in a call
     muted = {
@@ -53,7 +55,7 @@ class WebRTCManager {
         "mute_unmute_audio",
         "mute_unmute_video",
         "share_screen",
-        "stop_sharing_screen"
+        "stop_sharing_screen",
     ]
     listeMessagesEmis = [
         "send_offer",
@@ -70,7 +72,7 @@ class WebRTCManager {
         "set_call_creator",
         "set_call_info",
         "demande_info_session",
-        "demande_connected_users"
+        "demande_connected_users",
     ]
 
     verbose = true
@@ -106,8 +108,26 @@ class WebRTCManager {
          * @returns void
          */
         if (this.verbose) console.log("Message reçu par le WebRTCManager: ", message)
+        if (typeof message.call_created !== "undefined") {
+            // call_created: {
+            //    value: true,
+            //    call: {
+                //    members_allowed_to_join: [],
+                //    discussion_uuid: "",
+                //    type: "",
+                //    call_creator: ""
+            //    },
+            //    error?: string
+            // }
 
-        if (typeof message.receive_offer !== "undefined") {                         // {sender: "", offer: {}, type: "", discussion: ""}
+            if (message.call_created.value) {
+                this.callCreated = true
+                this.inCall = true
+
+                const membersToCall = message.call_created.call.members_allowed_to_join.filter(member => member !== this.session.user_socket_id)
+                await this.createOffer(membersToCall.map(member => member.user_socket_id), message.call_created.call.discussion_uuid, message.call_created.call.type, message.call_created.call.call_creator)
+            }
+        } else if (typeof message.receive_offer !== "undefined") {                         // {sender: "", offer: {}, type: "", discussion: ""}
             await this.handleOffer(message.receive_offer)
         } else if (typeof message.receive_answer !== "undefined") {                 // {sender: "", answer: {}, discussion: ""}
             await this.handleAnswer(message.receive_answer)
@@ -116,18 +136,13 @@ class WebRTCManager {
         } else if (typeof message.hung_up !== "undefined") {                // {sender: "", discussion: ""}
             await this.handleHangUp(message.hung_up)
         } else if (typeof message.call_connected_users !== "undefined") {   // {connected_users: [], discussion: ""}
-            this.connectedMembers = message.connected_users
-            this.discussion = message.discussion
-        } else if (typeof message.call_created !== "undefined") {           // {members: [], discussion: "", type: "", initiator: ""}
-            console.log("CALL CREATED", message.call_created)
+            this.inCallMembers = message.call_connected_users.connected_users
         } else if (typeof message.connected_users !== "undefined") {        // {connected_users: []}
             this.setConnectedUsers(message.connected_users)
         } else if (typeof message.info_session !== "undefined") {           // {session: {}}
             this.setSession(message.info_session)
         } else if (typeof message.accept_incoming_call !== "undefined") {  // {accepted: true, offer: {}}
             await this.acceptIncomingCall(message.accept_incoming_call.value, message.accept_incoming_call.offer)
-        } else if (typeof message.create_offer !== "undefined") {           // {members: [], discussion: "", type: "", initiator: ""}
-            await this.createOffer(message.create_offer.members, message.create_offer.discussion, message.create_offer.type, message.create_offer.initiator)
         } else if (typeof message.end_call !== "undefined") {               // {}
             await this.endCall()
         } else if (typeof message.is_in_call !== "undefined") {             // {value: true}
@@ -195,7 +210,11 @@ class WebRTCManager {
             if (!user) {
                 console.error("Impossible de trouver l'utilisateur parmi les utilisateurs connectés")
             }
-            this.remoteStreams[socketId] = {user: user, stream: event.streams[0]}
+            this.remoteStreams[socketId] = {
+                user: user,
+                stream: event.streams[0],
+                status: this.peers[socketId].iceConnectionState
+            }
 
             this.controller.send(this, {
                 "update_remote_streams": {
@@ -366,6 +385,9 @@ class WebRTCManager {
                 }
             })
         }
+        this.inCall = true
+        this.controller.send(this, {"set_calling": true})
+        this.controller.send(this, {"set_in_call": {value: true, discussion: discussion}})
         this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
@@ -463,7 +485,7 @@ class WebRTCManager {
             return
         }
 
-        this.connectedMembers = offer.connected_users
+        this.inCallMembers = offer.in_call_members
 
         if (offer.call_creator === offer.sender && !this.callAccepted) {
             if (this.verbose)
@@ -534,7 +556,8 @@ class WebRTCManager {
 
         this.controller.send(this, {"send_answer": {target: offer.sender, answer: answer, discussion: this.discussion}})
 
-        for (const member of this.connectedMembers) {
+        console.info("In call members: ", this.inCallMembers)
+        for (const member of this.inCallMembers) {
             if (!this.session) {
                 console.warn("No session user to create offer")
                 return
@@ -600,8 +623,6 @@ class WebRTCManager {
             ) {
                 await this.handlePendingIceCandidates(data.sender)
             }
-            // this.callbacks.setCallInfo(this.getCallInfo())
-            this.controller.send(this, {"set_call_info": this.getCallInfo()})
         } catch (e) {
             console.error("Error adding ice candidate: ", e)
         }
@@ -635,9 +656,6 @@ class WebRTCManager {
                 }
             }
             delete this.pendingIceCandidates[socketId]
-            // this.callbacks.setCallInfo(this.getCallInfo())
-            this.controller.send(this, {"set_call_info": this.getCallInfo()})
-
         } else {
             if (this.verbose)
                 console.warn("No pending ice candidates for: ", socketId)
@@ -648,6 +666,11 @@ class WebRTCManager {
         console.log("Received hang up: ", data)
         if (!this.session) {
             console.warn("No session user to create offer")
+            return
+        }
+
+        if (!this.inCall) {
+            console.warn("Not in a call to hang up")
             return
         }
 
@@ -675,6 +698,8 @@ class WebRTCManager {
                 await this.endCall()
             }
         }
+
+        this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
     endCall = async () => {
@@ -697,6 +722,11 @@ class WebRTCManager {
         for (const peer in this.peers) {
             this.peers[peer].close()
             delete this.peers[peer]
+        }
+
+        if (!this.discussion) {
+            console.error("No discussion to end call")
+            return
         }
 
         this.controller.send(this, {"hang_up": {discussion: this.discussion}})
@@ -728,8 +758,9 @@ class WebRTCManager {
         this.type = "video"
         this.pendingIceCandidates = {}
         this.callMembers = []
-        this.connectedMembers = []
+        this.inCallMembers = []
         this.callCreator = ""
+        this.inCall = false
         this.callAccepted = false
         this.isScreenSharing = false
         this.controller.send(this, {"set_call_info": this.getCallInfo()})

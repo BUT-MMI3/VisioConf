@@ -63,6 +63,7 @@ class CanalSocketIO {
         } else {
             if (!this.sessionToken && typeof msg.demande_de_connexion === "undefined" && typeof msg.demande_inscription === "undefined") {
                 console.error("No session token")
+                this.controller.send(this, {client_deconnexion: this.socket.id});
                 return new Error("No session token");
             }
 

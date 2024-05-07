@@ -26,7 +26,7 @@ class CanalSocketIO {
     io;
     listeDesMessagesEmis = ListeMessagesEmis
     listeDesMessagesRecus = ListeMessagesRecus;
-    verbose = true;
+    verbose = false;
 
     constructor(io, controller, name) {
 
