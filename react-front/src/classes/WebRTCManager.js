@@ -80,24 +80,20 @@ class WebRTCManager {
     constructor(controller) {
         this.controller = controller // Le controller est un objet qui permet de gérer les messages reçus et émis
         this.controller.subscribe(this, this.listeMessagesEmis, this.listeMessagesRecus) // On s'abonne à ces messages
-        if (this.verbose) console.log("WebRTCManager initialized")
+        if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Initialisation`)
 
         this.controller.send(this, {"demande_info_session": {}})
         this.controller.send(this, {"demande_connected_users": {}})
     }
 
     setSession = session => {
-        if (this.verbose) console.log("Session set: ", session)
+        if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Session set: `, session)
         this.session = session
     }
 
     setConnectedUsers = connectedUsers => {
-        if (this.verbose) console.log("Connected users set: ", connectedUsers)
+        if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Connected users set: `, connectedUsers)
         this.connectedUsers = connectedUsers
-    }
-
-    setDiscussion = discussion => {
-        this.discussion = discussion
     }
 
     traitementMessage = async (message) => {
@@ -107,15 +103,15 @@ class WebRTCManager {
          * @param message - Le message reçu par le controller
          * @returns void
          */
-        if (this.verbose) console.log("Message reçu par le WebRTCManager: ", message)
+        if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Traitement du message: `, message)
         if (typeof message.call_created !== "undefined") {
             // call_created: {
             //    value: true,
             //    call: {
-                //    members_allowed_to_join: [],
-                //    discussion_uuid: "",
-                //    type: "",
-                //    call_creator: ""
+            //    members_allowed_to_join: [],
+            //    discussion_uuid: "",
+            //    type: "",
+            //    call_creator: ""
             //    },
             //    error?: string
             // }
@@ -186,29 +182,27 @@ class WebRTCManager {
          */
         if (this.peers[socketId]) return
 
-        if (this.verbose)
-            console.log("Creating new peer connection for: ", socketId)
+        if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Creating new peer connection for: ${socketId}`)
 
         this.peers[socketId] = new RTCPeerConnection(this.config)
 
         this.peers[socketId].ontrack = event => {
-            if (this.verbose) {
-                console.log("Received remote stream: ", event.streams[0])
+            if (this.verbose || this.controller.verboseall) {
+                console.log(`INFO ${this.instanceName}: Track event: `, event.streams[0])
                 event.streams[0].getTracks().forEach(track => {
                     console.log(
-                        `Track kind: ${track.kind}, enabled: ${track.enabled}, readyState: ${track.readyState}`
+                        `INFO ${this.instanceName}: \nTrack kind: ${track.kind}, \nenabled: ${track.enabled}, \nreadyState: ${track.readyState}`
                     )
                 })
             }
             if (this.remoteStreams[socketId]) {
-                if (this.verbose)
-                    console.log("Remote stream already exists for: ", socketId)
+                if (this.verbose || this.controller.verboseall) console.log(`WARNING ${this.instanceName}: Remote stream already exists for: ${socketId}`)
                 return
             }
 
             const user = this.connectedUsers.find(user => user.user_socket_id === socketId)
             if (!user) {
-                console.error("Impossible de trouver l'utilisateur parmi les utilisateurs connectés")
+                if (this.verbose || this.controller.verboseall) console.error(`ERROR ${this.instanceName}: User not found for: ${socketId}`)
             }
             this.remoteStreams[socketId] = {
                 user: user,
@@ -228,7 +222,7 @@ class WebRTCManager {
 
         this.peers[socketId].onicecandidate = event => {
             if (event.candidate) {
-                if (this.verbose) console.log("Sending ice candidate: ", event.candidate)
+                if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Sending ice candidate to: ${socketId}`)
                 this.controller.send(this, {
                     "send_ice_candidate": {
                         target: socketId,
@@ -241,9 +235,7 @@ class WebRTCManager {
         }
 
         this.peers[socketId].oniceconnectionstatechange = () => {
-            console.log(
-                `Connection state change: ${this.peers[socketId].iceConnectionState}`
-            )
+            if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Ice connection state change for: ${socketId}`, this.peers[socketId].iceConnectionState)
 
             if (this.remoteStreams[socketId]) {
                 this.remoteStreams[socketId].status = this.peers[socketId].iceConnectionState;
@@ -274,7 +266,7 @@ class WebRTCManager {
                 this.peers[socketId].iceConnectionState === "failed" ||
                 this.peers[socketId].iceConnectionState === "disconnected"
             ) {
-                console.log("Call failed or disconnected for: ", socketId)
+                if (this.verbose || this.controller.verboseall) console.warn(`WARNING ${this.instanceName}: Call disconnected for: ${socketId}`)
                 this.peers[socketId].close()
                 delete this.peers[socketId]
 
@@ -301,14 +293,15 @@ class WebRTCManager {
     }
 
     addStreamTrack = async type => {
+        // Si aucun peer n'est connecté, on ne peut pas ajouter de flux
         if (!this.peers) {
-            console.warn("No peer connections to add stream to")
+            if (this.verbose || this.controller.verboseall) console.warn(`WARNING ${this.instanceName}: No peer connections to add stream to`)
             return
         }
 
-        // Si le flux local n'est pas encore ajouté, obtenez-le
+        // Si le flux local n'est pas encore ajouté, on le récupère
         if (this.localStream.getTracks().length === 0) {
-            console.log("Local stream not added yet, getting local stream: ", type)
+            if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Local stream not added yet, getting stream`)
             await this.getLocalStream(type)
         }
 
@@ -320,10 +313,10 @@ class WebRTCManager {
                     .some(sender => sender.track === track)
 
                 if (!senderAlreadyExists) {
-                    console.log("Adding track to peer: ", peer)
+                    if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Adding track to peer: ${peer}`)
                     this.peers[peer].addTrack(track, this.localStream)
                 } else {
-                    console.log("Track already exists in the peer connection: ", peer)
+                    if (this.verbose || this.controller.verboseall) console.warn(`WARNING ${this.instanceName}: Track already exists for peer: ${peer}`)
                 }
             }
         })
@@ -333,13 +326,13 @@ class WebRTCManager {
 
     muteUnmute = (type) => {
         if (type === "audio") {
-            if (this.verbose) console.log("Muting/unmuting audio")
+            if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Muting/unmuting audio`)
             this.muted.audio = !this.muted.audio
             this.localStream.getAudioTracks().forEach(track => {
                 track.enabled = !this.muted.audio
             })
         } else if (type === "video") {
-            if (this.verbose) console.log("Muting/unmuting video")
+            if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Muting/unmuting video`)
             this.muted.video = !this.muted.video
             this.localStream.getVideoTracks().forEach(track => {
                 track.enabled = !this.muted.video
@@ -359,11 +352,11 @@ class WebRTCManager {
          *
          * @returns Promise<void>
          */
-        this.setDiscussion(discussion)
+        this.discussion = discussion
         this.type = type
         for (const member of members) {
             if (!this.session) {
-                console.warn("No session user to create offer")
+                if (this.verbose || this.controller.verboseall) console.warn(`WARNING ${this.instanceName}: No session user to create offer`)
                 return
             }
             if (member === this.session.user_socket_id) continue
@@ -400,14 +393,14 @@ class WebRTCManager {
          * @returns Promise<void>
          */
         try {
-            if (this.verbose) console.log("Getting local stream: ", type)
+            if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Getting local stream for: ${type}`)
 
             this.localStream = await navigator.mediaDevices.getUserMedia({
                 video: type === "video",
                 audio: type === "audio" || type === "video"
             })
         } catch (e) {
-            console.error("Error getting local stream: ", e)
+            console.error(`ERROR ${this.instanceName}: Error getting local stream: `, e)
         }
     }
 
@@ -418,7 +411,7 @@ class WebRTCManager {
                 audio: true
             })
         } catch (e) {
-            console.error("Error getting local screen: ", e)
+            console.error(`ERROR ${this.instanceName}: Error getting local screen: `, e)
         }
     }
 
@@ -435,23 +428,21 @@ class WebRTCManager {
                 await senders.replaceTrack(this.localScreen.getVideoTracks()[0])
             } else {
                 this.localScreen.getTracks().forEach(track => {
-                    console.log("Adding track to peer: ", peer)
+                    if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Adding screen share track to peer: ${peer}`)
                     this.peers[peer].addTrack(track, this.localScreen)
                 })
             }
         }
 
-        // this.callbacks.setIsSharingScreen(true)
-        this.controller.send(this, {"set_is_sharing_screen": true})
         this.isScreenSharing = true
-
+        this.controller.send(this, {"set_is_sharing_screen": this.isScreenSharing})
         this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
     stopSharingScreen = async () => {
         if (!this.localScreen) return
 
-        if (this.verbose) console.log("Stopping screen share")
+        if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Stopping screen share`)
 
         for (const peer in this.peers) {
             const senders = this.peers[peer]
@@ -464,10 +455,9 @@ class WebRTCManager {
 
         this.localScreen.getTracks().forEach(track => track.stop())
         this.localScreen = new MediaStream()
-        // this.callbacks.setIsSharingScreen(false)
-        this.controller.send(this, {"set_is_sharing_screen": false})
         this.isScreenSharing = false
 
+        this.controller.send(this, {"set_is_sharing_screen": this.isScreenSharing})
         this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
@@ -479,39 +469,33 @@ class WebRTCManager {
          *
          * @returns Promise<void>
          */
-        if (this.verbose) console.log("Received offer: ", offer.offer)
+        if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Handling offer from: ${offer.sender}`)
         if (this.peers[offer.sender]) {
-            console.warn("Peer connection already exists for: ", offer.sender)
+            if (this.verbose || this.controller.verboseall) console.warn(`WARNING ${this.instanceName}: Peer connection already exists for: ${offer.sender}`)
             return
         }
 
         this.inCallMembers = offer.in_call_members
 
         if (offer.call_creator === offer.sender && !this.callAccepted) {
-            if (this.verbose)
-                console.log("Offer initiator is the sender: ", offer.sender)
+            if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Call creator receiving offer from: ${offer.sender}`)
 
+            this.discussion = offer.discussion
             this.callCreator = offer.call_creator
-            await this.newPeerConnection(offer.sender)
-            this.setDiscussion(offer.discussion)
-            // this.callbacks.setCallCreator(offer.initiator);
-            this.controller.send(this, {"set_call_creator": offer.initiator})
-
             this.type = offer.type
             this.callMembers = offer.members
-            // this.callbacks.incomingCall(offer)
+
+            await this.newPeerConnection(offer.sender)
+
+            this.controller.send(this, {"set_call_creator": offer.initiator})
             this.controller.send(this, {"incoming_call": offer})
         } else if (this.callAccepted) {
-            if (this.verbose)
-                console.log(
-                    "Call already accepted, receiving offer from another user: ",
-                    offer.sender
-                )
+            if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Call accepted, accepting offer from: ${offer.sender}`)
 
             await this.newPeerConnection(offer.sender)
             await this.acceptIncomingCall(true, offer)
         } else {
-            if (this.verbose) console.log("Call not accepted, rejecting offer from: ", offer.sender)
+            if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Call not accepted, rejecting offer from: ${offer.sender}`)
 
             this.controller.send(this, {"reject_offer": {target: offer.sender}})
 
@@ -530,7 +514,7 @@ class WebRTCManager {
          *
          * @returns Promise<void>
          */
-        if (this.verbose) console.log("Accepting incoming call: ", offer.offer)
+        if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Accepting incoming call: `, accepted)
 
         this.callAccepted = accepted
 
@@ -546,7 +530,7 @@ class WebRTCManager {
         const answer = await this.peers[offer.sender].createAnswer()
         await this.peers[offer.sender].setLocalDescription(answer)
         await this.handlePendingIceCandidates(offer.sender) // Handle any pending ice candidates
-        // this.callbacks.setInCall(true)
+
         this.controller.send(this, {
             "set_in_call": {
                 value: true,
@@ -556,16 +540,16 @@ class WebRTCManager {
 
         this.controller.send(this, {"send_answer": {target: offer.sender, answer: answer, discussion: this.discussion}})
 
-        console.info("In call members: ", this.inCallMembers)
         for (const member of this.inCallMembers) {
             if (!this.session) {
-                console.warn("No session user to create offer")
+                if (this.verbose || this.controller.verboseall) console.warn(`WARNING ${this.instanceName}: No session user to create offer`)
                 return
             }
             if (member === this.session.user_socket_id) continue
             if (member === offer.sender) continue
             if (this.peers[member]) continue
-            console.log("Creating offer for connected member: ", member)
+
+            if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Creating new peer connection for: ${member}`)
             await this.createOffer(
                 this.callMembers,
                 this.discussion,
@@ -574,7 +558,6 @@ class WebRTCManager {
             )
         }
 
-        // this.callbacks.setCallInfo(this.getCallInfo())
         this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
@@ -586,12 +569,11 @@ class WebRTCManager {
          *
          * @returns Promise<void>
          */
-        if (this.verbose) console.log("Setting remote description: ", answer.answer)
+        if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Handling answer from: ${answer.sender}`)
         if (!this.peers[answer.sender]) {
-            console.warn("No peer connection for: ", answer.sender)
+            if (this.verbose || this.controller.verboseall) console.warn(`WARNING ${this.instanceName}: No peer connection for: ${answer.sender}`)
             return
         }
-        // this.callbacks.setInCall(true)
         this.controller.send(this, {
             "set_in_call": {
                 value: true,
@@ -599,7 +581,6 @@ class WebRTCManager {
             }
         })
         await this.peers[answer.sender].setRemoteDescription(answer.answer)
-        // this.callbacks.setCallInfo(this.getCallInfo())
         this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
 
@@ -624,7 +605,7 @@ class WebRTCManager {
                 await this.handlePendingIceCandidates(data.sender)
             }
         } catch (e) {
-            console.error("Error adding ice candidate: ", e)
+            console.error(`ERROR ${this.instanceName}: Error handling ice candidate: `, e)
         }
     }
 
@@ -639,36 +620,34 @@ class WebRTCManager {
 
         if (this.pendingIceCandidates[socketId]) {
             for (const candidate of this.pendingIceCandidates[socketId]) {
-                if (this.verbose)
-                    console.log(
-                        "Adding pending ice candidate: ",
-                        candidate,
-                        " to peer: ",
-                        this.peers[socketId]
-                    )
+                if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Adding ice candidate to peer: ${socketId}`)
+
                 if (this.peers[socketId].remoteDescription) {
                     await this.peers[socketId].addIceCandidate(candidate)
                 } else {
-                    console.warn(
-                        "Remote description not set, adding ice candidate to pending: ",
-                        candidate
-                    )
+                    if (this.verbose || this.controller.verboseall) console.warn(`WARNING ${this.instanceName}: No remote description for: ${socketId}`)
                 }
             }
             delete this.pendingIceCandidates[socketId]
         } else {
-            if (this.verbose)
-                console.warn("No pending ice candidates for: ", socketId)
+               if (this.verbose || this.controller.verboseall) console.warn(`WARNING ${this.instanceName}: No pending ice candidates for: ${socketId}`)
         }
     }
 
     handleHangUp = async data => {
-        console.log("Received hang up: ", data)
+        /**
+         * Handle a hang up by closing the peer connection for the given socketId
+         *
+         * @param data - The data to handle
+         *
+         * @returns Promise<void>
+         */
+        if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Handling hang up from: ${data.sender}`)
+
         if (!this.session) {
-            console.warn("No session user to create offer")
+            console.warn("No session user to hang up")
             return
         }
-
         if (!this.inCall) {
             console.warn("Not in a call to hang up")
             return
@@ -697,6 +676,8 @@ class WebRTCManager {
                 })
                 await this.endCall()
             }
+
+            if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Hang up complete`)
         }
 
         this.controller.send(this, {"set_call_info": this.getCallInfo()})
@@ -710,7 +691,7 @@ class WebRTCManager {
          *
          * @returns void
          */
-        console.log("( WebRTCManager -> endCall() ) | Ending call")
+        if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Ending call`)
 
         // Close the local stream
         this.localStream.getTracks().forEach(track => track.stop())
