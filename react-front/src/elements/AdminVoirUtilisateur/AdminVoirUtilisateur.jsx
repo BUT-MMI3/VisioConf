@@ -4,7 +4,7 @@ import {appInstance} from "../../controller/index.js";
 import {useLocation, useNavigate} from "react-router-dom";
 import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
-import {useToasts} from "../Toasts/ToastContext.jsx";
+import {toast} from "react-toastify";
 
 const listeMessagesEmis = ["admin_demande_utilisateur_details"];
 const listeMessagesRecus = ["admin_utilisateur_details"];
@@ -14,7 +14,6 @@ const AdminVoirUtilisateur = () => {
     // url splitted = ['', 'admin', 'users', ':id', 'view']
     const id = location.pathname.split("/")[3];
     const navigate = useNavigate();
-    const {pushToast} = useToasts();
 
     const [user, setUser] = useState(undefined);
 
@@ -29,11 +28,7 @@ const AdminVoirUtilisateur = () => {
                     console.log("Utilisateur trouvé:", msg.admin_utilisateur_details.user);
                     setUser(msg.admin_utilisateur_details.user || {});
                 } else {
-                    pushToast({
-                        title: "Erreur",
-                        message: "Erreur lors de la récupération de l'utilisateur",
-                        type: "error",
-                    });
+                    toast.error("Erreur lors de la récupération de l'utilisateur", {theme: "colored", icon: "🚫"});
                 }
             }
         },

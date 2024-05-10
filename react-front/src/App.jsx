@@ -28,6 +28,7 @@ import NoyauAnnuaire from "./elements/NoyauAnnuaire/NoyauAnnuaire.jsx";
 import AdminVoirRole from "./elements/AdminVoirRole/AdminVoirRole.jsx";
 import AdminAjouterRole from "./elements/AdminAjouterRole/AdminAjouterRole.jsx";
 import AdminModifierRole from "./elements/AdminModifierRole/AdminModifierRole.jsx";
+import {toast} from "react-toastify";
 
 const listeMessageEmis = [
     "update_session_token",
@@ -92,6 +93,10 @@ const App = () => {
                     controller.send(AppInstanceRef.current, {"info_session": session})
                 } else if (typeof msg.distribue_notification !== "undefined") {
                     setNotifications(msg.distribue_notification);
+                    toast(msg.distribue_notification.content, {
+                        type: msg.distribue_notification.type || "info",
+                        autoClose: 5000
+                    })
                 }
             }
         }

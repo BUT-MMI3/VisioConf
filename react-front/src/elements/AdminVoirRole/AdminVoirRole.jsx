@@ -4,7 +4,7 @@ import {appInstance} from "../../controller/index.js";
 import {useLocation, useNavigate} from "react-router-dom";
 import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
-import {useToasts} from "../Toasts/ToastContext.jsx";
+import {toast} from "react-toastify";
 
 const listeMessagesEmis = ["admin_demande_role_details"];
 const listeMessagesRecus = ["admin_role_details"];
@@ -14,7 +14,6 @@ const AdminVoirRole = () => {
     // url splitted = ['', 'admin', 'roles', ':id', 'view']
     const id = location.pathname.split("/")[3];
     const navigate = useNavigate();
-    const {pushToast} = useToasts();
 
     const [role, setRole] = useState(undefined);
 
@@ -29,11 +28,7 @@ const AdminVoirRole = () => {
                     console.log("Role trouvé:", msg.admin_role_details.role);
                     setRole(msg.admin_role_details.role || {});
                 } else {
-                    pushToast({
-                        title: "Erreur",
-                        message: "Erreur lors de la récupération du rôle",
-                        type: "error",
-                    });
+                    toast.error("Erreur lors de la récupération du rôle", {theme: "colored", icon: "🚫"});
                 }
             }
         },

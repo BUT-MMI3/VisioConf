@@ -4,15 +4,14 @@ import {appInstance} from "../../controller/index.js";
 import {useNavigate} from "react-router-dom";
 import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
-import {useToasts} from "../Toasts/ToastContext.jsx";
 import {useCollapse} from 'react-collapsed'
+import {toast} from "react-toastify";
 
 const listeMessagesEmis = ["admin_ajouter_utilisateur"];
 const listeMessagesRecus = ["admin_utilisateur_cree"];
 
 const AdminAjouterUtilisateur = () => {
     const navigate = useNavigate();
-    const {pushToast} = useToasts();
     const {getToggleProps, getCollapseProps, isExpanded} = useCollapse()
 
     const [userFirstname, setUserFirstname] = useState("");
@@ -32,11 +31,7 @@ const AdminAjouterUtilisateur = () => {
         event.preventDefault();
 
         if (!userEmail || !userFirstname || !userLastname || (definePassword && password !== confirmPassword) || (defineStatus && !status)) {
-            pushToast({
-                title: "Erreur",
-                message: definePassword && password !== confirmPassword ? "Les mots de passe ne correspondent pas." : "Veuillez remplir tous les champs obligatoires.",
-                type: "error",
-            });
+            toast.error("Veuillez remplir tous les champs obligatoires.", {theme: "colored", icon: "🚫"})
             return;
         }
 
@@ -57,16 +52,11 @@ const AdminAjouterUtilisateur = () => {
             console.log("Received data:", msg);
             if (msg && msg.admin_utilisateur_cree) {
                 if (msg.admin_utilisateur_cree.success) {
-                    pushToast({
-                        title: "Succès", message: "Compte créé avec succès !", type: "success",
-                    })
+                    toast.success("Compte créé avec succès !", {theme: "colored", icon: "🚀"})
                     navigate(`/admin/users/${msg.admin_utilisateur_cree.newUser._id}/view`);
                     console.log("Utilisateur créé avec succès !", msg.admin_utilisateur_cree.newUser);
                 } else {
-                    pushToast({
-                        title: "Erreur", message: "Erreur lors de la création de l'utilisateur", type: "error",
-                    });
-
+                    toast.error("Erreur lors de la création du compte.", {theme: "colored", icon: "🚫"})
                 }
             }
         },
@@ -96,7 +86,7 @@ const AdminAjouterUtilisateur = () => {
 
         <form onSubmit={handleSubmit} className={"ajouter-utilisateur-form"}>
             <label className={"ajouter-utilisateur-label"} style={{width: '100%'}}>
-                <span>Les champs marqués d'une (<p>*</p>) sont obligatoires.</span>
+                <span>Les champs marqués d&apos;une (<p>*</p>) sont obligatoires.</span>
             </label>
             <label className={"ajouter-utilisateur-label"}>
                 <h4>Prénom : <p>*</p></h4>
@@ -204,11 +194,11 @@ const AdminAjouterUtilisateur = () => {
             <label style={{flexDirection: "column"}}>
                 <h4>Permissions additionnelles</h4>
                 <span>
-                        L'utilisateur héritera des permissions selon les groupes et rôles associés.
-                        Vous pourrez associer des permissions additionnelles plus tard via le module "Attribuer une permission".
+                        L&apos;utilisateur héritera des permissions selon les groupes et rôles associés.
+                        Vous pourrez associer des permissions additionnelles plus tard via le module &quot;Attribuer une permission&quot;.
                     </span>
             </label>
-            <button type="submit">Créer l'utilisateur</button>
+            <button type="submit">Créer l&apos;utilisateur</button>
         </form>
     </div>);
 };

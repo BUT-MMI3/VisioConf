@@ -96,7 +96,7 @@ class Messages {
                     });
                     this.controller.send(this, {
                         demande_notification: {
-                            type: "Info",
+                            type: "info",
                             content: "Vous avez reçu un nouveau message",
                             data: {
                                 discussionId: discussion.discussion_uuid,

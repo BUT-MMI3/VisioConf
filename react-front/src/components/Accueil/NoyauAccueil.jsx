@@ -4,6 +4,7 @@ import {appInstance} from "../../controller/index.js";
 import LinkTo from "../../elements/LinkTo/LinkTo.jsx";
 import "./NoyauAccueil.css";
 import {useSelector} from "react-redux";
+import {toast} from "react-toastify";
 
 const listeMessageEmis = ["update_notifications"];
 const listeMessageRecus = ["distribue_notification"];

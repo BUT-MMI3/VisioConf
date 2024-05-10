@@ -2,16 +2,15 @@ import "./AdminListeRoles.scss";
 import {useEffect, useRef, useState} from "react";
 import {appInstance} from "../../controller/index.js";
 import LinkTo from "../LinkTo/LinkTo.jsx";
-import {useToasts} from "../Toasts/ToastContext.jsx";
 import FeatherIcon from "feather-icons-react";
 import {useModal} from "../Modale/ModaleContext.jsx";
+import {toast} from "react-toastify";
 
 const listeMessagesEmis = ["admin_demande_liste_roles", "admin_supprimer_role"];
 const listeMessagesRecus = ["admin_liste_roles", "admin_role_supprime"];
 
 const AdminListeRoles = () => {
     const {newModal} = useModal();
-    const {pushToast} = useToasts();
     const [roles, setRoles] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const controller = useRef(appInstance.getController()).current;
@@ -24,25 +23,13 @@ const AdminListeRoles = () => {
                 if (msg.admin_liste_roles.success) {
                     setRoles(msg.admin_liste_roles.roles || []);
                 } else {
-                    pushToast({
-                        title: "Erreur",
-                        message: msg.admin_liste_roles.message || "Erreur lors de la récupération des rôles",
-                        type: "error",
-                    });
+                    toast.error(msg.admin_liste_roles.message || "Erreur lors de la récupération des rôles",{theme: "colored", icon: "🚫"});
                 }
             } else if (msg.admin_role_supprime) {
                 if (msg.admin_role_supprime.success) {
-                    pushToast({
-                        title: "Succès",
-                        message: "Rôle supprimé avec succès",
-                        type: "success",
-                    });
+                    toast.success("Rôle supprimé avec succès", {theme: "colored", icon: "🗑️"});
                 } else {
-                    pushToast({
-                        title: "Erreur",
-                        message: "Erreur lors de la suppression du rôle",
-                        type: "error",
-                    });
+                    toast.error(msg.admin_role_supprime.message || "Erreur lors de la suppression du rôle",{theme: "colored", icon: "🚫"});
                 }
             }
         },
