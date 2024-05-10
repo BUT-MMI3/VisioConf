@@ -12,8 +12,8 @@ import ListeDiscussions from "../liste-discussions/ListeDiscussions.jsx";
 import CreateDiscussion from "../create-discussion/CreateDiscussion.jsx";
 import {useSelector} from "react-redux";
 import HeaderFilDiscussion from "../header-fil-de-discussion/HeaderFilDiscussion.jsx";
-import {useToasts} from "../../../elements/Toasts/ToastContext.jsx";
 import Call from "../call/Call.jsx";
+import {toast} from "react-toastify";
 
 // Initialisation du contexte avec une valeur par défaut
 const DiscussionContext = createContext({
@@ -70,7 +70,6 @@ export function DiscussionContextProvider() {
     // UTILS
     const location = useLocation();
     const navigate = useNavigate();
-    const {pushToast} = useToasts();
 
     // DISCUSSION STATES
     const [discussionId, setDiscussionId] = useState(undefined);
@@ -132,11 +131,8 @@ export function DiscussionContextProvider() {
                     }
                 } else if (typeof msg.erreur_envoi_message !== "undefined") {
                     // Si erreur d'envoi de message
-                    pushToast({
-                        title: "Erreur",
-                        message: "Erreur lors de l'envoi du message",
-                        type: "error",
-                    })
+                    toast.error("Erreur lors de l'envoi du message", {theme: "colored", icon: "🚫"});
+
                     setMessages((prevMessages) => {
                         const newMessages = [...prevMessages];
                         newMessages[newMessages.length - 1].message_status = "error";
@@ -176,7 +172,7 @@ export function DiscussionContextProvider() {
         return () => {
             controller.unsubscribe(discussionInstanceRef.current, listeMessagesEmis, listeMessagesRecus);
         };
-    }, [controller, controller.verboseall, discussion, discussionId, location, navigate, verbose, messages, pushToast]);
+    }, [controller, controller.verboseall, discussion, discussionId, location, navigate, verbose, messages]);
 
     useEffect(() => {
         if (location.pathname.split("/")[1] === "discussions") {
@@ -226,44 +222,15 @@ export function DiscussionContextProvider() {
 
     useEffect(() => {
         if (calling) {
-            pushToast({
-                title: "Appel en cours",
-                message: "Appel en cours",
-                type: "info",
-                duration: 5,
-            })
+            toast.info("Appel en cours", {theme: "colored", icon: "📞"});
         }
-    }, [calling, pushToast]);
+    }, [calling]);
 
     const updateRemoteStreams = (socketId, stream) => {
         setRemoteStreams((prevStreams) => {
             return {...prevStreams, [socketId]: stream};
         });
-    }
-
-    // async function StartScreenSharing() {
-    //
-    //     if (inCall && webRTCManager ? webRTCManager.isCallInitiator : false) {
-    //         console.log("Start Screen Sharing " + self.username);
-    //         webRTCManager ? await webRTCManager.shareScreen() : null;
-    //         setIsScreenSharing(true);
-    //     }
-    // }
-    //
-    // function stopScreenSharing() {
-    //     if (inCall && isScreenSharing) {
-    //         console.log("Stopping Screen Sharing " + self.username);
-    //         if (webRTCManager) {
-    //             webRTCManager ? webRTCManager.stopSharingScreen() : null;
-    //         }
-    //     }
-    // }
-
-    // async function createOfferForNewUser(target) {
-    //     if (webRTCManager && inCall && isCallInitiator) {
-    //         await webRTCManager.createOffer([target], webRTCManager.discussion, 'video', self.id);
-    //     }
-    // }
+    };
 
     // Fonction pour ajouter un message au fil de discussion, gestion de l'ajout de message
     const addMessage = useCallback((message) => {

@@ -4,14 +4,13 @@ import {appInstance} from "../../controller/index.js";
 import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
 import {useModal} from "../Modale/ModaleContext.jsx";
-import {useToasts} from "../Toasts/ToastContext.jsx";
+import {toast} from "react-toastify";
 
 const listeMessagesEmis = ["admin_demande_liste_utilisateurs", "admin_supprimer_utilisateur"];
 const listeMessagesRecus = ["admin_liste_utilisateurs", "admin_utilisateur_supprime"];
 
 const AdminListeUtilisateurs = () => {
     const {newModal} = useModal();
-    const {pushToast} = useToasts();
 
     const [utilisateurs, setUtilisateurs] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -26,25 +25,13 @@ const AdminListeUtilisateurs = () => {
                 if (msg.admin_liste_utilisateurs.success) {
                     setUtilisateurs(msg.admin_liste_utilisateurs.liste_utilisateurs || []);
                 } else {
-                    pushToast({
-                        title: "Erreur",
-                        message: "Erreur lors de la récupération de la liste des utilisateurs",
-                        type: "error",
-                    });
+                    toast.error("Erreur lors de la récupération de la liste des utilisateurs", {theme: "colored", icon: "🚫"})
                 }
             } else if (msg && msg.admin_utilisateur_supprime) {
                 if (msg.admin_utilisateur_supprime.success) {
-                    pushToast({
-                        title: "Succès",
-                        message: "Utilisateur supprimé avec succès",
-                        type: "success",
-                    });
+                    toast.success("Utilisateur supprimé avec succès", {theme: "colored", icon: "🗑️"})
                 } else {
-                    pushToast({
-                        title: "Erreur",
-                        message: "Erreur lors de la suppression de l'utilisateur",
-                        type: "error",
-                    });
+                    toast("Erreur lors de la suppression de l'utilisateur", {theme: "colored", icon: "🚫"})
                 }
             }
         },
@@ -58,7 +45,7 @@ const AdminListeUtilisateurs = () => {
         return () => {
             controller.unsubscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
         };
-    }, []);
+    }, [controller]);
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value.toLowerCase());

@@ -1,7 +1,7 @@
 import "./AdminListePermissions.scss";
 import {useEffect, useRef, useState} from "react";
 import {appInstance} from "../../controller/index.js";
-import {useToasts} from "../Toasts/ToastContext.jsx";
+import {toast} from "react-toastify";
 import FeatherIcon from "feather-icons-react";
 import {useModal} from "../Modale/ModaleContext.jsx";
 
@@ -10,7 +10,6 @@ const listeMessagesRecus = ["admin_liste_permissions"];
 
 const AdminListePermissions = () => {
     const {newModal} = useModal();
-    const {pushToast} = useToasts();
     const [permissions, setPermissions] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const controller = useRef(appInstance.getController()).current;
@@ -23,11 +22,7 @@ const AdminListePermissions = () => {
                 if (msg.admin_liste_permissions.success) {
                     setPermissions(msg.admin_liste_permissions.permissions || []);
                 } else {
-                    pushToast({
-                        title: "Erreur",
-                        message: msg.admin_liste_permissions.message || "Erreur lors de la récupération des permissions",
-                        type: "error",
-                    });
+                    toast.error(msg.admin_liste_permissions.message || "Erreur lors de la récupération des permissions", {theme: "colored", icon: "🚫"});
                 }
             }
         },
@@ -41,7 +36,7 @@ const AdminListePermissions = () => {
         return () => {
             controller.unsubscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
         };
-    }, []);
+    }, [controller]);
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value.toLowerCase());

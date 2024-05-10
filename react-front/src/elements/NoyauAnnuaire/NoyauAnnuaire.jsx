@@ -3,14 +3,13 @@ import {useEffect, useRef, useState} from "react";
 import {appInstance} from "../../controller/index.js";
 import FeatherIcon from "feather-icons-react";
 import {useModal} from "../Modale/ModaleContext.jsx";
-import {useToasts} from "../Toasts/ToastContext.jsx";
+import {toast} from "react-toastify";
 
 const listeMessagesEmis = ["demande_annuaire", "demande_info_utilisateur"];
 const listeMessagesRecus = ["annuaire", "info_utilisateur"];
 
 const NoyauAnnuaire = () => {
     const {newModal} = useModal();
-    const {pushToast} = useToasts();
 
     const [utilisateurs, setUtilisateurs] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -25,11 +24,7 @@ const NoyauAnnuaire = () => {
                 if (msg.annuaire.success) {
                     setUtilisateurs(msg.annuaire.annuaire || []);
                 } else {
-                    pushToast({
-                        title: "Erreur",
-                        message: "Erreur lors de la récupération de l'annuaire'",
-                        type: "error",
-                    });
+                    toast.error("Erreur lors de la récupération de l'annuaire", {theme: "colored", icon:"🚫"});
                 }
             } else if (msg && msg.info_utilisateur) {
                 if (msg.info_utilisateur.success) {
@@ -109,11 +104,7 @@ const NoyauAnnuaire = () => {
                         ),
                     });
                 } else {
-                    pushToast({
-                        title: "Erreur",
-                        message: "Erreur lors de la récupération des informations de l'utilisateur",
-                        type: "error",
-                    });
+                    toast.error("Erreur lors de la récupération des informations de l'utilisateur", {theme: "colored", icon:"🚫"});
                 }
             }
         },

@@ -4,7 +4,7 @@ import {appInstance} from "../../controller/index.js";
 import {useNavigate} from "react-router-dom";
 import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
-import {useToasts} from "../Toasts/ToastContext.jsx";
+import {toast} from "react-toastify";
 
 const listeMessagesEmis = ["admin_demande_role_details", "admin_modifier_role", "admin_demande_liste_permissions"];
 const listeMessagesRecus = ["admin_role_details", "admin_role_modifie", "admin_liste_permissions"];
@@ -12,7 +12,6 @@ const listeMessagesRecus = ["admin_role_details", "admin_role_modifie", "admin_l
 const AdminModifierRole = () => {
     const roleId = location.pathname.split("/")[3];
     const navigate = useNavigate();
-    const {pushToast} = useToasts();
 
     const [label, setLabel] = useState("");
     const [permissions, setPermissions] = useState([]);
@@ -28,16 +27,12 @@ const AdminModifierRole = () => {
         return () => {
             controller.unsubscribe(instanceRef.current, listeMessagesEmis, listeMessagesRecus);
         };
-    }, []);
+    }, [controller]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (!label || selectedPermissions.length === 0) {
-            pushToast({
-                title: "Erreur",
-                message: "Veuillez remplir tous les champs obligatoires.",
-                type: "error",
-            });
+            toast.error("Veuillez remplir tous les champs obligatoires.");
             return;
         }
 
@@ -66,26 +61,14 @@ const AdminModifierRole = () => {
                     setLabel(msg.admin_role_details.role.role_label);
                     setSelectedPermissions(msg.admin_role_details.role.role_permissions.map(p => p._id));
                 } else {
-                    pushToast({
-                        title: "Erreur",
-                        message: msg.admin_role_details.message || "Erreur lors de la récupération des détails du rôle",
-                        type: "error",
-                    });
+                   toast.error(msg.admin_role_details.message || "Erreur lors de la récupération des informations du rôle")
                 }
             } else if (msg.admin_role_modifie) {
                 if (msg.admin_role_modifie.success) {
-                    pushToast({
-                        title: "Succès",
-                        message: "Rôle modifié avec succès",
-                        type: "success",
-                    });
+                    toast.success("Rôle modifié avec succès");
                     navigate(`/admin/roles/${roleId}/view`);
                 } else {
-                    pushToast({
-                        title: "Erreur",
-                        message: msg.admin_role_modifie.message || "Erreur lors de la modification du rôle",
-                        type: "error",
-                    });
+                    toast.error(msg.admin_role_modifie.message || "Erreur lors de la modification du rôle");
                 }
             } else if (msg.admin_liste_permissions) {
                 setPermissions(msg.admin_liste_permissions.permissions || []);

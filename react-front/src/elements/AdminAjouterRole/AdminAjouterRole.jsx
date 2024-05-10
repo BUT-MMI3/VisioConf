@@ -4,14 +4,13 @@ import {appInstance} from "../../controller/index.js";
 import {useNavigate} from "react-router-dom";
 import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
-import {useToasts} from "../Toasts/ToastContext.jsx";
+import {toast} from "react-toastify";
 
 const listeMessagesEmis = ["admin_ajouter_role", "admin_demande_liste_permissions"];
 const listeMessagesRecus = ["admin_role_cree", "admin_liste_permissions"];
 
 const AdminAjouterRole = () => {
     const navigate = useNavigate();
-    const {pushToast} = useToasts();
 
     const [label, setLabel] = useState("");
     const [permissions, setPermissions] = useState([]);
@@ -23,11 +22,7 @@ const AdminAjouterRole = () => {
         event.preventDefault();
 
         if (!label || selectedPermissions.length === 0) {
-            pushToast({
-                title: "Erreur",
-                message: "Veuillez remplir tous les champs obligatoires.",
-                type: "error",
-            });
+            toast.error("Veuillez remplir tous les champs obligatoires");
             return;
         }
 
@@ -50,24 +45,17 @@ const AdminAjouterRole = () => {
             console.log("Received data:", msg);
             if (msg && msg.admin_role_cree) {
                 if (msg.admin_role_cree.success) {
-                    pushToast({
-                        title: "Succès", message: "Rôle créé avec succès !", type: "success",
-                    })
+                   toast.success("Rôle créé avec succès !")
                     navigate(`/admin/roles/${msg.admin_role_cree.role._id}/view`);
                     console.log("Rôle créé avec succès !", msg.admin_role_cree.role);
                 } else {
-                    pushToast({
-                        title: "Erreur", message: "Erreur lors de la création du rôle", type: "error",
-                    });
-
+                    toast.error("Erreur lors de la création du rôle");
                 }
             } else if (msg && msg.admin_liste_permissions) {
                 if (msg.admin_liste_permissions.success) {
                     setPermissions(msg.admin_liste_permissions.permissions || []);
                 } else {
-                    pushToast({
-                        title: "Erreur", message: "Erreur lors de la récupération des permissions", type: "error",
-                    });
+                    toast.error("Erreur lors de la récupération des permissions");
                 }
             }
         },
@@ -98,7 +86,7 @@ const AdminAjouterRole = () => {
 
         <form onSubmit={handleSubmit} className={"ajouter-role-form"}>
             <label className={"ajouter-role-label"} style={{width: '100%'}}>
-                <span>Les champs marqués d'une (<p>*</p>) sont obligatoires.</span>
+                <span>Les champs marqués d&apos;une (<p>*</p>) sont obligatoires.</span>
             </label>
             <label className={"ajouter-role-label"}>
                 <h4>Nom du rôle : <p>*</p></h4>

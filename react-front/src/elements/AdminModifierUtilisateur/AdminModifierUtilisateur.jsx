@@ -4,14 +4,12 @@ import {appInstance} from "../../controller/index.js";
 import {useLocation, useNavigate} from "react-router-dom";
 import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
-import {useToasts} from "../Toasts/ToastContext.jsx";
+import {toast} from "react-toastify";
 
 const listeMessagesEmis = ["admin_modifier_utilisateur", "admin_demande_utilisateur_details"];
 const listeMessagesRecus = ["admin_utilisateur_modifie", "admin_utilisateur_details"];
 
 const AdminModifierUtilisateur = () => {
-    const {pushToast} = useToasts();
-
     const location = useLocation();
     // url splitted = ['', 'admin', 'users', ':id', 'view']
     const id = location.pathname.split("/")[3];
@@ -31,11 +29,7 @@ const AdminModifierUtilisateur = () => {
         event.preventDefault();
 
         if (!userEmail || !userFirstname || !userLastname) {
-            pushToast({
-                title: "Erreur",
-                message: "Veuillez remplir tous les champs obligatoires.",
-                type: "error",
-            })
+            toast.error("Veuillez remplir tous les champs obligatoires.", {theme: "colored", icon: "🚫"})
             return;
         }
 
@@ -56,20 +50,11 @@ const AdminModifierUtilisateur = () => {
             console.log("Received data:", msg);
             if (msg && msg.admin_utilisateur_modifie) {
                 if (msg.admin_utilisateur_modifie.success) {
-                    pushToast({
-                        title: "Succès",
-                        message: "Utilisateur modifié avec succès !",
-                        type: "success",
-                    })
+                    toast.success("Utilisateur modifié avec succès !", {theme: "colored", icon: "🚀"})
                     navigate(`/admin/users/${msg.admin_utilisateur_modifie.editedUser._id}/view`);
                     console.log("Utilisateur modifié avec succès !", msg.admin_utilisateur_modifie.editedUser);
                 } else {
-                    pushToast({
-                        title: "Erreur",
-                        message: "Erreur lors de la modification de l'utilisateur",
-                        type: "error",
-                    });
-
+                    toast.error("Erreur lors de la modification de l'utilisateur", {theme: "colored", icon: "🚫"})
                 }
             } else if (msg && msg.admin_utilisateur_details) {
                 if (msg.admin_utilisateur_details.success) {
@@ -81,11 +66,7 @@ const AdminModifierUtilisateur = () => {
                     setUserJob(msg.admin_utilisateur_details.user.user_job || "");
                     setUserStatus(msg.admin_utilisateur_details.user.user_status || "");
                 } else {
-                    pushToast({
-                        title: "Erreur",
-                        message: "Erreur lors de la récupération de l'utilisateur",
-                        type: "error",
-                    });
+                    toast.error("Erreur lors de la récupération des informations de l'utilisateur", {theme: "colored", icon: "🚫"})
                 }
             }
         },
@@ -117,7 +98,7 @@ const AdminModifierUtilisateur = () => {
 
             <form onSubmit={handleSubmit} className={"ajouter-utilisateur-form"}>
                 <label className={"ajouter-utilisateur-label"} style={{width: '100%'}}>
-                    <span>Les champs marqués d'une (<p>*</p>) sont obligatoires.</span>
+                    <span>Les champs marqués d&apos;une (<p>*</p>) sont obligatoires.</span>
                 </label>
                 <label className={"ajouter-utilisateur-label"}>
                     <h4>Prénom : <p>*</p></h4>
@@ -155,11 +136,11 @@ const AdminModifierUtilisateur = () => {
                 <label style={{flexDirection: "column"}}>
                     <h4>Permissions additionnelles</h4>
                     <span>
-                        L'utilisateur héritera des permissions selon les groupes et rôles associés.
-                        Vous pourrez associer des permissions additionnelles plus tard via le module "Attribuer une permission".
+                        L&apos;utilisateur héritera des permissions selon les groupes et rôles associés.
+                        Vous pourrez associer des permissions additionnelles plus tard via le module &quot;Attribuer une permission&quot;.
                     </span>
                 </label>
-                <button type="submit">Modifier l'utilisateur</button>
+                <button type="submit">Modifier l&apos;utilisateur</button>
             </form>
         </div>
     );

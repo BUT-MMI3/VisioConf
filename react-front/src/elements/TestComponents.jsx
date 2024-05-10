@@ -1,20 +1,22 @@
 import {useModal} from "./Modale/ModaleContext";
-import {useToasts} from "./Toasts/ToastContext";
+import {toast} from "react-toastify";
 
 export default function TestComponents() {
     const {newModal} = useModal();
-    const {pushToast} = useToasts();
 
     return (
         <div className={"fc g1"}>
             <div className={"fr"}>
                 <button
                     onClick={() =>
-                        pushToast({
-                            type: "error",
-                            title: "Erreur",
-                            message: "Une erreur est survenue",
-                            duration: 3,
+                        toast.error("Une erreur est survenue", {
+                            position: "top-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
                         })
                     }
                 >
@@ -22,10 +24,14 @@ export default function TestComponents() {
                 </button>
                 <button
                     onClick={() =>
-                        pushToast({
-                            type: "success",
-                            title: "Succés",
-                            message: "Une opération a réussi",
+                        toast.success("Opération réussie", {
+                            position: "top-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
                         })
                     }
                 >
@@ -33,11 +39,14 @@ export default function TestComponents() {
                 </button>
                 <button
                     onClick={() =>
-                        pushToast({
-                            type: "info",
-                            title: "Info",
-                            message: "Une information",
-                            duration: 3,
+                        toast.info("Une information", {
+                            position: "top-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
                         })
                     }
                 >
@@ -45,11 +54,14 @@ export default function TestComponents() {
                 </button>
                 <button
                     onClick={() =>
-                        pushToast({
-                            type: "warning",
-                            title: "Attention",
-                            message: "Une information importante",
-                            duration: 3,
+                        toast.warn("Attention", {
+                            position: "top-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
                         })
                     }
                 >
