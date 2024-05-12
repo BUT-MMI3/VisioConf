@@ -1,0 +1,105 @@
+.NoyauAppelWidget {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+
+  border-radius: 1rem;
+  padding: 0.5rem;
+
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  background-color: var(--color-primary);
+
+  transition: box-shadow 0.2s, background-color 0.2s;
+  will-change: transform;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 1000;
+
+
+  &__header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+
+    &__drag {
+      height: 0.25rem;
+      width: 2rem;
+      background-color: var(--color-light-transparent);
+      border-radius: 0.5rem;
+      cursor: grab;
+
+
+      &:active {
+        cursor: grabbing;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        background-color: var(--color-primary-dark);
+      }
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+
+    &__left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+        &__title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--color-white);
+        }
+
+      &__call-time {
+        font-size: 0.75rem;
+        color: var(--color-white);
+      }
+
+      a {
+        color: var(--color-white);
+        text-decoration: none;
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-align: center;
+        padding: 0.25rem;
+        border-radius: 0.5rem;
+        background-color: var(--color-info);
+        transition: background-color 0.2s;
+
+        &:hover {
+          background-color: var(--color-info-dark);
+        }
+      }
+    }
+
+    &__right {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      &__hangup {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        background-color: var(--color-error);
+        padding: 0.75rem;
+        border-radius: 50%;
+        aspect-ratio: 1;
+
+        & svg {
+          transform: rotate(135deg);
+          line-height: 0;
+        }
+      }
+    }
+  }
+}

@@ -139,17 +139,17 @@ export function DiscussionContextProvider() {
                         return newMessages;
                     });
                 } else if (typeof msg.set_in_call !== "undefined") {
-                    if (discussionId === msg.set_in_call.discussion) {
+                    if (discussionId === msg.set_in_call.discussion.discussion_uuid) {
                         setInCall(msg.set_in_call.value);
                         if (msg.set_in_call.value) {
                             controller.send(discussionInstanceRef.current, {
                                 "get_call_info": {
-                                    discussion: discussionId,
+                                    discussion_uuid: discussionId,
                                 }
                             })
                             controller.send(discussionInstanceRef.current, {
                                 "get_streams": {
-                                    discussion: discussionId,
+                                    discussion_uuid: discussionId,
                                 }
                             })
                         }
@@ -271,7 +271,7 @@ export function DiscussionContextProvider() {
         console.log("Calling type: " + type);
         controller.send(discussionInstanceRef.current, {
             "new_call": {
-                discussion: discussionId,
+                discussion_uuid: discussionId,
                 type: type,
             },
         });

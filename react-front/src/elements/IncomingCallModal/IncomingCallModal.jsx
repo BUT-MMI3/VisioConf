@@ -3,8 +3,6 @@ import './IncomingCallModal.scss';
 import {useNavigate} from "react-router-dom";
 
 const IncomingCallModal = ({offer, calling, acceptCall}) => {
-    const [accept, setAccept] = useState(false);
-    const [reject, setReject] = useState(false);
     const [name, setName] = useState("Inconnu");
     const navigate = useNavigate();
 
@@ -15,13 +13,11 @@ const IncomingCallModal = ({offer, calling, acceptCall}) => {
     }, [offer]);
 
     const handleAccept = async () => {
-        setAccept(true);
-        navigate('/discussion/' + offer.discussion);
+        navigate('/discussion/' + offer.discussion.discussion_uuid);
         await acceptCall(true, offer);
     }
 
     const handleReject = async () => {
-        setReject(true);
         await acceptCall(false, offer);
     }
 

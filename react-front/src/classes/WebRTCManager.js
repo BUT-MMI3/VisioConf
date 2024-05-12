@@ -31,10 +31,11 @@ class WebRTCManager {
         video: false
     } // Whether the user is muted
     isScreenSharing = false
-    discussion = "" // The discussion id
+    discussion = {} // The discussion info object
     localStream = new MediaStream() // The local stream for the call
     localScreen = new MediaStream() // The local screen share stream
     callCreator = "" // The user who created the call
+    timeStart = null
 
     controller = null
     listeMessagesRecus = [
@@ -121,7 +122,7 @@ class WebRTCManager {
                 this.inCall = true
 
                 const membersToCall = message.call_created.call.members_allowed_to_join.filter(member => member !== this.session.user_socket_id)
-                await this.createOffer(membersToCall.map(member => member.user_socket_id), message.call_created.call.discussion_uuid, message.call_created.call.type, message.call_created.call.call_creator)
+                await this.createOffer(membersToCall.map(member => member.user_socket_id), message.call_created.discussion, message.call_created.call.type, message.call_created.call.call_creator)
             }
         } else if (typeof message.receive_offer !== "undefined") {                         // {sender: "", offer: {}, type: "", discussion: ""}
             await this.handleOffer(message.receive_offer)
@@ -149,13 +150,17 @@ class WebRTCManager {
                 }
             })
         } else if (typeof message.get_call_info !== "undefined") {          // {}
-            if (message.get_call_info.discussion === this.discussion) {
+            if (message.get_call_info.discussion_uuid === this.discussion.discussion_uuid) {
+                this.controller.send(this, {"set_call_info": this.getCallInfo()})
+            } else if (this.inCall) {
                 this.controller.send(this, {"set_call_info": this.getCallInfo()})
             } else {
                 this.controller.send(this, {"set_call_info": {}})
             }
         } else if (typeof message.get_streams !== "undefined") {            // {}
-            if (message.get_streams.discussion === this.discussion) {
+            if (message.get_streams.discussion_uuid === this.discussion.discussion_uuid) {
+                this.controller.send(this, {"set_remote_streams": this.remoteStreams})
+            } else if (this.inCall) {
                 this.controller.send(this, {"set_remote_streams": this.remoteStreams})
             } else {
                 this.controller.send(this, {"set_remote_streams": {}})
@@ -214,7 +219,7 @@ class WebRTCManager {
                 "update_remote_streams": {
                     target: socketId,
                     stream: event.streams[0],
-                    discussion: this.discussion
+                    discussion_uuid: this.discussion.discussion_uuid
                 }
             })
             this.controller.send(this, {"set_call_info": this.getCallInfo()})
@@ -227,7 +232,7 @@ class WebRTCManager {
                     "send_ice_candidate": {
                         target: socketId,
                         candidate: event.candidate,
-                        discussion: this.discussion
+                        discussion_uuid: this.discussion.discussion_uuid
                     }
                 })
             }
@@ -243,7 +248,7 @@ class WebRTCManager {
                     "update_remote_streams": {
                         target: socketId,
                         stream: this.remoteStreams[socketId],
-                        discussion: this.discussion
+                        discussion_uuid: this.discussion.discussion_uuid
                     }
                 })
             }
@@ -372,13 +377,14 @@ class WebRTCManager {
                     target: member,
                     offer: offer,
                     type: type,
-                    discussion: discussion,
+                    discussion_uuid: discussion.discussion_uuid,
                     members: members,
                     initiator: initiator
                 }
             })
         }
         this.inCall = true
+        this.timeStart = Date.now()
         this.controller.send(this, {"set_calling": true})
         this.controller.send(this, {"set_in_call": {value: true, discussion: discussion}})
         this.controller.send(this, {"set_call_info": this.getCallInfo()})
@@ -530,6 +536,9 @@ class WebRTCManager {
         const answer = await this.peers[offer.sender].createAnswer()
         await this.peers[offer.sender].setLocalDescription(answer)
         await this.handlePendingIceCandidates(offer.sender) // Handle any pending ice candidates
+
+        this.inCall = true
+        this.timeStart = Date.now()
 
         this.controller.send(this, {
             "set_in_call": {
@@ -710,7 +719,7 @@ class WebRTCManager {
             return
         }
 
-        this.controller.send(this, {"hang_up": {discussion: this.discussion}})
+        this.controller.send(this, {"hang_up": {discussion_uuid: this.discussion.discussion_uuid}})
         this.reset()
         this.controller.send(this, {"set_call_info": this.getCallInfo()})
     }
@@ -727,7 +736,8 @@ class WebRTCManager {
             inCall: this.inCall,
             callAccepted: this.callAccepted,
             type: this.type,
-            muted: this.muted
+            muted: this.muted,
+            timeStart: this.timeStart,
         }
     }
 
@@ -735,7 +745,7 @@ class WebRTCManager {
         this.localStream = new MediaStream()
         this.localScreen = new MediaStream()
         this.remoteStreams = {}
-        this.discussion = ""
+        this.discussion = {}
         this.type = "video"
         this.pendingIceCandidates = {}
         this.callMembers = []
@@ -744,6 +754,7 @@ class WebRTCManager {
         this.inCall = false
         this.callAccepted = false
         this.isScreenSharing = false
+        this.timeStart = null
         this.controller.send(this, {"set_call_info": this.getCallInfo()})
         this.controller.send(this, {
             "set_in_call": {

@@ -34,7 +34,12 @@ class Discussions {
             } else if (typeof msg.demande_historique_discussion !== 'undefined') {
                 const discussion = await Discussion.findPopulateMembersByDiscussionId(msg.demande_historique_discussion.discussionId);
                 if (!discussion) {
-                    this.controller.send(this, {historique_discussion: [], id: msg.id});
+                    this.controller.send(this, {
+                        historique_discussion: {
+                            historique: [],
+                            discussionId: msg.demande_historique_discussion.discussionId
+                        }, id: msg.id
+                    });
                     return;
                 }
                 this.controller.send(this, {
