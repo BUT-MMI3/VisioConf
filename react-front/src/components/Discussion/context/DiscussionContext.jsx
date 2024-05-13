@@ -191,10 +191,15 @@ export function DiscussionContextProvider() {
 
     useEffect(() => {
         const id = location.pathname.split("/")[2];
+
+        if (id && createDiscussion) {
+            setCreateDiscussion(false);
+        }
+
         if (id !== discussionId) {
             setDiscussionId(id);
         }
-    }, [discussionId, location, location.pathname]);
+    }, [createDiscussion, discussionId, location, location.pathname]);
 
     useEffect(() => {
         /*
