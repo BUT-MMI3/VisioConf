@@ -111,6 +111,8 @@
     flex-wrap: wrap;
     flex-direction: column;
     gap: 0.5rem;
+    overflow: hidden;
+    overflow-x: auto;
 
     &__stream {
       display: flex;
