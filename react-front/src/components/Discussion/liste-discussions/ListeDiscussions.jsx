@@ -2,13 +2,16 @@ import "./ListeDiscussions.scss";
 import LinkTo from "../../../elements/LinkTo/LinkTo.jsx";
 import {useDiscussion} from "../context/DiscussionContext.jsx";
 import {useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
 
 export default function ListeDiscussions() {
     const {listeDiscussions, newDiscussion} = useDiscussion();
     const session = useSelector((state) => state.session);
 
+    const navigate = useNavigate();
+
     const handleNewDiscussion = () => {
-        console.log("handleNewDiscussion");
+        navigate("/discussions")
         newDiscussion();
     };
 
