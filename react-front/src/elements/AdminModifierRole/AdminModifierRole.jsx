@@ -61,7 +61,7 @@ const AdminModifierRole = () => {
                     setLabel(msg.admin_role_details.role.role_label);
                     setSelectedPermissions(msg.admin_role_details.role.role_permissions.map(p => p._id));
                 } else {
-                   toast.error(msg.admin_role_details.message || "Erreur lors de la récupération des informations du rôle")
+                    toast.error(msg.admin_role_details.message || "Erreur lors de la récupération des informations du rôle")
                 }
             } else if (msg.admin_role_modifie) {
                 if (msg.admin_role_modifie.success) {

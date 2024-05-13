@@ -25,7 +25,10 @@ const AdminListeUtilisateurs = () => {
                 if (msg.admin_liste_utilisateurs.success) {
                     setUtilisateurs(msg.admin_liste_utilisateurs.liste_utilisateurs || []);
                 } else {
-                    toast.error("Erreur lors de la récupération de la liste des utilisateurs", {theme: "colored", icon: "🚫"})
+                    toast.error("Erreur lors de la récupération de la liste des utilisateurs", {
+                        theme: "colored",
+                        icon: "🚫"
+                    })
                 }
             } else if (msg && msg.admin_utilisateur_supprime) {
                 if (msg.admin_utilisateur_supprime.success) {

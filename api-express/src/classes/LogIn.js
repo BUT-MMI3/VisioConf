@@ -109,34 +109,33 @@ class LogIn {
                     if (this.verbose || this.controller.verboseall)
                         console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
 
-
                     // check if the user was in a call
-                    const call = await Call.findOne({
+                    const calls = await Call.find({
                         in_call_members: user._id,
                         is_ended: false
                     }).populate("in_call_members").populate("call_creator");
-                    console.log("USER")
-                    console.log(user)
-                    console.log("CALL")
-                    console.log(call)
-                    if (call) {
-                        if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, mise à jour de l'appel en cours");
-                        if (call.call_creator.user_uuid === user.user_uuid) {
-                            if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Créateur de l'appel déconnecté, choix d'un nouveau créateur");
-                            if (call.in_call_members.length <= 1) {
-                                if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Dernier utilisateur de l'appel déconnecté, suppression de l'appel");
-                                call.is_ended = true;
-                                call.date_ended = Date.now();
+                    if (calls.length > 0) {
+                        for (let call of calls) {
+                            if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, mise à jour de l'appel en cours");
+                            if (call.call_creator.user_uuid === user.user_uuid) {
+                                if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Créateur de l'appel déconnecté, choix d'un nouveau créateur");
+                                if (call.in_call_members.length <= 1) {
+                                    if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Dernier utilisateur de l'appel déconnecté, suppression de l'appel");
+                                    await Call.updateOne({_id: call._id}, {is_ended: true, date_ended: Date.now()});
+                                } else {
+                                    let randomIndex = Math.floor(Math.random() * call.in_call_members.length);
+                                    let newCreator = call.in_call_members[randomIndex];
+                                    if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Nouveau créateur de l'appel : " + newCreator);
+                                    await Call.updateOne({_id: call._id}, {call_creator: newCreator});
+                                }
                             } else {
-                                let randomIndex = Math.floor(Math.random() * call.in_call_members.length);
-                                let newCreator = call.in_call_members[randomIndex];
-                                if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Nouveau créateur de l'appel : " + newCreator);
-                                call.call_creator = newCreator;
+                                if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, suppression de l'utilisateur de l'appel");
                             }
-                        }
 
-                        call.in_call_members = call.in_call_members.filter(member => member.user_uuid !== user.user_uuid);
-                        await call.save();
+                            await Call.updateOne({_id: call._id}, {
+                                in_call_members: call.in_call_members.filter(member => member.user_uuid !== user.user_uuid)
+                            });
+                        }
                     }
                 } else {
                     if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur non trouvé dans la base de données");

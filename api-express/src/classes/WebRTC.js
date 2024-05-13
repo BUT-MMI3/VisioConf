@@ -11,7 +11,7 @@ class WebRTC {
     listeMessagesEmis = ["receive_offer", "receive_answer", "receive_ice_candidate", "offer_rejected", "call_created", "hung_up", "call_connected_users"]
     listeMessagesRecus = ["new_call", "send_offer", "send_answer", "send_ice_candidate", "reject_offer", "hang_up"]
 
-    verbose = true;
+    verbose = false;
 
     constructor(controller, instanceName) {
         this.controller = controller;
@@ -119,7 +119,10 @@ class WebRTC {
             }
         } else if (typeof msg.send_answer !== 'undefined') {
             try {
-                const call = await Call.findOne({discussion_uuid: msg.send_answer.discussion.discussion_uuid, is_ended: false}).populate('in_call_members').populate('members_allowed_to_join')
+                const call = await Call.findOne({
+                    discussion_uuid: msg.send_answer.discussion.discussion_uuid,
+                    is_ended: false
+                }).populate('in_call_members').populate('members_allowed_to_join')
                 const userFrom = await User.findBySocketId(msg.id);
                 const userTo = await User.findBySocketId(msg.send_answer.target);
 
@@ -157,7 +160,10 @@ class WebRTC {
             }
         } else if (typeof msg.send_ice_candidate !== 'undefined') {
             try {
-                const call = await Call.findOne({discussion_uuid: msg.send_ice_candidate.discussion_uuid, is_ended: false});
+                const call = await Call.findOne({
+                    discussion_uuid: msg.send_ice_candidate.discussion_uuid,
+                    is_ended: false
+                });
                 const userTo = await User.findBySocketId(msg.send_ice_candidate.target);
 
                 if (call && userTo && userTo.user_socket_id && userTo.user_is_online && userTo.user_socket_id !== msg.id) {

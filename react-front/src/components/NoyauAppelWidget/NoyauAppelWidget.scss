@@ -52,11 +52,11 @@
       flex-direction: column;
       gap: 0.5rem;
 
-        &__title {
-            font-size: 1rem;
-            font-weight: bold;
-            color: var(--color-white);
-        }
+      &__title {
+        font-size: 1rem;
+        font-weight: bold;
+        color: var(--color-white);
+      }
 
       &__call-time {
         font-size: 0.75rem;

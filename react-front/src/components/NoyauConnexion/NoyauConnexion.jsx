@@ -15,7 +15,7 @@ const listeMessageRecus = [
 
 const NoyauConnexion = () => {
     const instanceName = "NoyauConnexion";
-    const verbose = true;
+    const verbose = false;
 
     const [controller] = useState(appInstance.getController())
 

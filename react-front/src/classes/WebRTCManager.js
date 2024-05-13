@@ -76,7 +76,7 @@ class WebRTCManager {
         "demande_connected_users",
     ]
 
-    verbose = true
+    verbose = false
 
     constructor(controller) {
         this.controller = controller // Le controller est un objet qui permet de gérer les messages reçus et émis
@@ -639,7 +639,7 @@ class WebRTCManager {
             }
             delete this.pendingIceCandidates[socketId]
         } else {
-               if (this.verbose || this.controller.verboseall) console.warn(`WARNING ${this.instanceName}: No pending ice candidates for: ${socketId}`)
+            if (this.verbose || this.controller.verboseall) console.warn(`WARNING ${this.instanceName}: No pending ice candidates for: ${socketId}`)
         }
     }
 
@@ -755,6 +755,10 @@ class WebRTCManager {
         this.callAccepted = false
         this.isScreenSharing = false
         this.timeStart = null
+        this.muted = {
+            audio: false,
+            video: false
+        }
         this.controller.send(this, {"set_call_info": this.getCallInfo()})
         this.controller.send(this, {
             "set_in_call": {

@@ -5,17 +5,19 @@ import Draggable from "react-draggable";
 import LinkTo from "../../elements/LinkTo/LinkTo.jsx";
 import {Phone} from "react-feather";
 import {useLocation} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 const listeMessagesEmis = ["get_call_info", "get_streams", "is_in_call", "end_call"]
 const listeMessagesRecus = ["set_call_info", "set_remote_streams", "update_remote_streams", "set_in_call"]
 
 const NoyauAppelWidget = () => {
     const instanceName = "NoyauAppelWidget"
-    const verbose = true
+    const verbose = false
 
     const location = useLocation()
 
     const [controller] = useState(appInstance.getController())
+    const session = useSelector(state => state.session)
 
     const [hidden, setHidden] = useState(true)
     const [callInfo, setCallInfo] = useState({})
@@ -59,16 +61,18 @@ const NoyauAppelWidget = () => {
     }, [controller, current])
 
     useEffect(() => {
-        if (location.pathname.includes("discussion")) {
-            if (location.pathname.split('/')[2] === callInfo.discussion && inCall) {
-                setHidden(true)
+        if (inCall && callInfo) {
+            if (location.pathname.includes("discussion")) {
+                if (location.pathname.split('/')[2] === callInfo.discussion.discussion_uuid && inCall) {
+                    setHidden(true)
+                } else if (inCall && (location.pathname.split('/')[2] !== callInfo.discussion)) {
+                    setHidden(false)
+                }
             } else if (inCall) {
                 setHidden(false)
             }
-        } else if (inCall) {
-            setHidden(false)
         }
-    }, [callInfo.discussion, discussion, inCall, location])
+    }, [callInfo, discussion, inCall, location])
 
     useEffect(() => {
         if (inCall) {
@@ -88,43 +92,58 @@ const NoyauAppelWidget = () => {
             defaultPosition={{x: 0, y: 0}}
         >
             <div className={"NoyauAppelWidget"} hidden={hidden}>
-                <div className={"NoyauAppelWidget__header"}>
-                    <div className={"NoyauAppelWidget__header__drag"}></div>
-                </div>
+                {inCall && !hidden && (
+                    <>
 
-                <div className={"NoyauAppelWidget__content"}>
-                    <div className="NoyauAppelWidget__content__left">
-                        {/*
+                        <div className={"NoyauAppelWidget__header"}>
+                            <div className={"NoyauAppelWidget__header__drag"}></div>
+                        </div>
+
+                        <div className={"NoyauAppelWidget__content"}>
+                            <div className="NoyauAppelWidget__content__left">
+                                {/*
                           IMPLEMENT HERE THE CALLER NAME (discussion info)
                         */}
-                        <h3 className={"NoyauAppelWidget__content__left__title"}>{discussion?.discussion_name}</h3>
-                        <LinkTo to={`discussion/${callInfo?.discussion.discussion_uuid}`}>Voir l&apos;appel</LinkTo>
-                        <p className={"NoyauAppelWidget__content__left__call-time"}>{new Date(callTime).toISOString().substring(11, 19)}</p>
-                    </div>
+                                <h3 className={"NoyauAppelWidget__content__left__title"}>
+                                    {(discussion.discussion_members.length === 2 && (
+                                        discussion.discussion_name || discussion.discussion_members.find((m) => m.user_uuid !== session.user_uuid).user_firstname
+                                    )) || (discussion.discussion_members.length > 2 && (
+                                        discussion.discussion_name || discussion.discussion_members.filter((m) => m.user_uuid !== session.user_uuid).map((m) => m.user_firstname).join(', ')
+                                    )) || (
+                                        discussion.discussion_name || "Discussion sans nom"
+                                    )}
+                                </h3>
+                                <LinkTo to={`discussion/${callInfo?.discussion.discussion_uuid}`}>Voir
+                                    l&apos;appel</LinkTo>
+                                <p className={"NoyauAppelWidget__content__left__call-time"}>{new Date(callTime).toISOString().substring(11, 19)}</p>
+                            </div>
 
-                    <div className="NoyauAppelWidget__content__right">
-                        <div className={"NoyauAppelWidget__content__right__hangup"} onClick={() => {
-                            controller.send(current, {"end_call": {}})
-                            setHidden(true)
-                            setInCall(false)
-                        }}>
-                            <Phone size={18}/>
+                            <div className="NoyauAppelWidget__content__right">
+                                <div className={"NoyauAppelWidget__content__right__hangup"} onClick={() => {
+                                    controller.send(current, {"end_call": {}})
+                                    setHidden(true)
+                                    setInCall(false)
+                                }}>
+                                    <Phone size={18}/>
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
 
-                </div>
+                        <div className={"NoyauAppelWidget__streams"} style={{display: 'none'}}>
+                            {Object.keys(callInfo?.remoteStreams).map((socketId) => {
+                                return (
+                                    <video key={socketId} autoPlay={true} ref={(video) => {
+                                        if (video) {
+                                            video.srcObject = callInfo?.remoteStreams[socketId].stream
+                                        }
+                                    }}/>
+                                );
+                            })}
+                        </div>
 
-                {/*<div className={"NoyauAppelWidget__streams"}>*/}
-                {/*    {Object.keys(remoteStreams).map((socketId) => {*/}
-                {/*        return (*/}
-                {/*            <video key={socketId} style={'visibility:hidden;'} autoPlay={true} ref={(video) => {*/}
-                {/*                if (video) {*/}
-                {/*                    video.srcObject = remoteStreams[socketId];*/}
-                {/*                }*/}
-                {/*            }}/>*/}
-                {/*        );*/}
-                {/*    })}*/}
-                {/*</div>*/}
+                    </>
+                )}
             </div>
         </Draggable>
     )

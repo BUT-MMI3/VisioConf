@@ -16,7 +16,7 @@ class CanalSocketIO {
 
     sessionToken = null;
 
-    verbose = true;
+    verbose = false;
 
     constructor(s, c, nom) {
         this.socket = s;

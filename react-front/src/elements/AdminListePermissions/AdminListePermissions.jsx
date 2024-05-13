@@ -22,7 +22,10 @@ const AdminListePermissions = () => {
                 if (msg.admin_liste_permissions.success) {
                     setPermissions(msg.admin_liste_permissions.permissions || []);
                 } else {
-                    toast.error(msg.admin_liste_permissions.message || "Erreur lors de la récupération des permissions", {theme: "colored", icon: "🚫"});
+                    toast.error(msg.admin_liste_permissions.message || "Erreur lors de la récupération des permissions", {
+                        theme: "colored",
+                        icon: "🚫"
+                    });
                 }
             }
         },

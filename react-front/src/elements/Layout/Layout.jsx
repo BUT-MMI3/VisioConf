@@ -13,7 +13,7 @@ const listeMessagesRecus = ["incoming_call"];
 export default function Layout() {
     const location = useLocation();
     const instanceName = "Layout";
-    const verbose = true;
+    const verbose = false;
 
     const [controller] = useState(appInstance.getController());
     const [offer, setOffer] = useState(null);
@@ -70,7 +70,7 @@ export default function Layout() {
                     ALLOW USER TO CONTROL CALL WHEREVER HE IS
                 */
             }
-            <NoyauAppelWidget />
+            <NoyauAppelWidget/>
             <div className="layout-grid">
                 <NoyauBarreDeMenu/>
                 <div className="layout-content">

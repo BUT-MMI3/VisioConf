@@ -9,7 +9,7 @@ class Messages {
     listeMessagesEmis = ["demande_historique_discussion", "nouveau_message", "erreur_envoi_message", "demande_notification"];
     listeMessagesRecus = ["envoie_message"];
 
-    verbose = true;
+    verbose = false;
 
     constructor(controller, instanceName) {
         this.controller = controller;

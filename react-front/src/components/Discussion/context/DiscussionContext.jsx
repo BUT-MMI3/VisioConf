@@ -53,13 +53,14 @@ const listeMessagesRecus = [
     "set_in_call",
     "update_remote_streams",
     "set_call_info",
-    "set_remote_streams"
+    "set_remote_streams",
+    "call_created"
 ];
 
 export function DiscussionContextProvider() {
     // INIT COMPONENT
     const instanceName = "Discussion Context";
-    const verbose = true;
+    const verbose = false;
 
     // CALL CONTROLLER
     const [controller] = useState(appInstance.getController());
@@ -163,6 +164,10 @@ export function DiscussionContextProvider() {
                     setCallInfo(msg.set_call_info);
                 } else if (typeof msg.set_remote_streams !== "undefined") {
                     setRemoteStreams(msg.set_remote_streams);
+                } else if (typeof msg.call_created !== "undefined") {
+                    if (!msg.call_created.value && msg.call_created.error) {
+                        toast.error(msg.call_created.error, {theme: "colored", icon: "🚫"});
+                    }
                 }
             }
         };

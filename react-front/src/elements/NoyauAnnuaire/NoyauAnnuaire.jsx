@@ -24,7 +24,7 @@ const NoyauAnnuaire = () => {
                 if (msg.annuaire.success) {
                     setUtilisateurs(msg.annuaire.annuaire || []);
                 } else {
-                    toast.error("Erreur lors de la récupération de l'annuaire", {theme: "colored", icon:"🚫"});
+                    toast.error("Erreur lors de la récupération de l'annuaire", {theme: "colored", icon: "🚫"});
                 }
             } else if (msg && msg.info_utilisateur) {
                 if (msg.info_utilisateur.success) {
@@ -104,7 +104,10 @@ const NoyauAnnuaire = () => {
                         ),
                     });
                 } else {
-                    toast.error("Erreur lors de la récupération des informations de l'utilisateur", {theme: "colored", icon:"🚫"});
+                    toast.error("Erreur lors de la récupération des informations de l'utilisateur", {
+                        theme: "colored",
+                        icon: "🚫"
+                    });
                 }
             }
         },

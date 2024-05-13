@@ -8,7 +8,7 @@ class Permissions {
     listeMessagesEmis = ["admin_liste_permissions"];
     listeMessagesRecus = ["admin_demande_liste_permissions"];
 
-    verbose = true;
+    verbose = false;
 
     constructor(controller, instanceName) {
         this.controller = controller;

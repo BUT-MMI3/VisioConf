@@ -15,7 +15,7 @@ const listeMessageRecus = [
 
 const NoyauInscription = () => {
     const instanceName = "NoyauInscription";
-    const verbose = true;
+    const verbose = false;
 
     const [controller] = useState(appInstance.getController());
 

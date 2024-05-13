@@ -48,7 +48,7 @@ const listeMessageRecus = [
 
 const App = () => {
     const instanceName = "App";
-    const verbose = true;
+    const verbose = false;
 
     const [loading, setLoading] = useState(appInstance.loading);
     const [controller, setController] = useState(appInstance.controller);
