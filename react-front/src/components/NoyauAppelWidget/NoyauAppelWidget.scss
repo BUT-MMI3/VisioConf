@@ -63,19 +63,20 @@
         color: var(--color-white);
       }
 
-      a {
-        color: var(--color-white);
-        text-decoration: none;
-        font-size: 0.75rem;
-        font-weight: bold;
-        text-align: center;
-        padding: 0.25rem;
-        border-radius: 0.5rem;
-        background-color: var(--color-info);
-        transition: background-color 0.2s;
+      &__icons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
 
-        &:hover {
-          background-color: var(--color-info-dark);
+        & .btn {
+          flex: 1;
+          margin: 0;
+          padding: 0.5rem;
+          position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
       }
     }
@@ -100,6 +101,30 @@
           line-height: 0;
         }
       }
+    }
+  }
+
+  &__streams {
+    max-width: 275px;
+    max-height: 200px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    &__stream {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      border-radius: 0.5rem;
+      background-color: var(--color-white);
+      flex: 1;
+
+     .remote-video-container {
+       min-width: 100%;
+       max-width: 100%;
+     }
     }
   }
 }

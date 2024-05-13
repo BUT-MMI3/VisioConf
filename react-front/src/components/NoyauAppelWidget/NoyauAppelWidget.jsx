@@ -3,9 +3,10 @@ import {useEffect, useRef, useState} from "react";
 import './NoyauAppelWidget.scss'
 import Draggable from "react-draggable";
 import LinkTo from "../../elements/LinkTo/LinkTo.jsx";
-import {Phone} from "react-feather";
+import {ExternalLink, Phone, Video, VideoOff} from "react-feather";
 import {useLocation} from "react-router-dom";
 import {useSelector} from "react-redux";
+import RemoteVideo from "../../elements/RemoteVideo/RemoteVideo.jsx";
 
 const listeMessagesEmis = ["get_call_info", "get_streams", "is_in_call", "end_call"]
 const listeMessagesRecus = ["set_call_info", "set_remote_streams", "update_remote_streams", "set_in_call"]
@@ -22,6 +23,7 @@ const NoyauAppelWidget = () => {
     const [hidden, setHidden] = useState(true)
     const [callInfo, setCallInfo] = useState({})
     const [remoteStreams, setRemoteStreams] = useState({})
+    const [showStreams, setShowStreams] = useState(false)
     const [inCall, setInCall] = useState(false)
     const [discussion, setDiscussion] = useState(null)
     const [callTime, setCallTime] = useState(0)
@@ -70,6 +72,8 @@ const NoyauAppelWidget = () => {
             } else if (inCall) {
                 setHidden(false)
             }
+        } else {
+            setHidden(true)
         }
     }, [callInfo, discussion, inCall, location])
 
@@ -112,8 +116,16 @@ const NoyauAppelWidget = () => {
                                         discussion.discussion_name || "Discussion sans nom"
                                     )}
                                 </h3>
-                                <LinkTo to={`discussion/${callInfo?.discussion.discussion_uuid}`}>Voir
-                                    l&apos;appel</LinkTo>
+                                <div className={"NoyauAppelWidget__content__left__icons"}>
+                                    <LinkTo to={`discussion/${callInfo?.discussion.discussion_uuid}`}
+                                            className={"btn btn-secondary"} title={"Retourner à l'appel"}>
+                                        <ExternalLink size={18}/>
+                                    </LinkTo>
+                                    <button className={"btn btn-tertiary"} onClick={() => setShowStreams(!showStreams)}
+                                            title={"Afficher/Masquer les flux"}>
+                                        {showStreams ? <Video size={18}/> : <VideoOff size={18}/>}
+                                    </button>
+                                </div>
                                 <p className={"NoyauAppelWidget__content__left__call-time"}>{new Date(callTime).toISOString().substring(11, 19)}</p>
                             </div>
 
@@ -129,14 +141,13 @@ const NoyauAppelWidget = () => {
 
                         </div>
 
-                        <div className={"NoyauAppelWidget__streams"} style={{display: 'none'}}>
+                        <div className={"NoyauAppelWidget__streams"} style={{display: showStreams ? "block" : "none"}}>
                             {Object.keys(callInfo?.remoteStreams).map((socketId) => {
                                 return (
-                                    <video key={socketId} autoPlay={true} ref={(video) => {
-                                        if (video) {
-                                            video.srcObject = callInfo?.remoteStreams[socketId].stream
-                                        }
-                                    }}/>
+                                    <div className={"NoyauAppelWidget__streams__stream"} key={socketId}>
+                                        <RemoteVideo key={socketId} stream={callInfo?.remoteStreams[socketId]}
+                                                     callInfo={callInfo}/>
+                                    </div>
                                 );
                             })}
                         </div>
