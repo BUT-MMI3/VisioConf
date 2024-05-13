@@ -141,7 +141,7 @@ const NoyauAppelWidget = () => {
 
                         </div>
 
-                        <div className={"NoyauAppelWidget__streams"} style={{display: showStreams ? "block" : "none"}}>
+                        <div className={"NoyauAppelWidget__streams"} style={{display: showStreams ? "flex" : "none"}}>
                             {Object.keys(callInfo?.remoteStreams).map((socketId) => {
                                 return (
                                     <div className={"NoyauAppelWidget__streams__stream"} key={socketId}>
