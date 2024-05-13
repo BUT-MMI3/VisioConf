@@ -32,7 +32,6 @@ const NoyauAppelWidget = () => {
             if (verbose || controller.verboseall) console.log(`INFO (${instanceName}) - traitementMessage: `, msg);
 
             if (typeof msg.set_call_info !== "undefined") {
-                console.warn("INFO - set_call_info: ", msg.set_call_info)
                 setCallInfo(msg.set_call_info)
                 setDiscussion(msg.set_call_info.discussion)
             } else if (typeof msg.set_remote_streams !== "undefined") {

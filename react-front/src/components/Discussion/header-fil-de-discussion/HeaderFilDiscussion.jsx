@@ -22,7 +22,6 @@ const HeaderFilDiscussion = ({discussion, inCall}) => {
             if (verbose || controller.verboseall) console.log(`INFO (${instanceName}) - traitementMessage: `, msg);
 
             if (typeof msg.set_call_info !== "undefined") {
-                console.warn("INFO - set_call_info: ", msg.set_call_info)
                 setCallInfo(msg.set_call_info)
             }
         }

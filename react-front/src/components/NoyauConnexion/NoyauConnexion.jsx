@@ -25,9 +25,9 @@ const NoyauConnexion = () => {
             if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
             if (typeof msg.connexion_acceptee !== "undefined") {
-                console.log("Connexion établie");
+                if (verbose || controller.verboseall) console.log("Connexion établie");
             } else if (typeof msg.connexion_refusee !== "undefined") {
-                console.log("Connexion refusée");
+                if (verbose || controller.verboseall) console.log("Connexion refusée");
                 setErreur(msg.connexion_refusee);
             }
         }

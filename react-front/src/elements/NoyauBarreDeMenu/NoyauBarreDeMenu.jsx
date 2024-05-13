@@ -30,10 +30,10 @@ const NoyauBarreDeMenu = () => {
             if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
             if (typeof msg.status_answer !== "undefined") {
-                console.log("Informations utilisateur obtenues", msg.status_answer);
+                if (verbose || controller.verboseall) console.log("Informations utilisateur obtenues", msg.status_answer);
                 setStatus(msg.status_answer);
             } else {
-                console.log("Erreur lors du traitement du message :", msg);
+                if (verbose || controller.verboseall) console.log("Erreur lors du traitement du message :", msg);
             }
         }
     });
@@ -49,14 +49,14 @@ const NoyauBarreDeMenu = () => {
         setShowStatus(!showStatus);
     };
     const checkRole = () => {
-        console.log(`INFO: (NoyauBarreDeMenu) - checkRole - session.user_roles[0]`, session.user_roles[0]);
+        if (verbose || controller.verboseall) console.log(`INFO: (NoyauBarreDeMenu) - checkRole - session.user_roles[0]`, session.user_roles[0]);
         return session.user_roles[0];
     };
     const handleChangeStatus = async (newStatus) => {
         try {
             setSelectedStatus(newStatus);
             await controller.send(current, {demande_changement_status: newStatus});
-            console.log("Demande de changement de statut envoyée", newStatus)
+            if (verbose || controller.verboseall) console.log("Demande de changement de statut envoyée", newStatus)
         } catch (error) {
             console.error("Erreur lors de la demande de changement de statut :", error);
         }

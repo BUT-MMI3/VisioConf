@@ -43,7 +43,7 @@ export default function Layout() {
     }
 
     async function acceptCall(value, offer) {
-        console.warn("INFO Accepting call");
+        if (verbose || controller.verboseall) console.warn("INFO Accepting call");
         controller.send(current, {
             "accept_incoming_call": {
                 "value": value,

@@ -272,8 +272,9 @@ export function DiscussionContextProvider() {
 
         setCalling(true);
 
-        console.log("Calling discussionId: " + discussionId);
-        console.log("Calling type: " + type);
+        if (verbose || controller.verboseall) console.log(`INFO - (${instanceName}) : Demande de création d'appel`);
+        if (verbose || controller.verboseall) console.log(`INFO - (${instanceName}) : Type d'appel : ${type}`);
+
         controller.send(discussionInstanceRef.current, {
             "new_call": {
                 discussion_uuid: discussionId,

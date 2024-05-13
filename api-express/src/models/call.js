@@ -46,13 +46,6 @@ callSchema.methods.addMemberToCall = async function (socketId) {
             throw new Error('User not found');
         }
 
-        console.log("|||| USER TO ADD ||||")
-        console.log(user);
-
-        console.log("|||| AddMemberToCall ||||")
-        console.log(this)
-        console.log(this.in_call_members);
-
         if (this.in_call_members.map(member => member.user_socket_id).includes(socketId)) {
             console.log("User already in call");
             return;
