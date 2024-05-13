@@ -11,7 +11,7 @@ class Register {
         this.listeMessagesEmis = ["inscription_acceptee", "inscription_refusee"];
         this.listeMessagesRecus = ["demande_inscription"];
 
-        this.verbose = true;
+        this.verbose = false;
 
         if (this.verbose || this.controller.verboseall) console.log("INFO (" + this.instanceName + ") - Création de l'instance Register : " + this.instanceName);
 

@@ -7,12 +7,12 @@ class LogIn {
     controller = null;
     instanceName = "";
 
-    listeMessagesEmis = ["connexion_acceptee", "connexion_refusee", "information_user", "demande_liste_utilisateurs", "status_answer"];
+    listeMessagesEmis = ["connexion_acceptee", "connexion_refusee", "information_user", "demande_liste_utilisateurs", "status_answer", "hang_up"];
     listeMessagesRecus = ["demande_de_connexion", "client_deconnexion", "demande_changement_status"];
 
     email = "";
 
-    verbose = false;
+    verbose = true;
 
     constructor(controller, instanceName) {
         this.controller = controller;
@@ -99,6 +99,25 @@ class LogIn {
             try {
                 const user = await User.findOne({user_socket_id: msg.id})
                 if (user) {
+                    // check if the user was in a call
+                    const calls = await Call.find({
+                        in_call_members: user._id,
+                        is_ended: false
+                    }).populate("in_call_members").populate("call_creator");
+
+                    if (calls.length > 0) {
+                        for (let call of calls) {
+                            if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, mise à jour de l'appel en cours");
+                            this.controller.send(this, {
+                                "hang_up": {
+                                    discussion_uuid: call.discussion_uuid,
+                                    user_uuid: user.user_uuid
+                                },
+                                id: msg.id
+                            });
+                        }
+                    }
+
                     await User.updateOne({user_socket_id: msg.id}, {
                         user_socket_id: "none",
                         user_is_online: false,
@@ -106,38 +125,7 @@ class LogIn {
                         user_tokens: {}
                     });
 
-                    if (this.verbose || this.controller.verboseall)
-                        console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
-
-
-                    // check if the user was in a call
-                    const call = await Call.findOne({
-                        in_call_members: user._id,
-                        is_ended: false
-                    }).populate("in_call_members").populate("call_creator");
-                    console.log("USER")
-                    console.log(user)
-                    console.log("CALL")
-                    console.log(call)
-                    if (call) {
-                        if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, mise à jour de l'appel en cours");
-                        if (call.call_creator.user_uuid === user.user_uuid) {
-                            if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Créateur de l'appel déconnecté, choix d'un nouveau créateur");
-                            if (call.in_call_members.length <= 1) {
-                                if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Dernier utilisateur de l'appel déconnecté, suppression de l'appel");
-                                call.is_ended = true;
-                                call.date_ended = Date.now();
-                            } else {
-                                let randomIndex = Math.floor(Math.random() * call.in_call_members.length);
-                                let newCreator = call.in_call_members[randomIndex];
-                                if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Nouveau créateur de l'appel : " + newCreator);
-                                call.call_creator = newCreator;
-                            }
-                        }
-
-                        call.in_call_members = call.in_call_members.filter(member => member.user_uuid !== user.user_uuid);
-                        await call.save();
-                    }
+                    if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur déconnecté, informations mises à jour dans la base de données");
                 } else {
                     if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur non trouvé dans la base de données");
                 }

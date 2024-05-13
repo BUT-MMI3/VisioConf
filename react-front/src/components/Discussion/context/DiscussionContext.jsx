@@ -53,13 +53,14 @@ const listeMessagesRecus = [
     "set_in_call",
     "update_remote_streams",
     "set_call_info",
-    "set_remote_streams"
+    "set_remote_streams",
+    "call_created"
 ];
 
 export function DiscussionContextProvider() {
     // INIT COMPONENT
     const instanceName = "Discussion Context";
-    const verbose = true;
+    const verbose = false;
 
     // CALL CONTROLLER
     const [controller] = useState(appInstance.getController());
@@ -139,17 +140,17 @@ export function DiscussionContextProvider() {
                         return newMessages;
                     });
                 } else if (typeof msg.set_in_call !== "undefined") {
-                    if (discussionId === msg.set_in_call.discussion) {
+                    if (discussionId === msg.set_in_call.discussion.discussion_uuid) {
                         setInCall(msg.set_in_call.value);
                         if (msg.set_in_call.value) {
                             controller.send(discussionInstanceRef.current, {
                                 "get_call_info": {
-                                    discussion: discussionId,
+                                    discussion_uuid: discussionId,
                                 }
                             })
                             controller.send(discussionInstanceRef.current, {
                                 "get_streams": {
-                                    discussion: discussionId,
+                                    discussion_uuid: discussionId,
                                 }
                             })
                         }
@@ -163,6 +164,10 @@ export function DiscussionContextProvider() {
                     setCallInfo(msg.set_call_info);
                 } else if (typeof msg.set_remote_streams !== "undefined") {
                     setRemoteStreams(msg.set_remote_streams);
+                } else if (typeof msg.call_created !== "undefined") {
+                    if (!msg.call_created.value && msg.call_created.error) {
+                        toast.error(msg.call_created.error, {theme: "colored", icon: "🚫"});
+                    }
                 }
             }
         };
@@ -267,11 +272,12 @@ export function DiscussionContextProvider() {
 
         setCalling(true);
 
-        console.log("Calling discussionId: " + discussionId);
-        console.log("Calling type: " + type);
+        if (verbose || controller.verboseall) console.log(`INFO - (${instanceName}) : Demande de création d'appel`);
+        if (verbose || controller.verboseall) console.log(`INFO - (${instanceName}) : Type d'appel : ${type}`);
+
         controller.send(discussionInstanceRef.current, {
             "new_call": {
-                discussion: discussionId,
+                discussion_uuid: discussionId,
                 type: type,
             },
         });

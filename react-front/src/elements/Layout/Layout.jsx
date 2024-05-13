@@ -5,6 +5,7 @@ import {Outlet, useLocation} from "react-router-dom";
 import {appInstance} from "../../controller/index.js";
 import {useEffect, useRef, useState} from "react";
 import IncomingCallModal from "../IncomingCallModal/IncomingCallModal.jsx";
+import NoyauAppelWidget from "../../components/NoyauAppelWidget/NoyauAppelWidget.jsx";
 
 const listeMessagesEmis = ["accept_incoming_call"];
 const listeMessagesRecus = ["incoming_call"];
@@ -12,7 +13,7 @@ const listeMessagesRecus = ["incoming_call"];
 export default function Layout() {
     const location = useLocation();
     const instanceName = "Layout";
-    const verbose = true;
+    const verbose = false;
 
     const [controller] = useState(appInstance.getController());
     const [offer, setOffer] = useState(null);
@@ -42,7 +43,7 @@ export default function Layout() {
     }
 
     async function acceptCall(value, offer) {
-        console.warn("INFO Accepting call");
+        if (verbose || controller.verboseall) console.warn("INFO Accepting call");
         controller.send(current, {
             "accept_incoming_call": {
                 "value": value,
@@ -55,11 +56,21 @@ export default function Layout() {
 
     return (
         <div className="layout">
-            {/*
-                IMPLEMENT HERE THE CALL MODAL
-                IF USER RECEIVES A CALL
-            */}
+            {
+                /*
+                    IMPLEMENT HERE THE CALL MODAL
+                    IF USER RECEIVES A CALL
+                */
+            }
             <IncomingCallModal offer={offer} calling={incomingCall} acceptCall={acceptCall}/>
+            {
+                /*
+                    IMPLEMENT HERE THE CALL PIP
+                    IF USER IS IN CALL OR CALLING
+                    ALLOW USER TO CONTROL CALL WHEREVER HE IS
+                */
+            }
+            <NoyauAppelWidget/>
             <div className="layout-grid">
                 <NoyauBarreDeMenu/>
                 <div className="layout-content">

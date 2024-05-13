@@ -9,7 +9,7 @@ class Utilisateurs {
     listeMessagesEmis = ["liste_utilisateurs", "annuaire", "info_utilisateur", "admin_liste_utilisateurs", "admin_utilisateur_cree", "admin_utilisateur_details", "admin_utilisateur_supprime", "admin_utilisateur_modifie"];
     listeMessagesRecus = ["demande_liste_utilisateurs", "demande_annuaire", "demande_info_utilisateur", "admin_demande_liste_utilisateurs", "admin_ajouter_utilisateur", "admin_demande_utilisateur_details", "admin_supprimer_utilisateur", "admin_modifier_utilisateur"];
 
-    verbose = true;
+    verbose = false;
 
     constructor(controller, instanceName) {
         this.controller = controller;

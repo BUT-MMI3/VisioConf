@@ -33,21 +33,21 @@ class WebRTC {
             // }
             try {
                 const call = await Call.findOne({
-                    discussion_uuid: msg.new_call.discussion,
+                    discussion_uuid: msg.new_call.discussion_uuid,
                     is_ended: false
                 }).populate('in_call_members').populate('call_creator');
                 const userFrom = await User.findBySocketId(msg.id);
 
                 if (!call) {
-                    console.log("Creating new call for discussion: " + msg.new_call.discussion)
-                    const discussion = await Discussion.findPopulateMembersByDiscussionId(msg.new_call.discussion);
+                    if (this.verbose || this.controller.verboseall) console.log("Creating new call for discussion: " + msg.new_call.discussion_uuid)
+                    const discussion = await Discussion.findPopulateMembersByDiscussionId(msg.new_call.discussion_uuid);
 
                     if (!discussion) {
                         throw new Error("Discussion not found")
                     }
                     const newCall = new Call({
                         call_uuid: uuidv4(),
-                        discussion_uuid: msg.new_call.discussion,
+                        discussion_uuid: msg.new_call.discussion_uuid,
                         type: msg.new_call.type,
                         members_allowed_to_join: discussion.discussion_members || [userFrom],
                         in_call_members: [userFrom],
@@ -55,11 +55,11 @@ class WebRTC {
                     });
                     await newCall.save();
 
-
                     this.controller.send(this, {
                         call_created: {
                             value: true,
                             call: newCall,
+                            discussion: discussion.info || null,
                         },
                         id: msg.id
                     })
@@ -80,7 +80,7 @@ class WebRTC {
         } else if (typeof msg.send_offer !== 'undefined') {
             try {
                 const call = await Call.findOne({
-                    discussion_uuid: msg.send_offer.discussion,
+                    discussion_uuid: msg.send_offer.discussion_uuid,
                     is_ended: false
                 }).populate('in_call_members', 'user_socket_id').populate('call_creator');
                 const userFrom = await User.findBySocketId(msg.id);
@@ -88,13 +88,13 @@ class WebRTC {
                 const pseudo_caller = userFrom.user_firstname + " " + userFrom.user_lastname;
 
                 if (call && userTo && userTo.user_socket_id && userTo.user_is_online && userTo.user_socket_id !== msg.id) {
-                    console.log(msg.id + " is sending offer to: " + msg.send_offer.target);
-                    console.log("Call")
-                    console.log(call)
+                    if (this.verbose || this.controller.verboseall) console.log(msg.id + " is sending offer to: " + msg.send_offer.target);
+
+                    const discussion = await Discussion.findPopulateMembersByDiscussionId(msg.send_offer.discussion_uuid);
 
                     this.controller.send(this, {
                         receive_offer: {
-                            discussion: msg.send_offer.discussion,
+                            discussion: discussion.info,
                             members: msg.send_offer.members,
                             initiator: call.call_creator.user_socket_id,
                             sender: msg.id,
@@ -117,14 +117,16 @@ class WebRTC {
             }
         } else if (typeof msg.send_answer !== 'undefined') {
             try {
-                const call = await Call.findOne({discussion_uuid: msg.send_answer.discussion, is_ended: false}).populate('in_call_members').populate('members_allowed_to_join')
+                const call = await Call.findOne({
+                    discussion_uuid: msg.send_answer.discussion.discussion_uuid,
+                    is_ended: false
+                }).populate('in_call_members').populate('members_allowed_to_join')
                 const userFrom = await User.findBySocketId(msg.id);
                 const userTo = await User.findBySocketId(msg.send_answer.target);
 
                 if (call && userTo && userTo.user_socket_id && userTo.user_is_online && userTo.user_socket_id !== msg.id) {
-                    console.log(msg.id + " is sending answer to: " + msg.send_answer.target);
-                    console.log("{{{ ADDING MEMBER TO CALL }}}")
-                    console.log(userFrom.user_socket_id)
+                    if (this.verbose || this.controller.verboseall) console.log(msg.id + " is sending answer to: " + msg.send_answer.target);
+
                     await call.addMemberToCall(userFrom.user_socket_id);
                     this.controller.send(this, {
                         receive_answer: {
@@ -133,9 +135,6 @@ class WebRTC {
                         },
                         id: msg.send_answer.target
                     });
-                    console.log("|||| CALL MEMBERS ||||")
-                    console.log(call.in_call_members)
-
 
                     for (const member of call.members_allowed_to_join) {
                         if (member.user_socket_id) {
@@ -155,14 +154,17 @@ class WebRTC {
             }
         } else if (typeof msg.send_ice_candidate !== 'undefined') {
             try {
-                const call = await Call.findOne({discussion_uuid: msg.send_ice_candidate.discussion, is_ended: false});
+                const call = await Call.findOne({
+                    discussion_uuid: msg.send_ice_candidate.discussion_uuid,
+                    is_ended: false
+                });
                 const userTo = await User.findBySocketId(msg.send_ice_candidate.target);
 
                 if (call && userTo && userTo.user_socket_id && userTo.user_is_online && userTo.user_socket_id !== msg.id) {
-                    console.log(msg.id + " is sending ice candidate to: " + msg.send_ice_candidate.target);
+                    if (this.verbose || this.controller.verboseall) console.log(msg.id + " is sending ice candidate to: " + msg.send_ice_candidate.target);
                     this.controller.send(this, {
                         receive_ice_candidate: {
-                            discussion: msg.send_ice_candidate.discussion,
+                            discussion_uuid: msg.send_ice_candidate.discussion_uuid,
                             sender: msg.id,
                             candidate: msg.send_ice_candidate.candidate,
                         },
@@ -179,7 +181,7 @@ class WebRTC {
                 const userTo = await User.findBySocketId(msg.reject_offer.target);
 
                 if (call && userTo && userTo.user_socket_id && userTo.user_is_online && userTo.user_socket_id !== msg.id) {
-                    console.log(msg.id + " is rejecting offer from: " + msg.reject_offer.target);
+                    if (this.verbose || this.controller.verboseall) console.log(msg.id + " is rejecting offer from: " + msg.reject_offer.target);
                     this.controller.send(this, {
                         offer_rejected: {
                             sender: msg.id,
@@ -196,50 +198,69 @@ class WebRTC {
         } else if (typeof msg.hang_up !== 'undefined') {
             try {
                 const call = await Call.findOne({
-                    discussion_uuid: msg.hang_up.discussion,
+                    discussion_uuid: msg.hang_up.discussion_uuid,
                     is_ended: false
                 }).populate('in_call_members').populate('call_creator');
                 if (call) {
-                    if (this.verbose || this.controller.verboseall) console.log(msg.id + " is hanging up from call: " + msg.hang_up.discussion);
+                    let userFrom;
 
-                    const userFrom = await User.findBySocketId(msg.id);
-
-                    // Retirer l'utilisateur du tableau 'in_call_members'
-                    const updatedCall = await Call.findOneAndUpdate(
-                        {_id: call._id},
-                        {$pull: {'in_call_members': userFrom._id}},
-                        {new: true} // Retourne le document mis à jour pour vérifier si le tableau est vide
-                    ).populate('in_call_members').populate('call_creator');
-
-                    console.log(msg.id);
-                    console.log(updatedCall.in_call_members);
-
-                    // Vérifier si le tableau 'in_call_members' est maintenant vide
-                    if (updatedCall.in_call_members.length === 0) {
-                        // Si vide, mettre à jour 'is_ended' et 'date_ended'
-                        const finalUpdate = await Call.findByIdAndUpdate(
-                            updatedCall._id,
-                            {$set: {'is_ended': true, 'date_ended': Date.now()}},
-                            {new: true}
-                        );
-
-                        console.log('L\'appel est terminé');
-                        console.log(finalUpdate);
+                    if (msg.hang_up.user_uuid) {
+                        userFrom = await User.findOne({user_uuid: msg.hang_up.user_uuid});
+                    } else {
+                        userFrom = await User.findBySocketId(msg.id);
                     }
 
-                    // Send hung up message to other members
-                    for (const member of call.in_call_members) {
-                        if (member.user_socket_id !== msg.id) {
-                            this.controller.send(this, {
-                                hung_up: {
-                                    sender: msg.id,
-                                },
-                                id: member.user_socket_id
-                            });
+                    if (userFrom) {
+                        if (this.verbose || this.controller.verboseall) console.log(userFrom.user_firstname + " is hanging up from call: " + msg.hang_up.discussion_uuid);
+
+                        // Retirer l'utilisateur du tableau 'in_call_members'
+                        const updatedCall = await Call.findOneAndUpdate(
+                            {_id: call._id},
+                            {$pull: {'in_call_members': userFrom._id}},
+                            {new: true} // Retourne le document mis à jour pour vérifier si le tableau est vide
+                        ).populate('in_call_members').populate('call_creator');
+
+                        // Vérifier si le tableau 'in_call_members' est maintenant vide
+                        if (updatedCall.in_call_members.length === 0) {
+                            // Si vide, mettre à jour 'is_ended' et 'date_ended'
+                            const finalUpdate = await Call.findByIdAndUpdate(
+                                updatedCall._id,
+                                {$set: {'is_ended': true, 'date_ended': Date.now()}},
+                                {new: true}
+                            );
+
+                            console.log('L\'appel est terminé');
+                            console.log(finalUpdate);
                         }
+
+                        // Send hung up message to other members
+                        for (const member of call.in_call_members) {
+                            if (msg.hang_up.user_uuid) {
+                                if (member.user_uuid !== msg.hang_up.user_uuid) {
+                                    this.controller.send(this, {
+                                        hung_up: {
+                                            sender: msg.id,
+                                        },
+                                        id: member.user_socket_id
+                                    });
+                                }
+                            } else {
+                                if (member.user_socket_id !== msg.id) {
+                                    this.controller.send(this, {
+                                        hung_up: {
+                                            sender: msg.id,
+                                        },
+                                        id: member.user_socket_id
+                                    });
+                                }
+                            }
+                        }
+                    } else {
+                        throw new Error("User not found")
                     }
                 }
-            } catch (e) {
+            } catch
+                (e) {
                 console.log("Une erreur est survenue")
                 console.log(e)
             }
@@ -247,4 +268,5 @@ class WebRTC {
     }
 }
 
-module.exports = WebRTC;
+module
+    .exports = WebRTC;

@@ -45,7 +45,7 @@ const AdminAjouterRole = () => {
             console.log("Received data:", msg);
             if (msg && msg.admin_role_cree) {
                 if (msg.admin_role_cree.success) {
-                   toast.success("Rôle créé avec succès !")
+                    toast.success("Rôle créé avec succès !")
                     navigate(`/admin/roles/${msg.admin_role_cree.role._id}/view`);
                     console.log("Rôle créé avec succès !", msg.admin_role_cree.role);
                 } else {

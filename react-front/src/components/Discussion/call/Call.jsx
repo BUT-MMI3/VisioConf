@@ -1,16 +1,9 @@
-import {useEffect} from "react";
 import RemoteVideo from "../../../elements/RemoteVideo/RemoteVideo.jsx";
 import './Call.scss'
 
 const Call = ({streams, callInfo}) => {
 
-    useEffect(() => {
-        console.log("streams")
-        console.log(streams)
-    }, [streams])
-
     return (
-
         <div className={"left"} id={'call'}>
             <div>
                 <em>{callInfo.isCallCreator ? "Vous êtes l'animateur" : ''}</em>

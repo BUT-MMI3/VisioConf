@@ -4,14 +4,13 @@ import {appInstance} from "../../controller/index.js";
 import LinkTo from "../../elements/LinkTo/LinkTo.jsx";
 import "./NoyauAccueil.css";
 import {useSelector} from "react-redux";
-import {toast} from "react-toastify";
 
 const listeMessageEmis = ["update_notifications"];
 const listeMessageRecus = ["distribue_notification"];
 
 const NoyauAccueil = () => {
     const instanceName = "NoyauAccueil";
-    const verbose = true;
+    const verbose = false;
     const [controller] = useState(appInstance.getController());
 
     const session = useSelector((state) => state.session);
@@ -131,17 +130,18 @@ const NoyauAccueil = () => {
                         <div className="section-notification-hidden">
                             <div className="notification-info fr jc-sa">
                                 <div className="notifications w-100 fr ai-c">
-                                    <ul style={{maxHeight:"40vh"}}>
+                                    <ul style={{maxHeight: "40vh"}}>
                                         {notifications.map((notification, index) => (
-                                            <LinkTo key={index} to={"/discussion/"+notification.data.discussionId}>
-                                                <li  className="notification-item if ai-c">
+                                            <LinkTo key={index} to={"/discussion/" + notification.data.discussionId}>
+                                                <li className="notification-item if ai-c">
                                                     <img src={notification.data.lastMessage.message_sender.user_picture}
                                                          className='logo-profil-reception' alt="Photo de profil"/>
                                                     <p>
                                                         <span
                                                             className="sender-name">{notification.data.lastMessage.message_sender.user_firstname} {notification.data.lastMessage.message_sender.user_lastname},
                                                         </span>
-                                                        vous a envoyé un nouveau message dans : &quot;{notification.data?.discussionName}&quot;
+                                                        vous a envoyé un nouveau message dans
+                                                        : &quot;{notification.data?.discussionName}&quot;
                                                     </p>
                                                 </li>
                                             </LinkTo>

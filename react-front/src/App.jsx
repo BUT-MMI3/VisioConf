@@ -48,7 +48,7 @@ const listeMessageRecus = [
 
 const App = () => {
     const instanceName = "App";
-    const verbose = true;
+    const verbose = false;
 
     const [loading, setLoading] = useState(appInstance.loading);
     const [controller, setController] = useState(appInstance.controller);
@@ -93,14 +93,28 @@ const App = () => {
                     controller.send(AppInstanceRef.current, {"info_session": session})
                 } else if (typeof msg.distribue_notification !== "undefined") {
                     setNotifications(msg.distribue_notification);
-                    toast(msg.distribue_notification.content, {
-                        type: msg.distribue_notification.type || "info",
-                        autoClose: 5000
-                    })
+
+                    if (location.pathname.includes("/discussion")) {
+                        if (msg.distribue_notification.data.discussionId) {
+                            if (!location.pathname.includes(msg.distribue_notification.data.discussionId)) {
+                                toast(msg.distribue_notification.content, {
+                                    type: msg.distribue_notification.type || "info",
+                                    autoClose: 1000,
+                                    position: "bottom-left"
+                                })
+                            }
+                        }
+                    } else {
+                        toast(msg.distribue_notification.content, {
+                            type: msg.distribue_notification.type || "info",
+                            autoClose: 1000,
+                            position: "bottom-left"
+                        })
+                    }
                 }
             }
         }
-    }, [controller, dispatch, listeUtilisateurs, session, verbose]);
+    }, [controller, dispatch, listeUtilisateurs, session, verbose, location]);
 
 
     useEffect(() => {
@@ -122,7 +136,7 @@ const App = () => {
                 controller.unsubscribe(AppInstanceRef.current, listeMessageEmis, listeMessageRecus);
             };
         }
-    }, [controller, loading]);
+    }, [controller, loading, location]);
 
     useEffect(() => {
         if (!session.isSignedIn && (location.pathname !== "/login" && location.pathname !== "/forgot-password" && location.pathname !== "/inscription")) {

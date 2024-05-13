@@ -23,13 +23,19 @@ const AdminListeRoles = () => {
                 if (msg.admin_liste_roles.success) {
                     setRoles(msg.admin_liste_roles.roles || []);
                 } else {
-                    toast.error(msg.admin_liste_roles.message || "Erreur lors de la récupération des rôles",{theme: "colored", icon: "🚫"});
+                    toast.error(msg.admin_liste_roles.message || "Erreur lors de la récupération des rôles", {
+                        theme: "colored",
+                        icon: "🚫"
+                    });
                 }
             } else if (msg.admin_role_supprime) {
                 if (msg.admin_role_supprime.success) {
                     toast.success("Rôle supprimé avec succès", {theme: "colored", icon: "🗑️"});
                 } else {
-                    toast.error(msg.admin_role_supprime.message || "Erreur lors de la suppression du rôle",{theme: "colored", icon: "🚫"});
+                    toast.error(msg.admin_role_supprime.message || "Erreur lors de la suppression du rôle", {
+                        theme: "colored",
+                        icon: "🚫"
+                    });
                 }
             }
         },

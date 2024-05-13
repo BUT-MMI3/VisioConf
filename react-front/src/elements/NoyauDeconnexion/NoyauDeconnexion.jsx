@@ -11,7 +11,7 @@ const listeMessageRecus = []
 
 const NoyauDeconnexion = () => {
     const instanceName = 'NoyauDeconnexion';
-    const verbose = true;
+    const verbose = false;
 
     const [controller] = useState(appInstance.getController());
 

@@ -6,7 +6,7 @@ class Notifications {
         this.controller = controller;
         this.listeMessagesEmis = ["distribue_notification"];
         this.listeMessagesRecus = ["update_notifications", "demande_notification"];
-        this.verbose = true;
+        this.verbose = false;
 
         if (this.verbose || this.controller.verboseall) {
             console.log(`INFO (${this.instanceName}) - Instance créée, abonnement aux messages : ${this.listeMessagesEmis.join(', ')}`);

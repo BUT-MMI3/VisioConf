@@ -1,7 +1,7 @@
 class Controller {
     listeEmission = {};
     listeAbonnement = {};
-    verbose = true;
+    verbose = false;
     verboseall = false;
 
     constructor() {

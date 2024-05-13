@@ -66,7 +66,10 @@ const AdminModifierUtilisateur = () => {
                     setUserJob(msg.admin_utilisateur_details.user.user_job || "");
                     setUserStatus(msg.admin_utilisateur_details.user.user_status || "");
                 } else {
-                    toast.error("Erreur lors de la récupération des informations de l'utilisateur", {theme: "colored", icon: "🚫"})
+                    toast.error("Erreur lors de la récupération des informations de l'utilisateur", {
+                        theme: "colored",
+                        icon: "🚫"
+                    })
                 }
             }
         },

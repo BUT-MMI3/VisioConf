@@ -8,7 +8,7 @@ class Roles {
     listeMessagesEmis = ["admin_liste_roles", "admin_role_details", "admin_role_cree", "admin_role_modifie", "admin_role_supprime"];
     listeMessagesRecus = ["admin_demande_liste_roles", "admin_demande_role_details", "admin_ajouter_role", "admin_modifier_role", "admin_supprimer_role"];
 
-    verbose = true;
+    verbose = false;
 
     constructor(controller, instanceName) {
         this.controller = controller;
