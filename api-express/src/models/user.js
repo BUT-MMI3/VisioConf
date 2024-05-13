@@ -100,7 +100,7 @@ UserSchema.virtual("info").get(function () {
 });
 
 async function findBySocketId(socketId) {
-    return await this.model("User").findOne({user_socket_id: socketId}).select("user_uuid user_firstname user_lastname user_picture user_socket_id user_disturb_status user_is_online");
+    return await this.model("User").findOne({user_socket_id: socketId}).select("user_uuid user_firstname user_lastname user_roles user_picture user_socket_id user_disturb_status user_is_online");
 }
 
 // Export the model
