@@ -139,11 +139,11 @@ const App = () => {
     }, [controller, loading, location]);
 
     useEffect(() => {
-        if (!session.isSignedIn && (location.pathname !== "/login" && location.pathname !== "/forgot-password" && location.pathname !== "/inscription")) {
+        if (!session.isSignedIn && (location.pathname !== "/login" && location.pathname !== "/forgot-password" && !location.pathname.startsWith("/inscription"))) {
             navigate("/login");
         }
 
-        if (session.isSignedIn && (location.pathname === "/login" || location.pathname === "/forgot-password" || location.pathname === "/inscription")) {
+        if (session.isSignedIn && (location.pathname === "/login" || location.pathname === "/forgot-password" || location.pathname.startsWith("/inscription"))) {
             navigate("/");
         }
     }, [session.isSignedIn, location.pathname, navigate]);
@@ -311,7 +311,7 @@ const App = () => {
             {!session.isSignedIn && !loading && (
                 <>
                     <Route
-                        path="/inscription"
+                        path="/inscription/:token"
                         element={
                             <>
                                 <NoyauInscription/>
