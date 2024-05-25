@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import './NoyauInscription.css';
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {appInstance} from "../../controller/index.js";
 import sha256 from "../../utils/sha256.js";
 
@@ -70,8 +70,7 @@ const NoyauInscription = () => {
         validatePassword();
     }, [motDePasse]);
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
+    const {token} = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {

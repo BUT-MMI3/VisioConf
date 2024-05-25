@@ -1,6 +1,8 @@
+require("dotenv").config();
 const User = require('../models/user');
 const {v4: uuidv4} = require("uuid");
 const {sha256} = require("../utils/utils");
+const mailer = require('../utils/mailer');
 
 class Utilisateurs {
     controller = null;
@@ -149,6 +151,18 @@ class Utilisateurs {
                 user_desc: ' ',
                 user_status: user_status || 'waiting',
             });
+
+            // if no password set, generate invitation token and send email
+            if (!user_password) {
+                newUser.user_tokens.invitation = uuidv4();
+                await mailer.sendMail({
+                    to: newUser.user_email,
+                    subject: 'Invitation à rejoindre Visioconf',
+                    text: `Bonjour ${newUser.user_firstname} ${newUser.user_lastname},\n\nVous avez été invité à rejoindre Visioconf. Pour cela, veuillez cliquer sur le lien suivant : ${process.env.CLIENT_URL}/invitation/${newUser.user_tokens.invitation}`,
+                    html: `<p>Bonjour ${newUser.user_firstname} ${newUser.user_lastname},</p><p>Vous avez été invité à rejoindre Visioconf. Pour cela, veuillez cliquer sur le lien suivant : <a href="${process.env.CLIENT_URL}/invitation/${newUser.user_tokens.invitation}">Rejoindre l'application</a>`
+                });
+                if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Invitation email sent to ${newUser.user_email} - Token : ${newUser.user_tokens.invitation}`);
+            }
 
             await newUser.save();
 
