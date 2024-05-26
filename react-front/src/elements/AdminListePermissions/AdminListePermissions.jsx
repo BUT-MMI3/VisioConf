@@ -78,7 +78,9 @@ const AdminListePermissions = () => {
                         <tbody>
                         {filteredPermissions.map((permission, index) => (<tr key={index}>
                             <td>{permission.permission_uuid}</td>
-                            <td>{permission.permission_label}</td>
+                            <td>{permission.permission_label}{permission.permission_uuid.includes("admin_") && (
+                                <> (Admin)</>
+                            )}</td>
                         </tr>))}
                         </tbody>
                     </table>

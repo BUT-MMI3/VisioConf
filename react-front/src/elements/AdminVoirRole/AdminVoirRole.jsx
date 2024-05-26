@@ -2,7 +2,6 @@ import "./AdminVoirRole.scss";
 import {useEffect, useRef, useState} from "react";
 import {appInstance} from "../../controller/index.js";
 import {useLocation, useNavigate} from "react-router-dom";
-import LinkTo from "../LinkTo/LinkTo.jsx";
 import FeatherIcon from "feather-icons-react";
 import {toast} from "react-toastify";
 
@@ -73,7 +72,13 @@ const AdminVoirRole = () => {
                                 </div>
                                 <div className="voir-role--content--card--content--row">
                                     <span>Permissions : </span>
-                                    <span>{role.role_permissions.map(p => p.permission_label).join(", ")}</span>
+                                    <span>{role.role_permissions.map((permission, index) => (
+                                        <>
+                                            <span key={index}>{permission.permission_label}{permission.permission_uuid.includes("admin_") && (
+                                                <> (Admin)</>
+                                            )}</span>
+                                            <>, </>
+                                        </>))}</span>
                                 </div>
                             </div>
                         </div>

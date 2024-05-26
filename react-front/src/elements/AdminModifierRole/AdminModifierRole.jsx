@@ -103,7 +103,9 @@ const AdminModifierRole = () => {
                             <label key={permission._id} className="checkbox-label">
                                 <input type="checkbox" checked={selectedPermissions.includes(permission._id)}
                                        onChange={() => handlePermissionChange(permission._id)}/>
-                                {permission.permission_label}
+                                {permission.permission_label}{permission.permission_uuid.includes("admin_") && (
+                                <> (Admin)</>
+                            )}
                             </label>
                         ))}
                     </div>
