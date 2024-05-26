@@ -94,7 +94,7 @@ const NoyauAnnuaire = () => {
                                                     whiteSpace: "nowrap",
                                                     borderRadius: '4rem'
                                                 }}>
-                                                    {role}
+                                                    {role.role_label}
                                                 </p>
                                             ))}
                                         </div>

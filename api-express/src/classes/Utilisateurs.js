@@ -74,7 +74,7 @@ class Utilisateurs {
         } else if (typeof msg.demande_info_utilisateur !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la demande d'informations sur un utilisateur`);
 
-            const user = await User.findOne({user_uuid: msg.demande_info_utilisateur.user_uuid}).select('user_uuid user_firstname user_lastname user_email user_phone user_job user_desc user_date_create user_picture user_is_online user_disturb_status user_last_connection user_direct_manager user_tokens user_roles');
+            const user = await User.findOne({user_uuid: msg.demande_info_utilisateur.user_uuid}).select('user_uuid user_firstname user_lastname user_email user_phone user_job user_desc user_date_create user_picture user_is_online user_disturb_status user_last_connection user_direct_manager user_tokens user_roles').populate('user_roles');
 
             this.controller.send(this, {
                 info_utilisateur: {
