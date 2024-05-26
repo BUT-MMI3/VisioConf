@@ -19,7 +19,6 @@ const usersToInsert = [
         user_job: "Responsable RH",
         user_desc: "Chef de département MMI à l’universite de Toulon. Également professeur de développement web.",
         user_status: 'active',
-        user_roles: ["user", "MMI3 Alternant", "Etudiant"],
         user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17',
     },
     {
@@ -87,6 +86,7 @@ const initializeRoles = async () => {
                 role_uuid: 'user',
                 role_label: 'Utilisateur',
                 role_permissions: [
+                    permissionIds['naviguer_vers'],
                     permissionIds['demande_liste_utilisateurs'],
                     permissionIds['demande_annuaire'],
                     permissionIds['demande_info_utilisateur'],
@@ -115,13 +115,17 @@ const initializeRoles = async () => {
     } catch (err) {
         console.error(err);
     }
-
-}
+};
 
 const initializePermissions = async () => {
     try {
         await Permission.deleteMany({});
         const permissions = [
+            {
+                permission_uuid: 'naviguer_vers',
+                permission_label: 'Naviguer vers',
+                permission_default: true,
+            },
             {
                 permission_uuid: 'admin_demande_liste_utilisateurs',
                 permission_label: 'Lister les utilisateurs',
@@ -200,29 +204,38 @@ const initializePermissions = async () => {
     } catch (err) {
         console.error(err);
     }
-}
+};
 
 const initializeUsers = async () => {
     try {
         if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
             console.log("Les identifiants de l'administrateur ne sont pas définis dans le .env");
         } else {
-            const adminPasswordHash = await sha256(process.env.ADMIN_PASSWORD)
+            const adminPasswordHash = await sha256(process.env.ADMIN_PASSWORD);
 
-            usersToInsert.push({
-                user_uuid: uuidv4(),
-                user_firstname: 'Admin',
-                user_status: 'active',
-                user_lastname: 'Admin',
-                user_job_desc: 'Administrateur',
-                user_email: process.env.ADMIN_EMAIL,
-                user_phone: "00.00.00.00.00",
-                user_job: "Admin",
-                user_desc: "Chef de département MMI à l’universite de Toulon. Également professeur de développement web.",
-                user_password: adminPasswordHash,
-                user_is_admin: true,
-                user_roles: ['admin', 'user'],
-            });
+            // Récupérer les ObjectId des rôles 'admin' et 'user'
+            const adminRole = await Role.findOne({ role_uuid: 'admin' });
+            const userRole = await Role.findOne({ role_uuid: 'user' });
+
+            if (adminRole && userRole) {
+                usersToInsert.push({
+                    user_uuid: uuidv4(),
+                    user_firstname: 'Admin',
+                    user_status: 'active',
+                    user_lastname: 'Admin',
+                    user_job_desc: 'Administrateur',
+                    user_email: process.env.ADMIN_EMAIL,
+                    user_phone: "00.00.00.00.00",
+                    user_job: "Admin",
+                    user_desc: "Chef de département MMI à l’universite de Toulon. Également professeur de développement web.",
+                    user_password: adminPasswordHash,
+                    user_is_admin: true,
+                    user_roles: [adminRole._id, userRole._id],
+                });
+            } else {
+                console.error("Les rôles 'admin' ou 'user' n'ont pas été trouvés");
+                return;
+            }
         }
         await User.deleteMany({});
         for (const userData of usersToInsert) {
@@ -240,7 +253,6 @@ const initializeUsers = async () => {
         console.error(err);
     }
 };
-
 
 const initializeDiscussions = async () => {
     try {
