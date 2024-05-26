@@ -4,6 +4,7 @@ Authors: Mathis Lambert, clementfavarel, Kyllian Diochon, Arthur Mondon
 
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
 
 // Default values
 const DEFAULT_USER_PICTURE = "/others/default.png";
@@ -59,13 +60,14 @@ const UserSchema = new Schema({
         description: "User uuid of the direct manager",
     },
     user_tokens: {type: Object, default: {}},
-    user_roles: {
-        type: Array,
-        required: true,
-        default: DEFAULT_ROLE,
-        description:
-            "List of roles id created by admin in the roles collection",
-    },
+    user_roles: [
+        {
+            type: ObjectId,
+            ref: 'Role',
+            default: DEFAULT_ROLE,
+            description: `List of roles id created by admin in the roles collection`
+        }
+    ],
 });
 
 // Virtual for user's full instanceName

@@ -19,7 +19,6 @@ const usersToInsert = [
         user_job: "Responsable RH",
         user_desc: "Chef de département MMI à l’universite de Toulon. Également professeur de développement web.",
         user_status: 'active',
-        user_roles: ["user", "MMI3 Alternant", "Etudiant"],
         user_password: 'f4f263e439cf40925e6a412387a9472a6773c2580212a4fb50d224d3a817de17',
     },
     {
@@ -78,6 +77,7 @@ const initializeRoles = async () => {
                     permissionIds['admin_demande_liste_roles'],
                     permissionIds['admin_demande_role_details'],
                     permissionIds['admin_ajouter_role'],
+                    permissionIds['admin_modifier_role'],
                     permissionIds['admin_supprimer_role'],
                     permissionIds['admin_demande_liste_permissions'],
                 ],
@@ -87,6 +87,7 @@ const initializeRoles = async () => {
                 role_uuid: 'user',
                 role_label: 'Utilisateur',
                 role_permissions: [
+                    permissionIds['naviguer_vers'],
                     permissionIds['demande_liste_utilisateurs'],
                     permissionIds['demande_annuaire'],
                     permissionIds['demande_info_utilisateur'],
@@ -98,6 +99,14 @@ const initializeRoles = async () => {
                     permissionIds['update_notifications'],
                     permissionIds['demande_creation_discussion'],
                     permissionIds['demande_discussion_info'],
+                    permissionIds['new_call'],
+                    permissionIds['send_ice_candidate'],
+                    permissionIds['send_offer'],
+                    permissionIds['send_answer'],
+                    permissionIds['reject_offer'],
+                    permissionIds['hang_up'],
+                    permissionIds['call_created'],
+                    permissionIds['hung_up'],
                 ],
                 role_default: true,
             },
@@ -115,13 +124,17 @@ const initializeRoles = async () => {
     } catch (err) {
         console.error(err);
     }
-
-}
+};
 
 const initializePermissions = async () => {
     try {
         await Permission.deleteMany({});
         const permissions = [
+            {
+                permission_uuid: 'naviguer_vers',
+                permission_label: 'Naviguer vers',
+                permission_default: true,
+            },
             {
                 permission_uuid: 'admin_demande_liste_utilisateurs',
                 permission_label: 'Lister les utilisateurs',
@@ -141,6 +154,30 @@ const initializePermissions = async () => {
             {
                 permission_uuid: 'admin_modifier_utilisateur',
                 permission_label: 'Modifier un utilisateur',
+            },
+            {
+                permission_uuid: 'admin_demande_liste_roles',
+                permission_label: 'Lister les rôles',
+            },
+            {
+                permission_uuid: 'admin_modifier_role',
+                permission_label: 'Modifier un rôle',
+            },
+            {
+                permission_uuid: 'admin_supprimer_role',
+                permission_label: 'Supprimer un rôle',
+            },
+            {
+                permission_uuid: 'admin_demande_liste_permissions',
+                permission_label: 'Lister les permissions',
+            },
+            {
+                permission_uuid: 'admin_ajouter_role',
+                permission_label: 'Ajouter un rôle',
+            },
+            {
+                permission_uuid: 'admin_demande_role_details',
+                permission_label: 'Détails du rôle',
             },
             {
                 permission_uuid: 'demande_liste_utilisateurs',
@@ -186,8 +223,72 @@ const initializePermissions = async () => {
                 permission_uuid: 'demande_discussion_info',
                 permission_label: 'Information sur une discussion',
             },
+            {
+                permission_uuid: 'new_call',
+                permission_label: 'Nouvel appel',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'send_ice_candidate',
+                permission_label: 'Envoi de candidat ICE',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'send_offer',
+                permission_label: 'Envoi d\'offre',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'send_answer',
+                permission_label: 'Envoi de réponse',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'reject_offer',
+                permission_label: 'Rejet d\'offre',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'hang_up',
+                permission_label: 'Raccrocher',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'receive_offer',
+                permission_label: 'Réception d\'offre',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'receive_answer',
+                permission_label: 'Réception de réponse',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'receive_ice_candidate',
+                permission_label: 'Réception de candidat ICE',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'offer_rejected',
+                permission_label: 'Offre rejetée',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'call_created',
+                permission_label: 'Appel créé',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'hung_up',
+                permission_label: 'Raccroché',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'call_connected_users',
+                permission_label: 'Utilisateurs connectés',
+                permission_default: true,
+            },
         ];
-
         const permissionIds = {};
         for (const permission of permissions) {
             const newPermission = new Permission(permission);
@@ -200,29 +301,38 @@ const initializePermissions = async () => {
     } catch (err) {
         console.error(err);
     }
-}
+};
 
 const initializeUsers = async () => {
     try {
         if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
             console.log("Les identifiants de l'administrateur ne sont pas définis dans le .env");
         } else {
-            const adminPasswordHash = await sha256(process.env.ADMIN_PASSWORD)
+            const adminPasswordHash = await sha256(process.env.ADMIN_PASSWORD);
 
-            usersToInsert.push({
-                user_uuid: uuidv4(),
-                user_firstname: 'Admin',
-                user_status: 'active',
-                user_lastname: 'Admin',
-                user_job_desc: 'Administrateur',
-                user_email: process.env.ADMIN_EMAIL,
-                user_phone: "00.00.00.00.00",
-                user_job: "Admin",
-                user_desc: "Chef de département MMI à l’universite de Toulon. Également professeur de développement web.",
-                user_password: adminPasswordHash,
-                user_is_admin: true,
-                user_roles: ['admin', 'user'],
-            });
+            // Récupérer les ObjectId des rôles 'admin' et 'user'
+            const adminRole = await Role.findOne({ role_uuid: 'admin' });
+            const userRole = await Role.findOne({ role_uuid: 'user' });
+
+            if (adminRole && userRole) {
+                usersToInsert.push({
+                    user_uuid: uuidv4(),
+                    user_firstname: 'Admin',
+                    user_status: 'active',
+                    user_lastname: 'Admin',
+                    user_job_desc: 'Administrateur',
+                    user_email: process.env.ADMIN_EMAIL,
+                    user_phone: "00.00.00.00.00",
+                    user_job: "Admin",
+                    user_desc: "Chef de département MMI à l’universite de Toulon. Également professeur de développement web.",
+                    user_password: adminPasswordHash,
+                    user_is_admin: true,
+                    user_roles: [adminRole._id, userRole._id],
+                });
+            } else {
+                console.error("Les rôles 'admin' ou 'user' n'ont pas été trouvés");
+                return;
+            }
         }
         await User.deleteMany({});
         for (const userData of usersToInsert) {
@@ -230,6 +340,13 @@ const initializeUsers = async () => {
             const userExists = await User.findOne({user_email: userData.user_email});
             if (!userExists) {
                 const newUser = new User(userData);
+
+                if (!userData.user_roles) {
+                    const userRole = await Role.findOne({role_uuid: 'user'});
+                    if (userRole) {
+                        newUser.user_roles = [userRole._id];
+                    }
+                }
                 await newUser.save();
                 console.log(`User ${userData.user_email} inserted`);
             } else {
@@ -240,7 +357,6 @@ const initializeUsers = async () => {
         console.error(err);
     }
 };
-
 
 const initializeDiscussions = async () => {
     try {

@@ -39,6 +39,7 @@ class CanalSocketIO {
 
         this.io.on('connection', (socket) => {
             console.log("INFO (" + this.instanceName + "): " + socket.id + " s'est connecté");
+            console.log("INFO (" + this.instanceName + "): " + socket.id + " s'est connecté");
             socket.on('message', async (msg) => {
                 try {
                     if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.instanceName + "): canalsocketio reçoit: " + msg + " de la part de " + socket.id);
@@ -48,26 +49,50 @@ class CanalSocketIO {
 
                     // Si le token est valide, on peut continuer, sinon on refuse la connexion
                     const token = message.sessionToken;
-
                     if (token !== null) {
-                        const user = await User.findOne({"user_tokens.session": message.sessionToken});
+                        const user = await User.findOne({"user_tokens.session": message.sessionToken})
+                            .populate({
+                                path: 'user_roles',
+                                populate: {
+                                    path: 'role_permissions',
+                                    select: 'permission_uuid',
+                                }
+                            });
 
                         if (user) {
-                            jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+                            jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
                                 if (err) {
                                     if (this.controller.verboseall || this.verbose) console.log("ERROR: Token invalide", err);
                                     return;
                                 }
                                 if (this.controller.verboseall || this.verbose) console.log("INFO: Token valide");
-                                this.controller.send(this, message);
+
+                                if (user && user.user_roles) {
+                                    const permissions = user.user_roles.flatMap(role =>
+                                        role.role_permissions.map(permission => permission.permission_uuid)
+                                    );
+                                    if (this.controller.verboseall || this.verbose) console.log("PERMISSIONS VERIFICATION : ", "Permissions: ", permissions, " message permission: ", Object.keys(message)[0]);
+
+                                    // Check if the user has the required permission
+                                    if (permissions.includes(Object.keys(message)[0])) {
+                                        this.controller.send(this, message);
+                                    } else {
+                                        if (this.controller.verboseall || this.verbose) console.log("ERROR: Permission refusée : ", Object.keys(message)[0], " n'est pas dans les permissions de l'utilisateur");
+                                        console.log("ERROR: Permission refusée : ", Object.keys(message)[0], " n'est pas dans les permissions de l'utilisateur", permissions);
+                                        socket.emit("error", "Permission refusée");
+                                    }
+                                } else {
+                                    console.log('User not found or no roles assigned');
+                                }
                             });
                         } else {
                             if (this.controller.verboseall || this.verbose) console.log("ERROR: Token invalide");
-
-                            this.controller.send(this, {client_deconnexion: socket.id, id: socket.id});
+                            this.controller.send(this, { client_deconnexion: socket.id, id: socket.id });
                         }
                     } else if (typeof message.demande_de_connexion !== 'undefined') {
                         if (this.controller.verboseall || this.verbose) console.log("INFO: Demande de connexion");
+                        const demandeDeConnexionId = Object.keys(message.demande_de_connexion)[0]; // Extraction de l'identifiant
+                        console.log("ID de la demande de connexion:", demandeDeConnexionId);
                         this.controller.send(this, message);
                     } else if (typeof message.demande_inscription !== 'undefined') {
                         if (this.controller.verboseall || this.verbose) console.log("INFO: Demande d'inscription");
@@ -78,9 +103,10 @@ class CanalSocketIO {
                     }
 
                 } catch (e) {
-                    console.log(e)
+                    console.log(e);
                 }
             });
+
 
             socket.on('demande_fichier', async (msg) => {
                 if (this.controller.verboseall || this.verbose) console.log("INFO (" + this.instanceName + "): demande de fichier reçue: " + msg);

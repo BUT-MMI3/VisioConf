@@ -27,7 +27,7 @@ class Discussions {
             if (typeof msg.demande_liste_discussions !== 'undefined') {
                 if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Demande de liste de discussions reçue`);
 
-                const user = await User.findOne({user_socket_id: msg.id});
+                const user = await User.findOne({user_socket_id: msg.id}).populate('user_roles');
                 const user_discussions = await Discussion.findManyByUser(user)
                 this.controller.send(this, {liste_discussions: user_discussions, id: msg.id});
 
@@ -52,8 +52,8 @@ class Discussions {
             } else if (typeof msg.demande_creation_discussion !== 'undefined') {
                 if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Demande de création de discussion reçue`);
 
-                const user = await User.findOne({user_socket_id: msg.id});
-                const members = await User.find({user_uuid: {$in: msg.demande_creation_discussion.discussionMembers}});
+                const user = await User.findOne({user_socket_id: msg.id}).populate('user_roles');
+                const members = await User.find({user_uuid: {$in: msg.demande_creation_discussion.discussionMembers}}).populate('user_roles');
 
                 if (!user || !members) {
                     this.controller.send(this, {discussion_creee: null, id: msg.id});

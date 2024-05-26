@@ -78,10 +78,10 @@ const AdminAjouterUtilisateur = () => {
         </div>
 
         <div className={"ajouter-utilisateur--tools"}>
-            <LinkTo to="/admin/users" className="ajouter-utilisateur--back">
+            <button onClick={() => navigate(-1)} className="ajouter-utilisateur--back" style={{cursor: 'pointer'}}>
                 <FeatherIcon icon="arrow-left" size={20}/>
                 <span>Retour</span>
-            </LinkTo>
+            </button>
         </div>
 
         <form onSubmit={handleSubmit} className={"ajouter-utilisateur-form"}>

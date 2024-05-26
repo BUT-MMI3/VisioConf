@@ -12,7 +12,7 @@ class LogIn {
 
     email = "";
 
-    verbose = true;
+    verbose = false;
 
     constructor(controller, instanceName) {
         this.controller = controller;
@@ -32,7 +32,7 @@ class LogIn {
         if (this.email.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-z]{2,6}$/)) {
             if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Adresse mail valide");
             // check if mail exists in database
-            let user = await User.findOne({user_email: this.email});
+            let user = await User.findOne({user_email: this.email}).populate("user_roles");
             if (user) {
                 if (this.verbose || this.controller.verboseall) console.log("INFO (LogIn) - Utilisateur trouvé dans la base de données");
 
@@ -97,7 +97,7 @@ class LogIn {
             await this.handleLogin(msg);
         } else if (typeof msg.client_deconnexion !== "undefined") {
             try {
-                const user = await User.findOne({user_socket_id: msg.id})
+                const user = await User.findOne({user_socket_id: msg.id}).populate('user_roles')
                 if (user) {
                     // check if the user was in a call
                     const calls = await Call.find({

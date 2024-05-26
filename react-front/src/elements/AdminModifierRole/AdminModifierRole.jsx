@@ -84,10 +84,10 @@ const AdminModifierRole = () => {
             </div>
 
             <div className="modifier-role--tools">
-                <LinkTo to="/admin/roles" className="modifier-role--back">
+                <button onClick={() => navigate(-1)} className="modifier-role--back" style={{cursor: 'pointer'}}>
                     <FeatherIcon icon="arrow-left" size={20}/>
                     <span>Retour</span>
-                </LinkTo>
+                </button>
             </div>
 
             <form onSubmit={handleSubmit} className="modifier-role-form">
@@ -103,7 +103,9 @@ const AdminModifierRole = () => {
                             <label key={permission._id} className="checkbox-label">
                                 <input type="checkbox" checked={selectedPermissions.includes(permission._id)}
                                        onChange={() => handlePermissionChange(permission._id)}/>
-                                {permission.permission_label}
+                                {permission.permission_label}{permission.permission_uuid.includes("admin_") && (
+                                <> (Admin)</>
+                            )}
                             </label>
                         ))}
                     </div>

@@ -78,10 +78,10 @@ const AdminAjouterRole = () => {
         </div>
 
         <div className={"ajouter-role--tools"}>
-            <LinkTo to="/admin/roles" className="ajouter-role--back">
+            <button onClick={() => navigate(-1)} className="ajouter-role--back" style={{cursor: 'pointer'}}>
                 <FeatherIcon icon="arrow-left" size={20}/>
                 <span>Retour</span>
-            </LinkTo>
+            </button>
         </div>
 
         <form onSubmit={handleSubmit} className={"ajouter-role-form"}>
@@ -90,7 +90,7 @@ const AdminAjouterRole = () => {
             </label>
             <label className={"ajouter-role-label"}>
                 <h4>Nom du rôle : <p>*</p></h4>
-                <input type="text" placeholder={"Utilisateur"} value={label}
+                <input type="text" placeholder={"Rôle"} value={label}
                        onChange={(e) => setLabel(e.target.value)} required/>
             </label>
             <label className={"ajouter-role-label w-100"}>
@@ -100,7 +100,9 @@ const AdminAjouterRole = () => {
                         <label key={permission._id} className="checkbox-label">
                             <input type="checkbox" checked={selectedPermissions.includes(permission._id)}
                                    onChange={() => handlePermissionChange(permission._id)}/>
-                            {permission.permission_label}
+                            {permission.permission_label}{permission.permission_uuid.includes("admin_") && (
+                            <> (Admin)</>
+                        )}
                         </label>
                     ))}
                 </div>
