@@ -90,7 +90,7 @@ const AdminAjouterRole = () => {
             </label>
             <label className={"ajouter-role-label"}>
                 <h4>Nom du rôle : <p>*</p></h4>
-                <input type="text" placeholder={"Utilisateur"} value={label}
+                <input type="text" placeholder={"Rôle"} value={label}
                        onChange={(e) => setLabel(e.target.value)} required/>
             </label>
             <label className={"ajouter-role-label w-100"}>
