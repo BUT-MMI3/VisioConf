@@ -12,7 +12,7 @@ class LogIn {
 
     email = "";
 
-    verbose = true;
+    verbose = false;
 
     constructor(controller, instanceName) {
         this.controller = controller;
