@@ -78,7 +78,7 @@ class CanalSocketIO {
                                         this.controller.send(this, message);
                                     } else {
                                         if (this.controller.verboseall || this.verbose) console.log("ERROR: Permission refusée : ", Object.keys(message)[0], " n'est pas dans les permissions de l'utilisateur");
-                                        console.log("ERROR: Permission refusée : ", Object.keys(message)[0], " n'est pas dans les permissions de l'utilisateur");
+                                        console.log("ERROR: Permission refusée : ", Object.keys(message)[0], " n'est pas dans les permissions de l'utilisateur", permissions);
                                         socket.emit("error", "Permission refusée");
                                     }
                                 } else {

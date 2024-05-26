@@ -215,6 +215,10 @@ const initializePermissions = async () => {
                 permission_uuid: 'demande_discussion_info',
                 permission_label: 'Information sur une discussion',
             },
+            {
+                permission_uuid: 'new_call',
+                permission_label: 'Nouvel appel'
+            }
         ];
 
         const permissionIds = {};
@@ -268,6 +272,13 @@ const initializeUsers = async () => {
             const userExists = await User.findOne({user_email: userData.user_email});
             if (!userExists) {
                 const newUser = new User(userData);
+
+                if (!userData.user_roles) {
+                    const userRole = await Role.findOne({role_uuid: 'user'});
+                    if (userRole) {
+                        newUser.user_roles = [userRole._id];
+                    }
+                }
                 await newUser.save();
                 console.log(`User ${userData.user_email} inserted`);
             } else {
