@@ -57,7 +57,13 @@ a {
   font-weight: 500;
   text-decoration: inherit;
 }
-
+select{
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #EAEAEA;
+  color: #4A4A4A;
+}
 body {
   margin: 0;
   display: flex;
