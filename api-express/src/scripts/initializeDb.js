@@ -77,6 +77,7 @@ const initializeRoles = async () => {
                     permissionIds['admin_demande_liste_roles'],
                     permissionIds['admin_demande_role_details'],
                     permissionIds['admin_ajouter_role'],
+                    permissionIds['admin_modifier_role'],
                     permissionIds['admin_supprimer_role'],
                     permissionIds['admin_demande_liste_permissions'],
                 ],
@@ -145,6 +146,30 @@ const initializePermissions = async () => {
             {
                 permission_uuid: 'admin_modifier_utilisateur',
                 permission_label: 'Modifier un utilisateur',
+            },
+            {
+                permission_uuid: 'admin_demande_liste_roles',
+                permission_label: 'Lister les rôles',
+            },
+            {
+                permission_uuid: 'admin_modifier_role',
+                permission_label: 'Modifier un rôle',
+            },
+            {
+                permission_uuid: 'admin_supprimer_role',
+                permission_label: 'Supprimer un rôle',
+            },
+            {
+                permission_uuid: 'admin_demande_liste_permissions',
+                permission_label: 'Lister les permissions',
+            },
+            {
+                permission_uuid: 'admin_ajouter_role',
+                permission_label: 'Ajouter un rôle',
+            },
+            {
+                permission_uuid: 'admin_demande_role_details',
+                permission_label: 'Détails du rôle',
             },
             {
                 permission_uuid: 'demande_liste_utilisateurs',
