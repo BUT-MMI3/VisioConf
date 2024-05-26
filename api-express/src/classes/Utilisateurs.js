@@ -1,5 +1,6 @@
 require("dotenv").config();
 const User = require('../models/user');
+const Role = require('../models/role');
 const {v4: uuidv4} = require("uuid");
 const {sha256} = require("../utils/utils");
 const mailer = require('../utils/mailer');
@@ -117,9 +118,12 @@ class Utilisateurs {
                 user_email,
                 user_phone,
                 user_job,
+                user_role: [],
                 user_desc: ' ',
                 user_status: user_status || 'waiting',
             });
+            const userRole = await Role.findOne({role_uuid: "user"});
+            newUser.user_roles.push(userRole._id);
 
             // if no password set, generate invitation token and send email
             if (!user_password) {
