@@ -137,9 +137,6 @@ const AdminAccueil = () => {
                         <LinkTo to="/admin/permissions" className="admin-accueil--links--link">
                             <p>Liste des permissions</p>
                         </LinkTo>
-                        <LinkTo to="/admin/permissions/attribute" className="admin-accueil--links--link">
-                            <p>Attribuer une permission</p>
-                        </LinkTo>
                     </div>
                 </div>
 
