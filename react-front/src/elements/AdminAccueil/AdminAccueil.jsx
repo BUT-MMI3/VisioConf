@@ -3,30 +3,43 @@ import FeatherIcon from "feather-icons-react";
 import {useEffect, useRef, useState} from "react";
 import {appInstance} from "../../controller/index.js";
 import LinkTo from "../LinkTo/LinkTo.jsx";
+import {toast} from "react-toastify";
 
-const listeMessagesEmis = ["fetch-utilisateurs"];
-const listeMessagesRecus = ["get-utilisateurs"];
+const listeMessagesEmis = ["admin_demande_liste_utilisateurs"];
+const listeMessagesRecus = ["admin_liste_utilisateurs"];
 
 const AdminAccueil = () => {
     const instanceName = "AdminAccueil";
     const [utilisateurs, setUtilisateurs] = useState([]);
 
-    const [controller] = useState(appInstance.getController());
+    const controller = useRef(appInstance.getController()).current;
 
 
     const {current} = useRef({
         instanceName, traitementMessage: (msg) => {
             console.log("Traitement message NoyauAccueil:", msg);
+            if (msg && msg.admin_liste_utilisateurs) {
+                if (msg.admin_liste_utilisateurs.success) {
+                    setUtilisateurs(msg.admin_liste_utilisateurs.liste_utilisateurs || []);
+                } else {
+                    toast.error("Erreur lors de la récupération de la liste des utilisateurs", {
+                        theme: "colored",
+                        icon: "🚫"
+                    })
+                }
+            }
         },
     });
 
     useEffect(() => {
         controller.subscribe(current, listeMessagesEmis, listeMessagesRecus);
 
+        controller.send(current, {"admin_demande_liste_utilisateurs": {}});
+
         return () => {
             controller.unsubscribe(current, listeMessagesEmis, listeMessagesRecus);
         };
-    });
+    }, [controller]);
 
     return (<div className="admin-accueil layout-content--full">
         <div className="admin-accueil--card">
@@ -45,7 +58,9 @@ const AdminAccueil = () => {
                         />
                     </div>
 
-                    <h2>0</h2>
+                    <h2>
+                        {utilisateurs.filter(user => user.user_is_online).length}
+                    </h2>
                     <p>Utilisateurs connectés</p>
                 </div>
 
@@ -58,7 +73,7 @@ const AdminAccueil = () => {
                         />
                     </div>
 
-                    <h2>0</h2>
+                    <h2>{utilisateurs.length}</h2>
                     <p>Utilisateurs inscrits</p>
                 </div>
 

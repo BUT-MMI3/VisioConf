@@ -103,7 +103,7 @@ class Utilisateurs {
                 console.log(error);
             }
 
-            const allUsers = await User.find({}).select('user_uuid user_firstname user_lastname user_email user_job');
+            const allUsers = await User.find({}).select('user_uuid user_firstname user_lastname user_email user_job user_is_online');
 
             this.controller.send(this, {
                 admin_liste_utilisateurs: {
