@@ -96,7 +96,19 @@ const AdminVoirUtilisateur = () => {
                                 </div>
                                 <div className="voir-utilisateur--content--card--content--row">
                                     <span>Rôles : </span>
-                                    <span>{user.user_roles.join(", ")}</span>
+                                    <span className={"fr g0-5"}>{user.user_roles.map((role, index) => (
+                                        <p key={index} style={{
+                                            backgroundColor: "#223A6A",
+                                            color: "white",
+                                            padding: '0.3rem 0.8rem',
+                                            fontSize: '0.8rem',
+                                            whiteSpace: "nowrap",
+                                            borderRadius: '4rem'
+                                        }}>
+                                            {role.role_label}
+                                        </p>
+                                    ))}</span>
+
                                 </div>
                             </div>
                         </div>
