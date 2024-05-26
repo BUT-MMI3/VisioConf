@@ -49,8 +49,10 @@ const NoyauBarreDeMenu = () => {
         setShowStatus(!showStatus);
     };
     const checkRole = () => {
-        if (verbose || controller.verboseall) console.log(`INFO: (NoyauBarreDeMenu) - checkRole - session.user_roles[0]`, session.user_roles[0]);
-        return session.user_roles[0];
+        if (verbose || controller.verboseall) console.log(`INFO: (NoyauBarreDeMenu) - checkRole - session.user_roles`, session.user_roles);
+        const isAdmin = session.user_roles.find((role) => role.role_uuid === "admin");
+        if (verbose || controller.verboseall) console.log(`INFO: (NoyauBarreDeMenu) - checkRole - isAdmin`, isAdmin);
+        return isAdmin ? "admin" : "user";
     };
     const handleChangeStatus = async (newStatus) => {
         try {

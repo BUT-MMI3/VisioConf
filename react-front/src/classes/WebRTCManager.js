@@ -88,6 +88,7 @@ class WebRTCManager {
     }
 
     setSession = session => {
+        console.log(session)
         if (this.verbose || this.controller.verboseall) console.log(`INFO ${this.instanceName}: Session set: `, session)
         this.session = session
     }

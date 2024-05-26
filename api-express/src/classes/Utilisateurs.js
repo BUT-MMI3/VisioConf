@@ -87,22 +87,6 @@ class Utilisateurs {
         } else if (typeof msg.admin_demande_liste_utilisateurs !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement d'une demande de liste d'utilisateurs par un administrateur`);
 
-            try {
-                const user = await User.findBySocketId(msg.id);
-                if (!user.user_roles.includes('admin')) {
-                    this.controller.send(this, {
-                        admin_liste_utilisateurs: {
-                            success: false,
-                            message: "Vous n'avez pas les droits pour récupérer la liste des utilisateurs"
-                        },
-                        id: msg.id
-                    });
-                    return;
-                }
-            } catch (error) {
-                console.log(error);
-            }
-
             const allUsers = await User.find({}).select('user_uuid user_firstname user_lastname user_email user_job user_is_online');
 
             this.controller.send(this, {
@@ -115,21 +99,6 @@ class Utilisateurs {
         } else if (typeof msg.admin_ajouter_utilisateur !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la création d'un utilisateur par un administrateur`);
 
-            try {
-                const user = await User.findBySocketId(msg.id);
-                if (!user.user_roles.includes('admin')) {
-                    this.controller.send(this, {
-                        admin_utilisateur_cree: {
-                            success: false,
-                            message: "Vous n'avez pas les droits pour créer un utilisateur"
-                        },
-                        id: msg.id
-                    });
-                    return;
-                }
-            } catch (error) {
-                console.log(error);
-            }
             const {
                 user_firstname,
                 user_lastname,
@@ -177,22 +146,6 @@ class Utilisateurs {
         } else if (typeof msg.admin_demande_utilisateur_details !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la demande de détails d'un utilisateur par un administrateur`);
 
-            try {
-                const user = await User.findBySocketId(msg.id);
-                if (!user.user_roles.includes('admin')) {
-                    this.controller.send(this, {
-                        admin_utilisateur_details: {
-                            success: false,
-                            message: "Vous n'avez pas les droits pour récupérer les détails de cet utilisateur"
-                        },
-                        id: msg.id
-                    });
-                    return;
-                }
-            } catch (error) {
-                console.log(error);
-            }
-
             const user = await User.findOne({_id: msg.admin_demande_utilisateur_details.userId}).select('user_uuid user_firstname user_lastname user_email user_phone user_status user_job user_date_create user_picture user_is_online user_disturb_status user_last_connection user_direct_manager user_tokens user_roles');
             this.controller.send(this, {
                 admin_utilisateur_details: {
@@ -205,18 +158,6 @@ class Utilisateurs {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la suppression d'un utilisateur par un administrateur`);
 
             try {
-                const user = await User.findBySocketId(msg.id);
-                if (!user.user_roles.includes('admin')) {
-                    this.controller.send(this, {
-                        admin_utilisateur_supprime: {
-                            success: false,
-                            message: "Vous n'avez pas les droits pour supprimer cet utilisateur"
-                        },
-                        id: msg.id
-                    });
-                    return;
-                }
-
                 await User.deleteOne({_id: msg.admin_supprimer_utilisateur});
                 this.controller.send(this, {
                     admin_utilisateur_supprime: {
@@ -240,22 +181,6 @@ class Utilisateurs {
             }
         } else if (typeof msg.admin_modifier_utilisateur !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la modification d'un utilisateur par un administrateur`);
-
-            try {
-                const user = await User.findBySocketId(msg.id);
-                if (!user.user_roles.includes('admin')) {
-                    this.controller.send(this, {
-                        admin_utilisateur_modifie: {
-                            success: false,
-                            message: "Vous n'avez pas les droits pour modifier cet utilisateur"
-                        },
-                        id: msg.id
-                    });
-                    return;
-                }
-            } catch (error) {
-                console.log(error);
-            }
 
             const {
                 user_firstname,
