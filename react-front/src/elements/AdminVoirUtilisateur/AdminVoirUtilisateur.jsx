@@ -51,17 +51,17 @@ const AdminVoirUtilisateur = () => {
                 <h2>Voir un utilisateur</h2>
             </div>
             <div className={"voir-utilisateur--tools"}>
-                <LinkTo to="/admin/users" className="voir-utilisateur--back">
+                <button onClick={() => navigate(-1)} className="voir-utilisateur--back" style={{cursor: 'pointer'}}>
                     <FeatherIcon icon="arrow-left" size={20}/>
                     <span>Retour</span>
-                </LinkTo>
+                </button>
             </div>
 
             {user && (
                 <>
                     <div className="voir-utilisateur--content">
                         <div className="voir-utilisateur--content--card">
-                            <h3>Informations de l'utilisateur</h3>
+                        <h3>Informations de l'utilisateur</h3>
                             <div className="voir-utilisateur--content--card--content">
                                 <div className="voir-utilisateur--content--card--content--row">
                                     <span>Photo : </span>

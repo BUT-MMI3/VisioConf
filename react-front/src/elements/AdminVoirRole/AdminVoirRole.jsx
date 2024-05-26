@@ -51,10 +51,10 @@ const AdminVoirRole = () => {
                 <h2>Voir un rôle</h2>
             </div>
             <div className={"voir-role--tools"}>
-                <LinkTo to="/admin/roles" className="voir-role--back">
+                <button onClick={() => navigate(-1)} className="voir-role--back" style={{cursor: 'pointer'}}>
                     <FeatherIcon icon="arrow-left" size={20}/>
                     <span>Retour</span>
-                </LinkTo>
+                </button>
             </div>
 
             {role && (

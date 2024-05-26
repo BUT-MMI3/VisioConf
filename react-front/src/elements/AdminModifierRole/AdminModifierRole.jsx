@@ -84,10 +84,10 @@ const AdminModifierRole = () => {
             </div>
 
             <div className="modifier-role--tools">
-                <LinkTo to="/admin/roles" className="modifier-role--back">
+                <button onClick={() => navigate(-1)} className="modifier-role--back" style={{cursor: 'pointer'}}>
                     <FeatherIcon icon="arrow-left" size={20}/>
                     <span>Retour</span>
-                </LinkTo>
+                </button>
             </div>
 
             <form onSubmit={handleSubmit} className="modifier-role-form">
