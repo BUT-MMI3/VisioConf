@@ -97,7 +97,7 @@ class LogIn {
             await this.handleLogin(msg);
         } else if (typeof msg.client_deconnexion !== "undefined") {
             try {
-                const user = await User.findOne({user_socket_id: msg.id})
+                const user = await User.findOne({user_socket_id: msg.id}).populate('user_roles')
                 if (user) {
                     // check if the user was in a call
                     const calls = await Call.find({

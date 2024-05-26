@@ -146,7 +146,7 @@ class Utilisateurs {
         } else if (typeof msg.admin_demande_utilisateur_details !== 'undefined') {
             if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Traitement de la demande de détails d'un utilisateur par un administrateur`);
 
-            const user = await User.findOne({_id: msg.admin_demande_utilisateur_details.userId}).select('user_uuid user_firstname user_lastname user_email user_phone user_status user_job user_date_create user_picture user_is_online user_disturb_status user_last_connection user_direct_manager user_tokens user_roles');
+            const user = await User.findOne({_id: msg.admin_demande_utilisateur_details.userId}).select('user_uuid user_firstname user_lastname user_email user_phone user_status user_job user_date_create user_picture user_is_online user_disturb_status user_last_connection user_direct_manager user_tokens user_roles').populate('user_roles');
             this.controller.send(this, {
                 admin_utilisateur_details: {
                     success: true,
@@ -191,7 +191,7 @@ class Utilisateurs {
                 user_status
             } = msg.admin_modifier_utilisateur.userData;
 
-            const user = await User.findOne({user_email: msg.admin_modifier_utilisateur.userData.user_email});
+            const user = await User.findOne({user_email: msg.admin_modifier_utilisateur.userData.user_email}).populate('user_roles');
             user.user_firstname = user_firstname;
             user.user_lastname = user_lastname;
             user.user_email = user_email;

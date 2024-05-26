@@ -33,7 +33,7 @@ class Messages {
                 model: 'User',
                 select: 'user_firstname user_lastname user_picture user_socket_id user_uuid'
             });
-            const sender = await User.findOne({user_socket_id: msg.id});
+            const sender = await User.findOne({user_socket_id: msg.id}).populate('user_roles');
 
             if (!msg.envoie_message.content) {
                 console.log("Message vide");
