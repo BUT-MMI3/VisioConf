@@ -99,6 +99,14 @@ const initializeRoles = async () => {
                     permissionIds['update_notifications'],
                     permissionIds['demande_creation_discussion'],
                     permissionIds['demande_discussion_info'],
+                    permissionIds['new_call'],
+                    permissionIds['send_ice_candidate'],
+                    permissionIds['send_offer'],
+                    permissionIds['send_answer'],
+                    permissionIds['reject_offer'],
+                    permissionIds['hang_up'],
+                    permissionIds['call_created'],
+                    permissionIds['hung_up'],
                 ],
                 role_default: true,
             },
@@ -217,10 +225,70 @@ const initializePermissions = async () => {
             },
             {
                 permission_uuid: 'new_call',
-                permission_label: 'Nouvel appel'
-            }
+                permission_label: 'Nouvel appel',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'send_ice_candidate',
+                permission_label: 'Envoi de candidat ICE',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'send_offer',
+                permission_label: 'Envoi d\'offre',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'send_answer',
+                permission_label: 'Envoi de réponse',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'reject_offer',
+                permission_label: 'Rejet d\'offre',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'hang_up',
+                permission_label: 'Raccrocher',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'receive_offer',
+                permission_label: 'Réception d\'offre',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'receive_answer',
+                permission_label: 'Réception de réponse',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'receive_ice_candidate',
+                permission_label: 'Réception de candidat ICE',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'offer_rejected',
+                permission_label: 'Offre rejetée',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'call_created',
+                permission_label: 'Appel créé',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'hung_up',
+                permission_label: 'Raccroché',
+                permission_default: true,
+            },
+            {
+                permission_uuid: 'call_connected_users',
+                permission_label: 'Utilisateurs connectés',
+                permission_default: true,
+            },
         ];
-
         const permissionIds = {};
         for (const permission of permissions) {
             const newPermission = new Permission(permission);
