@@ -97,6 +97,7 @@ const initializeRoles = async () => {
                     permissionIds['demande_notifications'],
                     permissionIds['demande_changement_status'],
                     permissionIds['update_notifications'],
+                    permissionIds['update_profil'],
                     permissionIds['demande_creation_discussion'],
                     permissionIds['demande_discussion_info'],
                     permissionIds['new_call'],
@@ -214,6 +215,10 @@ const initializePermissions = async () => {
             {
                 permission_uuid: 'update_notifications',
                 permission_label: 'Mise à jour des notifications',
+            },
+            {
+                permission_uuid: 'update_profil',
+                permission_label: 'Mise à jour du profil',
             },
             {
                 permission_uuid: 'demande_creation_discussion',
