@@ -15,10 +15,10 @@ const listeMessageRecus = [
 
 const NoyauInscription = () => {
     const instanceName = "NoyauInscription";
-    const verbose = false;
+    const verbose = true;
 
     const [controller] = useState(appInstance.getController());
-
+    const navigate = useNavigate();
     const {current} = useRef({
         instanceName,
         traitementMessage: (msg) => {
@@ -26,6 +26,7 @@ const NoyauInscription = () => {
 
             if (typeof msg.inscription_acceptee !== "undefined") {
                 console.log("Inscription réussite");
+                navigate("/login");
             } else if (typeof msg.inscription_refusee !== "undefined") {
                 console.log("Inscription refusée");
                 setErreur(msg.inscription_refusee);
@@ -71,17 +72,9 @@ const NoyauInscription = () => {
     }, [motDePasse]);
 
     const {token} = useParams();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if (!token) {
-            navigate("/login");
-        }
-    }, [token, navigate]);
 
     if (token) {
         const Register = async () => {
-            console.log(token, motDePasse);
 
             if (token && motDePasse) {
                 if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - Register - `, token, motDePasse);
@@ -94,6 +87,8 @@ const NoyauInscription = () => {
                         "mot_de_passe": await sha256(motDePasse)
                     }
                 });
+
+                if (verbose || controller.verboseall) console.log("Demande de changement de mdp");
             } else {
                 if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - Register - `, "Veuillez remplir tous les champs.");
                 setErreur('Veuillez remplir tous les champs.');
@@ -102,7 +97,7 @@ const NoyauInscription = () => {
         return (
             <div className="page-inscription">
                 <div className="card-inscription">
-                    <img src={'./others/logo-universite-toulon.png'} alt="Logo de l'entreprise"
+                    <img src={'../others/logo-universite-toulon.png'} alt="Logo de l'entreprise"
                          className="logo-inscription"/>
                     <h2 className="h2-inscription">Vous avez été invité à rejoindre VisioConf</h2>
                     <form className='form-controller' onSubmit={(e) => e.preventDefault()}>

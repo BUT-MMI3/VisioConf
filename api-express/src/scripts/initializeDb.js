@@ -52,11 +52,12 @@ const usersToInsert = [
         user_job_desc: 'Student',
         user_email: 'utilisateur@example.com',
         user_phone: "00.00.00.00.00",
+        user_picture: '../others/default.png',
         user_job: "Student",
         user_desc: "Chef de département MMI à l’universite de Toulon. Également professeur de développement web.",
         user_password: ' ',
         user_status: 'waiting',
-        user_tokens: {inscription: 'azerty1234'},
+        user_tokens: {invitation: 'azerty1234'},
     },
 ];
 
@@ -98,6 +99,7 @@ const initializeRoles = async () => {
                     permissionIds['demande_changement_status'],
                     permissionIds['update_notifications'],
                     permissionIds['update_profil'],
+                    permissionIds['update_picture'],
                     permissionIds['demande_creation_discussion'],
                     permissionIds['demande_discussion_info'],
                     permissionIds['new_call'],
@@ -219,6 +221,10 @@ const initializePermissions = async () => {
             {
                 permission_uuid: 'update_profil',
                 permission_label: 'Mise à jour du profil',
+            },
+            {
+                permission_uuid: 'update_picture',
+                permission_label: 'Mise à jour de la photo de profil',
             },
             {
                 permission_uuid: 'demande_creation_discussion',

@@ -1,5 +1,6 @@
 const User = require('../models/user');
-
+const fs = require('fs');
+const path = require('path');
 class Profil {
     constructor(controller, instanceName) {
         this.instanceName = instanceName || 'Profil';
@@ -49,41 +50,52 @@ class Profil {
             console.log(`INFO (${this.instanceName}) - Mise à jour de la photo de profil reçue`);
 
             try {
-                const formData = msg.update_picture;
+                const file = msg.update_picture;
 
-                if (!formData) {
-                    console.error(`ERREUR (${this.instanceName}) - Aucun FormData trouvé dans les données d'image`);
+                if (!file || !file.name || !file.buffer) {
+                    console.error(`ERREUR (${this.instanceName}) - Fichier invalide ou manquant`);
                     return;
                 }
 
-                const fileData = formData.get("profilePicture");
+                // Convertir le buffer ArrayBuffer en Buffer Node.js
+                const buffer = Buffer.from(new Uint8Array(file.buffer));
 
-                if (!fileData) {
-                    console.error(`ERREUR (${this.instanceName}) - Aucun fichier trouvé dans les données d'image`);
-                    return;
+                // Définir le chemin de stockage du fichier
+                const destinationDir = path.join(__dirname, '..', '..', '..', 'react-front', 'public', 'others');
+                const filePath = path.join(destinationDir, file.name);
+
+                // Vérifier que le dossier de destination existe, sinon le créer
+                if (!fs.existsSync(destinationDir)) {
+                    fs.mkdirSync(destinationDir, { recursive: true });
                 }
 
-                // Convertir les données de l'image en base64
-                const reader = new FileReader();
-                reader.readAsDataURL(fileData);
-                reader.onloadend = async () => {
-                    const base64Image = reader.result.split(',')[1];
+                // Enregistrer le fichier sur le système de fichiers
+                fs.writeFile(filePath, buffer, async (err) => {
+                    if (err) {
+                        console.error(`ERREUR (${this.instanceName}) - Échec de l'enregistrement du fichier`, err);
+                        return;
+                    }
 
-                    // Mettre à jour user_picture dans la base de données avec la chaîne encodée en base64
-                    await User.updateOne({}, { user_picture: base64Image });
+                    console.log(`INFO (${this.instanceName}) - Fichier enregistré avec succès`);
+
+                    // Générer l'URL de l'image stockée
+                    const imageUrl = `../others/${file.name}`;
+
+                    // Mettre à jour user_picture dans la base de données avec l'URL de l'image
+                    await User.updateOne({}, { user_picture: imageUrl });
                     console.log(`INFO (${this.instanceName}) - Photo de profil mise à jour dans la base de données`);
 
-                    // Envoyer un message de confirmation de réception
+                    // Envoyer un message de confirmation de réception avec l'URL de l'image
                     const confirmationMessage = {
                         retourne_modification_picture: {
                             status: 'success',
-                            message: 'Photo de profil mise à jour'
+                            message: imageUrl,
                         }
                     };
 
                     await this.controller.send(this, confirmationMessage);
                     console.log(`INFO (${this.instanceName}) - Confirmation de mise à jour envoyée`);
-                };
+                });
             } catch (error) {
                 console.error(`ERREUR (${this.instanceName}) - Échec de la mise à jour de la photo de profil :`, error);
             }

@@ -143,7 +143,7 @@ const App = () => {
             navigate("/login");
         }
 
-        if (session.isSignedIn && (location.pathname === "/login" || location.pathname === "/forgot-password" || location.pathname.startsWith("/inscription"))) {
+        if (session.isSignedIn && (location.pathname === "/login" || location.pathname === "/forgot-password") && !location.pathname.startsWith("/inscription" )) {
             navigate("/");
         }
     }, [session.isSignedIn, location.pathname, navigate]);

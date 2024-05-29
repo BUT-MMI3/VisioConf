@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { appInstance } from "../../controller/index.js";
 import { updateUserDescription, updateUserPicture } from "../../features/session/sessionSlice";
 
+
 const listeMessageEmis = ["update_profil","update_picture"];
 const listeMessageRecus = ["retourne_modification_profil", "retourne_modification_picture"];
 const NoyauProfil = () => {
@@ -22,8 +23,8 @@ const NoyauProfil = () => {
                 if (verbose || controller.verboseall) console.log("Informations profil obtenue", msg.retourne_modification_profil);
                 const newDescription = msg.retourne_modification_profil.message;
                 setConfirmationMessage("Mise à jour réussie !");
-                dispatch(updateUserDescription({ newDescription })); // Mettre à jour la session avec la nouvelle description
-                setDescription(newDescription); // Mettre à jour la description affichée
+                dispatch(updateUserDescription({ newDescription }));
+                setDescription(newDescription);
             } else {
                 if (verbose || controller.verboseall) console.log("Erreur lors du traitement du message :", msg);
             }
@@ -32,8 +33,8 @@ const NoyauProfil = () => {
                 if (verbose || controller.verboseall) console.log("Informations profil obtenue", msg.retourne_modification_picture);
                 const newPicture = msg.retourne_modification_picture.message;
                 setConfirmationMessage("Mise à jour réussie !");
-                dispatch(updateUserPicture({ newPicture })); // Mettre à jour la session avec la nouvelle description
-                setPicture(newPicture); // Mettre à jour la description affichée
+                dispatch(updateUserPicture({ newPicture }));
+                setPicture(newPicture);
             } else {
                 if (verbose || controller.verboseall) console.log("Erreur lors du traitement du message :", msg);
             }
@@ -70,12 +71,21 @@ const NoyauProfil = () => {
             return;
         }
 
-        const formData = new FormData();
-        formData.append("profilePicture", file);
-
         try {
-            await controller.send(current, { update_picture: formData });
-            if (verbose || controller.verboseall) console.log("Demande de changement de photo de profil envoyée", { update_picture: formData });
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(file);
+            reader.onloadend = async () => {
+                const arrayBuffer = reader.result;
+                await controller.send(current, {
+                    update_picture: {
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        buffer: arrayBuffer
+                    }
+                });
+                if (verbose || controller.verboseall) console.log("Demande de changement de photo de profil envoyée", { update_picture: file });
+            };
         } catch (error) {
             console.error("Erreur lors de la demande de changement de photo de profil :", error);
         }
@@ -97,30 +107,30 @@ const NoyauProfil = () => {
                             <p className={"ta-l o0-5"}>{session && description}</p>
                         </div>
 
-                        <div className={"fr g1"}>
+                        <div className={"fr g2"}>
                             <p>Nom :</p>
                             <p className={"o0-5"}>{session && session.user_lastname}</p>
                         </div>
-                        <div className={"fr g1"}>
+                        <div className={"fr g2"}>
                             <p>Prénom :</p>
                             <p className={"o0-5"}>{session && session.user_firstname}</p>
                         </div>
-                        <div className={"fr g1"}>
+                        <div className={"fr g2"}>
                             <p>Date de création :</p>
                             <p className={"o0-5"}>
                                 {session && new Date(session.user_date_create).toLocaleDateString('fr-FR')}
                             </p>
                         </div>
-                        <div className={"fr g1"}>
-                            <p>Email :</p>
+                        <div className={"fr g2"}>
+                            <p className={"rem3"}>Email :</p>
                             <p className={"o0-5"}>{session && session.user_email}</p>
                         </div>
-                        <div className={"fr g1"}>
-                            <p>Job :</p>
+                        <div className={"fr g2"}>
+                            <p className={"rem3"}>Job :</p>
                             <p className={"o0-5"}>{session && session.user_job}</p>
                         </div>
-                        <div className={"fr g1"}>
-                            <p>Rôles</p>
+                        <div className={"fr g2"}>
+                            <p >Rôles</p>
                             <div className={"fr g0-5"}>
                                 {session && session.user_roles.map((role, index) => (
                                     <p key={index} style={{
@@ -143,7 +153,7 @@ const NoyauProfil = () => {
                     <div className={"fr g1"}>
                         <input type="file" accept="image/*" onChange={handleChangePicture} />
                         {session && (
-                            <img src={picture} alt={"Photo de profil"}
+                            <img src={picture} onClick={handleChangePicture} alt={"Photo de profil"}
                                  style={{ width: '100px', height: '100px' }} />
                         )}
                     </div>
