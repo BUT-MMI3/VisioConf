@@ -101,7 +101,7 @@ const NoyauConnexion = () => {
                     </button>
                 </form>
                 <div className="lien-mot-de-passe-oublie">
-                    <LinkTo to="/mot-de-passe-oublie">Mot de passe oublié ?</LinkTo>
+                    <LinkTo to="/forgot-password">Mot de passe oublié ?</LinkTo>
                 </div>
             </div>
         </div>

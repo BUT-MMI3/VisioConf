@@ -3,6 +3,7 @@ import './NoyauInscription.css';
 import {useNavigate, useParams} from "react-router-dom";
 import {appInstance} from "../../controller/index.js";
 import sha256 from "../../utils/sha256.js";
+import {toast} from "react-toastify";
 
 const listeMessageEmis = [
     "demande_inscription",
@@ -25,7 +26,7 @@ const NoyauInscription = () => {
             if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - traitementMessage - `, msg);
 
             if (typeof msg.inscription_acceptee !== "undefined") {
-                console.log("Inscription réussite");
+                toast.success("Le mot de passe a bien été changé", {theme: "colored", icon: "🚀"})
                 navigate("/login");
             } else if (typeof msg.inscription_refusee !== "undefined") {
                 console.log("Inscription refusée");
@@ -88,7 +89,7 @@ const NoyauInscription = () => {
                     }
                 });
 
-                if (verbose || controller.verboseall) console.log("Demande de changement de mdp");
+                if (verbose || controller.verboseall) console.log("Demande inscription");
             } else {
                 if (verbose || controller.verboseall) console.log(`INFO: (${instanceName}) - Register - `, "Veuillez remplir tous les champs.");
                 setErreur('Veuillez remplir tous les champs.');

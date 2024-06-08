@@ -98,6 +98,10 @@ class CanalSocketIO {
                         if (this.controller.verboseall || this.verbose) console.log("INFO: Demande d'inscription");
                         console.log("mon message id", message.id);
                         this.controller.send(this, message);
+                    } else if (typeof message.demande_password !== 'undefined') {
+                        if (this.controller.verboseall || this.verbose) console.log("INFO: Demande de changement de mot de passe");
+                        console.log("mon message id", message.id);
+                        this.controller.send(this, message);
                     } else {
                         if (this.controller.verboseall || this.verbose) console.log("ERROR: Token invalide");
                     }

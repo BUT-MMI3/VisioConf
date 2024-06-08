@@ -6,6 +6,7 @@ const Controller = require("../controller/Controller.js");
 const CanalSocketIO = require("../controller/CanalSocketIO.js");
 const LogIn = require("../classes/LogIn.js");
 const Register = require("../classes/Register.js");
+const PassForgotten = require("../classes/PassForgotten.js");
 const Discussions = require("../classes/Discussions.js");
 const Utilisateurs = require("../classes/Utilisateurs.js");
 const Messages = require("../classes/Messages.js");
@@ -27,11 +28,12 @@ const SocketApp = (io) => {
      */
 
     const controller = new Controller();
-
+    new PassForgotten(controller, "PassForgotten");
     new CanalSocketIO(io, controller, "CanalSocketIO");
 
     new LogIn(controller, "LogIn");
     new Register(controller, "Register");
+
     new Discussions(controller, "Discussions");
     new Utilisateurs(controller, "Utilisateurs");
     new Messages(controller, "Messages");

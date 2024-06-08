@@ -1,0 +1,135 @@
+#root {
+    width: 100%;
+}
+
+.h2-inscription {
+    color: black;
+    font-size: 19px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    word-wrap: break-word;
+    width: 18rem;
+}
+
+.valid {
+    color: green;
+}
+
+.pass {
+    display: flex;
+    font-size: 0.8rem;
+}
+
+.password-rules {
+    margin-bottom: 10px;
+}
+
+.button-inscription.button-disabled {
+    background-color: gray;
+    border: gray;
+    cursor: revert;
+}
+
+.page-inscription {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-image: url("/others/bg-connexion.png");
+    background-size: cover;
+}
+
+.card-inscription {
+    background-color: white;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    padding-top: 3rem;
+    padding-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo-inscription {
+    width: 280px;
+    max-height: 80px;
+    object-fit: contain;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: flex;
+    margin-bottom: 0.5rem;
+    color: #304978;
+}
+
+input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #F4F5F9;
+    border-radius: 5px;
+    outline: none;
+    background: #F4F5F9;
+    color: gray;
+}
+
+.erreur {
+    color: #CB0000;
+}
+
+.erreur-message {
+    color: #CB0000;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+}
+
+.button-inscription {
+    background-color: #1C376A;
+    color: var(--color-font);
+    padding: 0.3rem 6.5rem;
+    border: 1px solid #1c376a;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+}
+
+.button-inscription.erreur {
+    background-color: #5F7091;
+    border: 1px solid #5F7091;
+}
+
+.button-inscription.erreur:hover {
+    background-color: #1C376A;
+    border: 1px solid #1C376A;
+}
+
+.lien-mot-de-passe-oublie {
+    margin-top: 1rem;
+}
+
+.lien-mot-de-passe-oublie > a:nth-child(1) {
+    color: #409cdc;
+}
+
+a {
+    text-decoration: none;
+}
+
+@media only screen and (max-width: 600px) {
+    #root {
+        width: 100%;
+    }
+
+    .page-inscription {
+        width: 100%;
+    }
+
+    .button-inscription {
+        width: 100%;
+    }
+}

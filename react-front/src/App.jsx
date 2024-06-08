@@ -9,6 +9,7 @@ import NotFound from "./elements/NotFound.jsx";
 import Layout from "./elements/Layout/Layout.jsx";
 import NoyauProfil from "./elements/NoyauProfil/NoyauProfil.jsx";
 import NoyauInscription from "./components/NoyauInscription/NoyauInscription.jsx";
+import NoyauPassForgotten from "./components/NoyauPassForgotten/NoyauPassForgotten.jsx";
 import NoyauConnexion from "./components/NoyauConnexion/NoyauConnexion.jsx";
 import AdminAccueil from "./elements/AdminAccueil/AdminAccueil.jsx";
 import AdminListeUtilisateurs from "./elements/AdminListeUtilisateurs/AdminListeUtilisateurs.jsx";
@@ -39,6 +40,7 @@ const listeMessageEmis = [
 const listeMessageRecus = [
     "connexion_acceptee",
     "inscription_acceptee",
+    "password_acceptee",
     "client_deconnexion",
     "liste_utilisateurs",
     "distribue_notification",
@@ -79,11 +81,6 @@ const App = () => {
                     dispatch(signOut()); // déconnexion
                     controller.send(AppInstanceRef.current, {"update_session_token": ""});
                     socket.connect(); // reconnect
-                } else if (typeof msg.inscription_acceptee !== "undefined") {
-                    dispatch(signIn({
-                        session_token: msg.inscription_acceptee.session_token,
-                        user_info: msg.inscription_acceptee.user_info
-                    }));
                 } else if (typeof msg.liste_utilisateurs !== "undefined") {
                     setListeUtilisateurs(msg.liste_utilisateurs)
                     controller.send(AppInstanceRef.current, {"connected_users": msg.liste_utilisateurs.utilisateurs_connectes})
@@ -139,11 +136,11 @@ const App = () => {
     }, [controller, loading, location]);
 
     useEffect(() => {
-        if (!session.isSignedIn && (location.pathname !== "/login" && location.pathname !== "/forgot-password" && !location.pathname.startsWith("/inscription"))) {
+        if (!session.isSignedIn && (location.pathname !== "/login" && location.pathname !== "/forgot-password" && !location.pathname.startsWith("/inscription") && !location.pathname.startsWith("/forgot-password") )) {
             navigate("/login");
         }
 
-        if (session.isSignedIn && (location.pathname === "/login" || location.pathname === "/forgot-password") && !location.pathname.startsWith("/inscription" )) {
+        if (session.isSignedIn && (location.pathname === "/login") && !location.pathname.startsWith("/inscription" ) && !location.pathname.startsWith("/forgot-password")) {
             navigate("/");
         }
     }, [session.isSignedIn, location.pathname, navigate]);
@@ -332,7 +329,7 @@ const App = () => {
                         path="/forgot-password"
                         element={
                             <>
-                                <NoyauConnexion/>
+                                <NoyauPassForgotten/>
                             </>
                         }
                     />
