@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { appInstance } from "../../controller/index.js";
 import { updateUserDescription, updateUserPicture } from "../../features/session/sessionSlice";
+import {toast} from "react-toastify";
 
 
 const listeMessageEmis = ["update_profil","update_picture"];
@@ -22,7 +23,7 @@ const NoyauProfil = () => {
             if (typeof msg.retourne_modification_profil !== "undefined") {
                 if (verbose || controller.verboseall) console.log("Informations profil obtenue", msg.retourne_modification_profil);
                 const newDescription = msg.retourne_modification_profil.message;
-                setConfirmationMessage("Mise à jour réussie !");
+                toast.success("Mise à Jour réussi !", {theme: "colored", icon: "🚀"})
                 dispatch(updateUserDescription({ newDescription }));
                 setDescription(newDescription);
             } else {
@@ -32,7 +33,7 @@ const NoyauProfil = () => {
             if (typeof msg.retourne_modification_picture !== "undefined") {
                 if (verbose || controller.verboseall) console.log("Informations profil obtenue", msg.retourne_modification_picture);
                 const newPicture = msg.retourne_modification_picture.message;
-                setConfirmationMessage("Mise à jour réussie !");
+                toast.success("Mise à Jour réussi !", {theme: "colored", icon: "🚀"})
                 dispatch(updateUserPicture({ newPicture }));
                 setPicture(newPicture);
             } else {
@@ -51,7 +52,6 @@ const NoyauProfil = () => {
 
     const [description, setDescription] = useState(session.user_desc);
     const [picture, setPicture] = useState(session.user_picture);
-    const [confirmationMessage, setConfirmationMessage] = useState("");
 
     const handleChangeDesc = async () => {
         try {
@@ -168,7 +168,6 @@ const NoyauProfil = () => {
                         />
                         <button onClick={handleChangeDesc}>Modifier</button>
                     </div>
-                    {confirmationMessage && <p>{confirmationMessage}</p>}
                 </div>
             </div>
         </div>
