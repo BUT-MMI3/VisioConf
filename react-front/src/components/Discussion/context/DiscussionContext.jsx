@@ -114,6 +114,10 @@ export function DiscussionContextProvider() {
                     setDiscussion(msg.discussion_info);
                 } else if (typeof msg.nouveau_message !== "undefined") {
                     // Si nouveau message dans la discussion en cours
+                    // update liste des discussions
+                    controller.send(discussionInstanceRef.current, {
+                        "demande_liste_discussions": null,
+                    });
                     if (msg.nouveau_message.discussionId === discussionId) {
                         if (messages.length === 0) {
                             setMessages([msg.nouveau_message.message]);
@@ -129,11 +133,6 @@ export function DiscussionContextProvider() {
                                 msg.nouveau_message.message,
                             ]);
                         }
-                    } else {
-                        // update liste des discussions
-                        controller.send(discussionInstanceRef.current, {
-                            "demande_liste_discussions": null,
-                        });
                     }
                 } else if (typeof msg.erreur_envoi_message !== "undefined") {
                     // Si erreur d'envoi de message
@@ -249,6 +248,8 @@ export function DiscussionContextProvider() {
 
     // Fonction pour ajouter un message au fil de discussion, gestion de l'ajout de message
     const addMessage = useCallback((message) => {
+        if (typeof message !== "string") return;
+
         setMessages((prevMessages) => [
             ...prevMessages,
             {
