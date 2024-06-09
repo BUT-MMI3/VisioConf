@@ -87,7 +87,7 @@ class CanalSocketIO {
                             });
                         } else {
                             if (this.controller.verboseall || this.verbose) console.log("ERROR: Token invalide");
-                            this.controller.send(this, { client_deconnexion: socket.id, id: socket.id });
+                            this.controller.send(this, {client_deconnexion: socket.id, id: socket.id});
                         }
                     } else if (typeof message.demande_de_connexion !== 'undefined') {
                         if (this.controller.verboseall || this.verbose) console.log("INFO: Demande de connexion");

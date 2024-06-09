@@ -129,6 +129,11 @@ export function DiscussionContextProvider() {
                                 msg.nouveau_message.message,
                             ]);
                         }
+                    } else {
+                        // update liste des discussions
+                        controller.send(discussionInstanceRef.current, {
+                            "demande_liste_discussions": null,
+                        });
                     }
                 } else if (typeof msg.erreur_envoi_message !== "undefined") {
                     // Si erreur d'envoi de message
