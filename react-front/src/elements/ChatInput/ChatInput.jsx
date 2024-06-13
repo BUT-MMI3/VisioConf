@@ -7,6 +7,7 @@ import {useState} from "react";
 import {useDiscussion} from "../../components/Discussion/context/DiscussionContext.jsx";
 import "./ChatInput.scss";
 import {Send} from "react-feather";
+import {toast} from "react-toastify";
 
 export default function ChatInput() {
     const {addMessage} = useDiscussion();
@@ -37,32 +38,30 @@ export default function ChatInput() {
             if (item.kind === 'file') {
                 const file = item.getAsFile();
                 const blob = new Blob([file], {type: file.type});
-                console.log(blob);
-                // send file as buffer
-                console.log(typeof blob);
                 setFile(blob);
-                addMessage(blob);
             }
         }
     }
 
     return (
         <form onSubmit={handleSubmit} className="chat-form">
-            <div className="preview">
-                {file && (
-                    <div className="preview-file">
-                        {file.type.includes("image") && (
-                            <img src={URL.createObjectURL(file)} alt="file"/>
-                        )}
-                        <button
-                            type="button"
-                            onClick={() => setFile(null)}
-                        >
-                            Annuler
-                        </button>
-                    </div>
-                )}
-            </div>
+            {/* Affichage du nom du fichier collé et de l'aperçu */}
+            {/* TODO: Terminer son implémentation */}
+            {/*<div className="preview">*/}
+            {/*    {file && (*/}
+            {/*        <div className="preview-file">*/}
+            {/*            {file.type.includes("image") && (*/}
+            {/*                <img src={URL.createObjectURL(file)} alt="file"/>*/}
+            {/*            )}*/}
+            {/*            <button*/}
+            {/*                type="button"*/}
+            {/*                onClick={() => setFile(null)}*/}
+            {/*            >*/}
+            {/*                Annuler*/}
+            {/*            </button>*/}
+            {/*        </div>*/}
+            {/*    )}*/}
+            {/*</div>*/}
             <input
                 type="text"
                 value={newMessage}
