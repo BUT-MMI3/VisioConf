@@ -12,17 +12,14 @@ const listeMessageRecus = ["status_answer"];
 
 const NoyauBarreDeMenu = () => {
     const [overlayVisible, setOverlayVisible] = useState(false);
-
+    const [showStatus, setShowStatus] = useState(false);
+    const [status, setStatus] = useState(null);
+    const [selectedStatus, setSelectedStatus] = useState("");
     const session = useSelector((state) => state.session);
-
 
     const instanceName = "NoyauBarreDeMenu";
     const verbose = false;
     const [controller] = useState(appInstance.getController());
-
-    const [status, setStatus] = useState(null);
-    const [selectedStatus, setSelectedStatus] = useState("");
-    const [showStatus, setShowStatus] = useState(null);
 
     const {current} = useRef({
         instanceName,
@@ -45,35 +42,34 @@ const NoyauBarreDeMenu = () => {
             controller.unsubscribe(current, listeMessageEmis, listeMessageRecus);
         };
     }, [current, controller]);
+
     const toggleStatus = () => {
-        setShowStatus(!showStatus);
+        setShowStatus((prevShowStatus) => !prevShowStatus);
     };
+
     const checkRole = () => {
         if (verbose || controller.verboseall) console.log(`INFO: (NoyauBarreDeMenu) - checkRole - session.user_roles`, session.user_roles);
         const isAdmin = session.user_roles.find((role) => role.role_uuid === "admin");
         if (verbose || controller.verboseall) console.log(`INFO: (NoyauBarreDeMenu) - checkRole - isAdmin`, isAdmin);
         return isAdmin ? "admin" : "user";
     };
+
     const handleChangeStatus = async (newStatus) => {
         try {
             setSelectedStatus(newStatus);
             await controller.send(current, {demande_changement_status: newStatus});
-            if (verbose || controller.verboseall) console.log("Demande de changement de statut envoyée", newStatus)
+            if (verbose || controller.verboseall) console.log("Demande de changement de statut envoyée", newStatus);
         } catch (error) {
             console.error("Erreur lors de la demande de changement de statut :", error);
         }
     };
 
-
     const overlayRef = useRef(null);
 
     const handleContainerClick = (event) => {
-        if (
-            overlayVisible &&
-            overlayRef.current &&
-            !overlayRef.current.contains(event.target)
-        ) {
+        if (overlayVisible && overlayRef.current && !overlayRef.current.contains(event.target)) {
             setOverlayVisible(false);
+            setShowStatus(false)
         }
     };
 
@@ -82,10 +78,27 @@ const NoyauBarreDeMenu = () => {
         return () => {
             document.removeEventListener("mousedown", handleContainerClick);
         };
-    }, [handleContainerClick, overlayVisible]);
+    }, [overlayVisible]);
 
     const handleOverlayToggle = () => {
         setOverlayVisible(!overlayVisible);
+        setShowStatus(false)
+    };
+
+    let hideTimer = null;
+    const handleMouseOverStatus = () => {
+        const timer = setTimeout(() => {
+            setShowStatus(true);
+        }, 500);
+        clearTimeout(hideTimer)
+        return () => clearTimeout(timer);
+    };
+
+    const handleMouseLeaveStatus = () => {
+        clearTimeout(hideTimer)
+        hideTimer = setTimeout(() => {
+            setShowStatus(false);
+        }, 500);
     };
 
     return (
@@ -158,10 +171,6 @@ const NoyauBarreDeMenu = () => {
 
                     <img
                         src={session.user_picture}
-                        // onError={(e) => {
-                        //     e.target.onerror = null;
-                        //     e.target.src = "./user-icons/user-base-icon.svg";
-                        // }}
                         alt="Logo de l'session"
                         className="logo-session"
                     />
@@ -171,10 +180,6 @@ const NoyauBarreDeMenu = () => {
                                 <div className="info-container">
                                     <img
                                         src={session.user_picture}
-                                        // onError={(e) => {
-                                        //     e.target.onerror = null;
-                                        //     e.target.src = "./user-icons/user-base-icon.svg";
-                                        // }}
                                         alt="Logo de l'session"
                                         className="overlay-logo"
                                     />
@@ -186,7 +191,9 @@ const NoyauBarreDeMenu = () => {
                                     </div>
                                 </div>
                                 <div className="onglets-overlay">
-                                    <div className={"fr g1 ai-c"}>
+                                    <div className={"fr g1 ai-c"} onMouseOver={handleMouseOverStatus}
+                                         onMouseLeave={handleMouseLeaveStatus}
+                                         onClick={toggleStatus}>
                                         <div className={`statut-connexion`}>
                                             {!status && (session.user_disturb_status === "available" || session.user_disturb_status === "offline" || session.user_disturb_status === "dnd") && (
                                                 <>
@@ -282,7 +289,7 @@ const NoyauBarreDeMenu = () => {
 
                                         <div className="status-affiche w-100 fr jc-c ai-c"
                                              style={{marginRight: "-1rem",}}
-                                             onMouseOver={toggleStatus}>
+                                        >
                                             <FeatherIcon
                                                 icon={showStatus ? 'chevron-down' : 'chevron-right'}
                                                 size="20"
