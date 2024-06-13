@@ -7,12 +7,11 @@ import {useState} from "react";
 import {useDiscussion} from "../../components/Discussion/context/DiscussionContext.jsx";
 import "./ChatInput.scss";
 import {Send} from "react-feather";
-import {toast} from "react-toastify";
 
 export default function ChatInput() {
     const {addMessage} = useDiscussion();
     const [newMessage, setNewMessage] = useState("");
-    const [file, setFile] = useState(null);
+    // const [file, setFile] = useState(null);
 
     // Gestion de la soumission du nouveau message
     const handleSubmit = (event) => {
@@ -31,17 +30,17 @@ export default function ChatInput() {
     };
 
     // handle paste file
-    const handlePaste = (event) => {
-        event.preventDefault();
-        const items = (event.clipboardData || event.originalEvent.clipboardData).items;
-        for (const item of items) {
-            if (item.kind === 'file') {
-                const file = item.getAsFile();
-                const blob = new Blob([file], {type: file.type});
-                setFile(blob);
-            }
-        }
-    }
+    // const handlePaste = (event) => {
+    //     event.preventDefault();
+    //     const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+    //     for (const item of items) {
+    //         if (item.kind === 'file') {
+    //             const file = item.getAsFile();
+    //             const blob = new Blob([file], {type: file.type});
+    //             setFile(blob);
+    //         }
+    //     }
+    // }
 
     return (
         <form onSubmit={handleSubmit} className="chat-form">
@@ -68,7 +67,7 @@ export default function ChatInput() {
                 onChange={(event) => setNewMessage(event.target.value)}
                 placeholder="Votre message"
                 className="chat-input"
-                onPaste={(event) => handlePaste(event)}
+                // onPaste={(event) => handlePaste(event)}
             />
             <button type="submit" className="chat-send">
                 <Send
