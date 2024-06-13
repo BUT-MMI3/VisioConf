@@ -63,9 +63,17 @@ export const sessionSlice = createSlice({
             state.user_socket_id = "";
             state.isSignedIn = false;
         },
+        updateUserDescription: (state, action) => {
+            // Mettre à jour la description de l'utilisateur
+            state.user_desc = action.payload.newDescription;
+        },
+        updateUserPicture: (state, action) => {
+            // Mettre à jour la description de l'utilisateur
+            state.user_picture = action.payload.newPicture;
+        },
     },
 });
 
-export const {signIn, signOut} = sessionSlice.actions;
+export const {signIn, signOut, updateUserDescription, updateUserPicture } = sessionSlice.actions;
 
 export default sessionSlice.reducer;

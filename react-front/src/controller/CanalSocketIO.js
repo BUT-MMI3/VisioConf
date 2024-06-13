@@ -61,13 +61,13 @@ class CanalSocketIO {
             this.setSessionToken(msg.update_session_token);
             delete msg.update_session_token;
         } else {
-            if (!this.sessionToken && typeof msg.demande_de_connexion === "undefined" && typeof msg.demande_inscription === "undefined") {
+            if (!this.sessionToken && typeof msg.demande_de_connexion === "undefined" && typeof msg.demande_inscription === "undefined" && typeof msg.demande_password === "undefined") {
                 console.error("No session token")
                 this.controller.send(this, {client_deconnexion: this.socket.id});
                 return new Error("No session token");
             }
 
-            if (typeof msg.demande_de_connexion !== "undefined" || typeof msg.demande_inscription !== "undefined") {
+            if (typeof msg.demande_de_connexion !== "undefined" || typeof msg.demande_inscription !== "undefined" || typeof msg.demande_password !== "undefined"){
                 this.sessionToken = null;
             }
 

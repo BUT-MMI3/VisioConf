@@ -11,7 +11,7 @@ class Register {
         this.listeMessagesEmis = ["inscription_acceptee", "inscription_refusee"];
         this.listeMessagesRecus = ["demande_inscription"];
 
-        this.verbose = false;
+        this.verbose = true;
 
         if (this.verbose || this.controller.verboseall) console.log("INFO (" + this.instanceName + ") - Création de l'instance Register : " + this.instanceName);
 
@@ -25,45 +25,36 @@ class Register {
         const motDePasse = msg.demande_inscription.mot_de_passe;
 
         try {
-            // Vérifiez si l'e-mail existe déjà dans la base de données
-            jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-                if (err) {
-                    this.controller.send({inscription_refusee: "Token invalide", id: msg.id});
-                    return;
-                }
+            const user = await User.findOne({"user_tokens.invitation": token});
+            if (user) {
+                // Si l'utilisateur existe déjà, mettez à jour ses informations
+                user.set({
+                    'user_socket_id': msg.id,
+                    'user_last_connection': new Date(),
+                    'user_is_online': false,
+                    'user_password': motDePasse,
+                    'user_tokens.session': jwt.sign({user: user.user_email + user.user_password}, process.env.JWT_SECRET, {expiresIn: "1h"}),
+                });
+                user.user_tokens.invitation = undefined;
 
-                const user = await User.findOne({"user_tokens.inscription": token});
+                // Sauvegardez les modifications dans la base de données
+                await user.save();
 
-                if (user) {
-                    // Si l'utilisateur existe déjà, mettez à jour ses informations
-                    user.set({
-                        'user_socket_id': msg.id,
-                        'user_last_connection': new Date(),
-                        'user_is_online': true,
-                        'user_password': motDePasse,
-                        'user_tokens.session': jwt.sign({user: user.user_email + user.user_password}, process.env.JWT_SECRET, {expiresIn: "1h"}),
-                    });
-                    user.user_tokens.inscription = undefined;
-
-                    // Sauvegardez les modifications dans la base de données
-                    await user.save();
-
-                    // Envoyez un message pour indiquer que l'inscription est réussie
-                    this.controller.send(this, {
-                        "inscription_acceptee": {
-                            session_token: user.user_tokens["session"],
-                            user_info: user.info
-                        },
-                        id: msg.id
-                    });
-                } else {
-                    // Envoyez un message pour indiquer que l'e-mail n'existe pas dans la base de données
-                    this.controller.send(this, {
-                        "inscription_refusee": "Utilisateur non trouvé dans la base de données",
-                        id: msg.id
-                    });
-                }
-            });
+                // Envoyez un message pour indiquer que l'inscription est réussie
+                this.controller.send(this, {
+                    "inscription_acceptee": {
+                        session_token: user.user_tokens["session"],
+                        user_info: user.info
+                    },
+                    id: msg.id
+                });
+            } else {
+                // Envoyez un message pour indiquer que l'e-mail n'existe pas dans la base de données
+                this.controller.send(this, {
+                    "inscription_refusee": "Utilisateur non trouvé dans la base de données",
+                    id: msg.id
+                });
+            }
         } catch (error) {
             // Gérez les erreurs
             console.error("Erreur lors du traitement de l'inscription :", error);
