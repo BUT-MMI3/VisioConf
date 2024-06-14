@@ -12,6 +12,7 @@ Date: Janvier 2024
   overflow: hidden;
   border-radius: 1rem;
   position: relative;
+  overflow-y: auto;
 
   &.shadow {
     &::after {
@@ -27,8 +28,7 @@ Date: Janvier 2024
 
 
   &--scroll {
-    overflow-y: auto;
-
+    padding-top: 80px;
 
     &::-webkit-scrollbar {
       width: 0.5rem;

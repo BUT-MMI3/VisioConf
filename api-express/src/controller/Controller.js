@@ -2,7 +2,7 @@ class Controller {
     listeEmission = {};
     listeReception = {};
 
-    verbose = false;
+    verbose = true;
     verboseall = false;
 
     subscribe(emetteur, liste_emission, liste_reception) {

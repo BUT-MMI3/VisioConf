@@ -322,8 +322,8 @@ const initializeUsers = async () => {
             const adminPasswordHash = await sha256(process.env.ADMIN_PASSWORD);
 
             // Récupérer les ObjectId des rôles 'admin' et 'user'
-            const adminRole = await Role.findOne({ role_uuid: 'admin' });
-            const userRole = await Role.findOne({ role_uuid: 'user' });
+            const adminRole = await Role.findOne({role_uuid: 'admin'});
+            const userRole = await Role.findOne({role_uuid: 'user'});
 
             if (adminRole && userRole) {
                 usersToInsert.push({

@@ -40,4 +40,97 @@
       }
     }
   }
+
+  &__info {
+    position: absolute;
+    top: calc(100% + 1rem);
+    right: -100%;
+    opacity: 1;
+    background-color: var(--color-light-transparent);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    color: var(--color-dark);
+    font-size: 0.75rem;
+    font-weight: 700;
+    transition: all 0.3s;
+
+    &.show {
+      right: 0;
+      opacity: 1;
+    }
+
+    &__container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: center;
+
+
+      &__date {
+        font-size: 0.5rem;
+        font-weight: 400;
+        color: var(--color-dark-light);
+      }
+
+      &__members {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+        justify-content: center;
+        max-width: 300px;
+        overflow-x: auto;
+
+
+        &__item {
+          width: auto;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          gap: 0.5rem;
+
+          span {
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+          }
+
+
+          img {
+            width: 1.5rem;
+            height: 1.5rem;
+            object-fit: cover;
+            border-radius: 50%;
+          }
+
+          & .creator {
+            font-weight: 400;
+            border: 1px solid var(--color-dark-light);
+            border-radius: 0.25rem;
+            padding: 0.2rem;
+            font-size: 0.5rem;
+            line-height: 1;
+          }
+
+          & .online {
+            width: 0.5rem;
+            height: 0.5rem;
+            background-color: var(--color-success);
+            border-radius: 50%;
+          }
+
+          & .offline {
+            width: 0.5rem;
+            height: 0.5rem;
+            background-color: var(--color-error);
+            border-radius: 50%;
+          }
+        }
+      }
+    }
+  }
 }

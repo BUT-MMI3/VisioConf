@@ -1,10 +1,12 @@
 # MMI-VisioConf
 
+**WORK-IN-PROGRESS**
+
 Visio Conf Fullstack-JS webApplication dedicated to MMI Toulon
 
 ## Description
 
-Ce projet est une application web de visio conférence développée dans le cadre du projet de la formation MMI de Toulon.
+Ce projet est une application web de visioconférence développée dans le cadre du projet de la formation MMI de Toulon.
 MMI VISIOCONF est développée en fullstack JS avec NodeJS, ExpressJS, Socket.io, MongoDB et ReactJS.
 Elle s'inspire grandement des applications de communication telles que Discord ou encore Teams et elle est développée
 dans un objectif "open source" et peut être utilisée par n'importe qui.
@@ -19,7 +21,13 @@ dans un objectif "open source" et peut être utilisée par n'importe qui.
 ## Installation
 
 - Cloner le projet
-
+- Se rendre dans le dossier du projet
+- Pour les 2 dossiers :
+  - Copier le fichier .env.example et le renommer en docker.env
+  - Modifier les variables d'environnement dans le fichier docker.env pour la PRODUCTION et le fichier .env pour le
+    DEV
+  - Pensez bien à définir les variables d'environnement pour les 2 dossiers
+  - C'est notamment là que vous créerez les identifiants de connexion au **compte admin** de l'application
 ### Pour lancer le projet en mode dev (container + serveur)
 
 - Commentez les services "api-express" et "react-front" dans le fichier docker-compose.yml
@@ -35,9 +43,9 @@ dans un objectif "open source" et peut être utilisée par n'importe qui.
 ## Utilisation
 
 - Une fois le projet lancé, rendez-vous sur l'adresse `http://localhost:3000` pour accéder à l'application
-- Connectez vous avec le compte administateur (email: admin@mail.com, password: admin)
+- Connectez-vous avec le compte administrateur (`email`: email que vous avez défini dans le fichier docker.env, `password`: password que vous avez défini dans le fichier docker.env)
 - Créez un compte utilisateur
-- Connectez vous avec le compte utilisateur que vous venez de créer
+- Connectez-vous avec le compte utilisateur que vous venez de créer
 
 ## Fonctionnalités
 
@@ -79,8 +87,4 @@ dans un objectif "open source" et peut être utilisée par n'importe qui.
 
 - [Mathis LAMBERT](https://mathislambert.fr)
 - [Arthur MONDON](https://mondon.pro)
-- Clément FAVAREL
-- Florian THOMY
 - Kyllian DIOCHON
-- Alan THOB
-- Mathieu ROMAIN

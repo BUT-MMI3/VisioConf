@@ -10,6 +10,37 @@ Date: Janvier 2024
   gap: 1rem;
   width: 100%;
   height: 50px;
+  position: relative;
+
+  & .preview {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 150px;
+    color: #555;
+
+    .preview-file {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding: 0 20px;
+        border-radius: 1rem;
+        background-color: var(--color-light);
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+
+      img {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        border-radius: 1rem;
+      }
+    }
+  }
 
   .chat-input {
     width: 100%;

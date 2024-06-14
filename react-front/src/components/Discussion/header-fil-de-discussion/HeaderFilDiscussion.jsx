@@ -16,6 +16,8 @@ const HeaderFilDiscussion = ({discussion, inCall}) => {
     const [controller] = useState(appInstance.getController())
     const [callInfo, setCallInfo] = useState({})
 
+    const [showInfo, setShowInfo] = useState(false)
+
     const {current} = useRef({
         instanceName,
         traitementMessage: (msg) => {
@@ -30,16 +32,14 @@ const HeaderFilDiscussion = ({discussion, inCall}) => {
     useEffect(() => {
         controller.subscribe(current, listeMessagesEmis, listeMessagesRecus)
 
+        controller.send(current, {"get_call_info": {}})
+        console.log(discussion)
+        console.log(discussion.discussion_members.find((m) => m._id === discussion.discussion_creator))
+
         return () => {
             controller.unsubscribe(current, listeMessagesEmis, listeMessagesRecus)
         }
     }, [controller, current]);
-
-    useEffect(() => {
-        return () => {
-            controller.send(current, {"get_call_info": {}})
-        }
-    }, [controller, current])
 
     const hangUp = async () => {
         if (inCall) {
@@ -131,8 +131,34 @@ const HeaderFilDiscussion = ({discussion, inCall}) => {
 
                 <button className="btn btn-primary" title={'Ajouter un participant -> non implémenté'} disabled={true}>
                     <UserPlus/></button>
-                <button className="btn btn-secondary" title={'Infos du groupe -> non implémenté'} disabled={true}>
+                <button className="btn btn-secondary" title={'Infos du groupe'}
+                        onClick={() => setShowInfo(!showInfo)}
+                >
                     <Users/></button>
+            </div>
+
+            <div className={"header-fil-discussion__info" + (showInfo ? " show" : "")}>
+                <div className="header-fil-discussion__info__container">
+                    <div className="header-fil-discussion__info__container__members">
+                        {discussion.discussion_members.map((m) => (
+                            <div key={m._id} className="header-fil-discussion__info__container__members__item">
+                                <img src={m.user_picture} alt={"pdp"}/>
+                                <span>{m.user_firstname + " " + m.user_lastname}</span>
+                                {m._id === discussion.discussion_creator && (
+                                    <span className={"creator"}>Créateur</span>
+                                ) || (m.user_is_online && (
+                                    <span className={"online"}></span>
+                                ) || (
+                                    <span className={"offline"}></span>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="header-fil-discussion__info__container__date">
+                        <span>Création le {new Date(discussion.discussion_date_create).toLocaleDateString()}</span>
+                    </div>
+                </div>
             </div>
         </div>
     )

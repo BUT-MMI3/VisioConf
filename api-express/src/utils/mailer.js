@@ -14,7 +14,7 @@ class Mailer {
         });
     }
 
-    async sendMail({ to, subject, text, html }) {
+    async sendMail({to, subject, text, html}) {
         const mailOptions = {
             from: process.env.SMTP_USER,
             to,

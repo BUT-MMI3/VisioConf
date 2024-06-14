@@ -9,7 +9,7 @@ class Discussions {
     listeMessagesEmis = ["liste_discussions", "historique_discussion", "discussion_creee", "discussion_info"];
     listeMessagesRecus = ["demande_liste_discussions", "demande_historique_discussion", "demande_creation_discussion", "demande_discussion_info"];
 
-    verbose = false;
+    verbose = true;
 
     constructor(controller, instanceName) {
         this.controller = controller;
