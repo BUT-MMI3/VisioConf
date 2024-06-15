@@ -3,6 +3,7 @@ import LinkTo from "../../../elements/LinkTo/LinkTo.jsx";
 import {useDiscussion} from "../context/DiscussionContext.jsx";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
+import {PlusCircle} from "react-feather";
 
 export default function ListeDiscussions() {
     const {listeDiscussions, newDiscussion} = useDiscussion();
@@ -18,9 +19,8 @@ export default function ListeDiscussions() {
     return (
         <div className="liste-discussion">
             <div className="liste-discussion--card">
-                <h2>Discussions</h2>
-
-                <button className="btn btn-tertiary" onClick={handleNewDiscussion}>
+                <button className="btn btn-tertiary btn-discussion" onClick={handleNewDiscussion}>
+                    <PlusCircle size={20}/>
                     Nouvelle discussion
                 </button>
 
