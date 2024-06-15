@@ -27,7 +27,6 @@ const NoyauInscription = () => {
 
             if (typeof msg.inscription_acceptee !== "undefined") {
                 toast.success("Le mot de passe a bien été changé", {theme: "colored", icon: "🚀"})
-                toast.info("Votre compte est en cours de vérification.", {theme: "colored", icon: "🚀"})
                 navigate("/login");
             } else if (typeof msg.inscription_refusee !== "undefined") {
                 console.log("Inscription refusée");

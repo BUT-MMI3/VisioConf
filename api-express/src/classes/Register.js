@@ -32,6 +32,7 @@ class Register {
                     'user_socket_id': msg.id,
                     'user_last_connection': new Date(),
                     'user_is_online': false,
+                    'user_status': "active",
                     'user_password': motDePasse,
                     'user_tokens.session': jwt.sign({user: user.user_email + user.user_password}, process.env.JWT_SECRET, {expiresIn: "1h"}),
                 });

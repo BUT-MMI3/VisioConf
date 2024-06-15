@@ -131,8 +131,8 @@ class Utilisateurs {
                 await mailer.sendMail({
                     to: newUser.user_email,
                     subject: 'Invitation à rejoindre Visioconf',
-                    text: `Bonjour ${newUser.user_firstname} ${newUser.user_lastname},\n\nVous avez été invité à rejoindre Visioconf. Pour cela, veuillez cliquer sur le lien suivant : ${process.env.CLIENT_URL}/invitation/${newUser.user_tokens.invitation}`,
-                    html: `<p>Bonjour ${newUser.user_firstname} ${newUser.user_lastname},</p><p>Vous avez été invité à rejoindre Visioconf. Pour cela, veuillez cliquer sur le lien suivant : <a href="${process.env.CLIENT_URL}/invitation/${newUser.user_tokens.invitation}">Rejoindre l'application</a>`
+                    text: `Bonjour ${newUser.user_firstname} ${newUser.user_lastname},\n\nVous avez été invité à rejoindre Visioconf. Pour cela, veuillez cliquer sur le lien suivant : ${process.env.CLIENT_URL}/inscription/${newUser.user_tokens.invitation}`,
+                    html: `<p>Bonjour ${newUser.user_firstname} ${newUser.user_lastname},</p><p>Vous avez été invité à rejoindre Visioconf. Pour cela, veuillez cliquer sur le lien suivant : <a href="${process.env.CLIENT_URL}/inscription/${newUser.user_tokens.invitation}">Rejoindre l'application</a>`
                 });
                 if (this.verbose || this.controller.verboseall) console.log(`INFO (${this.instanceName}) - Invitation email sent to ${newUser.user_email} - Token : ${newUser.user_tokens.invitation}`);
             }
